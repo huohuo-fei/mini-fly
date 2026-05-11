@@ -1,6 +1,7 @@
-import type {  IMiniScreen,  IMiniGam,  IMiniGamManager } from '../type';
+import type {  IMiniScreen,  IMiniGam,  IMiniGamManager, IMiniAction, IMiniActParams } from '../type';
 import { MiniGamManager } from '..';
 import { MiniGameType } from '../utils/common';
+import { MiniAction } from '../action';
 
 
 export class MiniScreen implements IMiniScreen {
@@ -9,6 +10,7 @@ export class MiniScreen implements IMiniScreen {
   height: number;
   width: number;
   gamManager:IMiniGamManager
+  gamAcion:IMiniAction
   activeGam: IMiniGam | null = null;
   ctx: CanvasRenderingContext2D | null;
   aniTime: number | null = null;
@@ -19,6 +21,7 @@ export class MiniScreen implements IMiniScreen {
     this.width = canvas.width;
     this.ctx = canvas.getContext('2d');
     this.gamManager = new MiniGamManager(this,{type:MiniGameType.FLY})
+    this.gamAcion = new MiniAction(canvas,this)
     this.initAni();
   }
 
@@ -44,13 +47,17 @@ export class MiniScreen implements IMiniScreen {
     this.activeGam = gam;
   }
 
+  actionTransfer(params:IMiniActParams){
+    this.gamManager.receiveTransfer(params)
+  }
+
   draw() {
     if (this.activeGam) {
-      if (this.ctx) {
-        this.activeGam.render(this.ctx);
-      } else {
-        this.pauseAni();
-      }
+      // if (this.ctx) {
+      //   this.activeGam.render(this.ctx);
+      // } else {
+      //   this.pauseAni();
+      // }
     } else {
       console.log('no active game');
       this.pauseAni();

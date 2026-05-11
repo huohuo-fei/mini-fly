@@ -15,8 +15,12 @@ onMounted(() =>{
     canvasElement = canvas
     miniGameInstance = new MiniScreen(canvas)
     console.log(miniGameInstance,'miniGameInstance');
-    
+  }else{
+    // canvasElement = null
   }
+
+  console.log(canvasElement,'canvasElement');
+  
   
 
 })
@@ -28,3 +32,11 @@ onMounted(() =>{
   <canvas id="mini-game-canvas"></canvas>
 </div>
 </template>
+
+<style>
+#mini-game-canvas{
+  width: 100%;
+  height: 100%;
+  background-color:gray ;
+}
+</style>
