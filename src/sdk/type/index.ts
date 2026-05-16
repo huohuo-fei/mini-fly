@@ -1,4 +1,4 @@
-import type { MiniActionType, MiniGameType } from '../utils/common';
+import type { MiniActionType, MiniGameType, MiniPlaneEnemyType } from '../utils/common';
 export interface IMiniBus {
   events: Map<string, Set<Function>>;
   // 事件总线
@@ -53,6 +53,8 @@ export interface IMiniScreen {
 
 export type IMiniGameParams = {
   type: MiniGameType.FLY;
+  canvasWidth: number;
+  canvasHeight: number;
 };
 
 export type IMiniActParams = {
@@ -61,3 +63,24 @@ export type IMiniActParams = {
   y: number;
   actionType: MiniActionType;
 };
+
+export type IMiniPlaneEnemyInfo = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  type:MiniPlaneEnemyType;
+}
+
+export type IMiniPlaneEnemy = {
+  x:number;
+  y:number;
+  w:number;
+  h:number;
+  health:number;
+  maxHealth:number;
+  type:MiniPlaneEnemyType;
+  color:string
+  speedX:number
+  speedY:number
+}

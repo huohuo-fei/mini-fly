@@ -41,4 +41,13 @@ export class MiniGamManager implements IMiniGamManager {
       this.activeGam?.actionDoing(action);
     }
   }
+
+  calcpos(clientX:number, clientY:number){
+    const canvas = this.screen.canvas;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    let canvasX = (clientX - rect.left) * scaleX;
+    canvasX = Math.min(Math.max(canvasX, 20), canvas.width-20);
+    return {x:canvasX,y:clientY}
+}
 }

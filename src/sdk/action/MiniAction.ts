@@ -49,6 +49,13 @@ export class MiniAction extends MiniBus implements IMiniAction {
   }
 
   pointerMove(event: PointerEvent) {
-    // console.log('event,',event);
+    const params: IMiniActParams = {
+      x: event.offsetX,
+      y: event.offsetY,
+      id: event.pointerId,
+      actionType: event.type as MiniActionType,
+    };
+
+    this.screen.actionTransfer(params);
   }
 }

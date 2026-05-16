@@ -12,6 +12,9 @@ onMounted(() =>{
   const canvas = document.getElementById('mini-game-canvas') as HTMLCanvasElement
 
   if(canvas){
+    const {width,height} = canvas.getBoundingClientRect()
+    canvas.width = width
+    canvas.height = height
     canvasElement = canvas
     miniGameInstance = new MiniScreen(canvas)
     console.log(miniGameInstance,'miniGameInstance');
@@ -19,12 +22,7 @@ onMounted(() =>{
     // canvasElement = null
   }
 
-  console.log(canvasElement,'canvasElement');
-  
-  
-
 })
-
 </script>
 
 <template>
@@ -34,8 +32,15 @@ onMounted(() =>{
 </template>
 
 <style>
+.canvas-container{
+  width:100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
 #mini-game-canvas{
-  width: 100%;
+  width: max(50%,500px);
   height: 100%;
   background-color:gray ;
 }

@@ -1,16 +1,21 @@
-import type {  IMiniScreen,  IMiniGam,  IMiniGamManager, IMiniAction, IMiniActParams } from '../type';
+import type {
+  IMiniScreen,
+  IMiniGam,
+  IMiniGamManager,
+  IMiniAction,
+  IMiniActParams,
+} from '../type';
 import { MiniGamManager } from '..';
 import { MiniGameType } from '../utils/common';
 import { MiniAction } from '../action';
-
 
 export class MiniScreen implements IMiniScreen {
   gamList = new Set<IMiniGam>();
   canvas: HTMLCanvasElement;
   height: number;
   width: number;
-  gamManager:IMiniGamManager
-  gamAcion:IMiniAction
+  gamManager: IMiniGamManager;
+  gamAcion: IMiniAction;
   activeGam: IMiniGam | null = null;
   ctx: CanvasRenderingContext2D | null;
   aniTime: number | null = null;
@@ -20,19 +25,26 @@ export class MiniScreen implements IMiniScreen {
     this.height = canvas.height;
     this.width = canvas.width;
     this.ctx = canvas.getContext('2d');
-    this.gamManager = new MiniGamManager(this,{type:MiniGameType.FLY})
-    this.gamAcion = new MiniAction(canvas,this)
+    this.gamManager = new MiniGamManager(this, {
+      type: MiniGameType.FLY,
+      canvasHeight: this.height,
+      canvasWidth: this.width,
+    });
+    this.gamAcion = new MiniAction(canvas, this);
     this.initAni();
   }
 
   initAni() {
-
-    if(!this.activeGam){
-      this.activeGam = this.gamManager.getActiveGam()
+    if (!this.activeGam) {
+      this.activeGam = this.gamManager.getActiveGam();
     }
-    this.aniTime = setInterval(() => {
+    // this.aniTime = setInterval(() => {
       this.draw();
-    }, 30);
+    // }, 20);
+
+    requestAnimationFrame(() => {
+      this.initAni();
+    })
   }
 
   pauseAni() {
@@ -47,17 +59,18 @@ export class MiniScreen implements IMiniScreen {
     this.activeGam = gam;
   }
 
-  actionTransfer(params:IMiniActParams){
-    this.gamManager.receiveTransfer(params)
+  actionTransfer(params: IMiniActParams) {
+    this.gamManager.receiveTransfer(params);
   }
 
   draw() {
+    this.ctx?.clearRect(0, 0, this.width, this.height);
     if (this.activeGam) {
-      // if (this.ctx) {
-      //   this.activeGam.render(this.ctx);
-      // } else {
-      //   this.pauseAni();
-      // }
+      if (this.ctx) {
+        this.activeGam.render(this.ctx);
+      } else {
+        this.pauseAni();
+      }
     } else {
       console.log('no active game');
       this.pauseAni();
