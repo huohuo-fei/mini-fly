@@ -4,14 +4,21 @@ import { PlaneAttacker } from './units/planeAttacker';
 
 import { PlaneBg } from './units/planeBg';
 import { PlaneEnemy } from './units/planeEnemy';
+import { PlaneEffect } from './units/effect/planeEffects';
+import type { IMiniPlaneEffectType } from './type';
+
+
 export class MiniFly implements IMiniGam {
   planeBackground: PlaneBg;
   planeAttacker: PlaneAttacker;
   planeEnemy: PlaneEnemy;
+
+  planeEffect: PlaneEffect;
   constructor(gameParams: IMiniGameParams) {
     this.planeBackground = new PlaneBg();
     this.planeAttacker = new PlaneAttacker(gameParams);
-    this.planeEnemy = new PlaneEnemy(gameParams)
+    this.planeEnemy = new PlaneEnemy(gameParams,this)
+    this.planeEffect = new PlaneEffect()
   }
 
   // render 方法
@@ -19,6 +26,7 @@ export class MiniFly implements IMiniGam {
     this.planeBackground.render(ctx);
     this.planeAttacker.render(ctx);
     this.planeEnemy.render(ctx);
+    this.planeEffect.render(ctx)
     this.bulletHitEnemy()
   }
 
@@ -33,6 +41,11 @@ export class MiniFly implements IMiniGam {
       }
     }
 
+  }
+
+  // 生成一个爆炸图
+  createEffect(type:IMiniPlaneEffectType,x:number,y:number) {
+    this.planeEffect.createEffect(type,x,y)
   }
 
   actionStart(action: IMiniActParams) {

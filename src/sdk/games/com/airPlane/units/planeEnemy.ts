@@ -1,15 +1,16 @@
+import type { MiniFly } from '..';
 import type {
   IMiniActParams,
   IMiniGam,
   IMiniGameParams,
 } from '../../../../type';
 import { MiniPlaneEnemyType } from '../../../../utils/common';
+import { IMiniPlaneEffectType } from '../type';
 import type { PlaneBullet } from './planeBullet';
 import { PlaneEnemyBullet } from './planeEnemyBullet';
 import { PlaneEnemyUnit } from './planeEnemyUnit';
 export class PlaneEnemy implements IMiniGam {
-  attackerX: number = 0;
-  attackerY: number = 0;
+  miniFly: MiniFly;
   gameParams: IMiniGameParams;
 
   // 所有敌人列表
@@ -18,7 +19,8 @@ export class PlaneEnemy implements IMiniGam {
   // 子弹列表
   bulletList: PlaneEnemyBullet[] = [];
 
-  constructor(params: IMiniGameParams) {
+  constructor(params: IMiniGameParams,miniFly:MiniFly) {
+    this.miniFly = miniFly;
     this.gameParams = params;
     for (let i = 0; i < 10; i++) {
       this.spawnEnemy();
@@ -81,6 +83,8 @@ export class PlaneEnemy implements IMiniGam {
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i]) {
         if (this.enemyList[i].isHit(bullet)) {
+          const enemyCenterArr = this.enemyList[i].getPos()
+          this.miniFly.createEffect(IMiniPlaneEffectType.EXPLODE,enemyCenterArr[0],enemyCenterArr[1]);
           // 需要将敌机从列表中移除
           this.removeUnit(this.enemyList[i]);
           return true;

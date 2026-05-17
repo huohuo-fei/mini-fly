@@ -98,6 +98,11 @@ export class PlaneEnemyUnit implements IMiniGam {
     }
   }
 
+  // 获取当前敌机的中心位置
+  getPos() {
+    return [this.enemyUnit.x + this.enemyUnit.w / 2, this.enemyUnit.y+ this.enemyUnit.h / 2]
+  }
+
   render(ctx: CanvasRenderingContext2D) {
     const { x, y, w, h, color } = this.enemyUnit;
     ctx.beginPath();
