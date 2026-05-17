@@ -83,4 +83,14 @@ export type IMiniPlaneEnemy = {
   color:string
   speedX:number
   speedY:number
+  shootCooldown:number
+}
+
+export type IMiniPlaneEnemyBullets = {
+  x:number;
+  y:number;
+  w: number;
+  h: number;
+  speedY: number;
+  color: string;
 }

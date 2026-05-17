@@ -40,7 +40,7 @@ export class MiniScreen implements IMiniScreen {
     }
     // this.aniTime = setInterval(() => {
       this.draw();
-    // }, 20);
+    // }, 22);
 
     requestAnimationFrame(() => {
       this.initAni();
@@ -65,6 +65,7 @@ export class MiniScreen implements IMiniScreen {
 
   draw() {
     this.ctx?.clearRect(0, 0, this.width, this.height);
+    this.ctx?.beginPath()
     if (this.activeGam) {
       if (this.ctx) {
         this.activeGam.render(this.ctx);

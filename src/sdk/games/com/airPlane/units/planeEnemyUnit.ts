@@ -6,6 +6,7 @@ import type {
 } from '../../../../type';
 import { MiniPlaneEnemyType } from '../../../../utils/common';
 import { enemyConfig1, enemyConfig2, enemyConfig3 } from '../config';
+import type { PlaneBullet } from './planeBullet';
 import type { PlaneEnemy } from './planeEnemy';
 
 export class PlaneEnemyUnit implements IMiniGam {
@@ -17,11 +18,14 @@ export class PlaneEnemyUnit implements IMiniGam {
   enemyInfo: IMiniPlaneEnemyInfo;
   planeEnemy: PlaneEnemy;
 
+  // 子弹相关
+  bulletLastTime: number;
+
   constructor(
     type: MiniPlaneEnemyType,
     canvasWidth: number,
     canvasHeight: number,
-    planeEnemy:PlaneEnemy
+    planeEnemy: PlaneEnemy
   ) {
     this.planeEnemy = planeEnemy;
     this.enemyInfo = {
@@ -36,6 +40,7 @@ export class PlaneEnemyUnit implements IMiniGam {
     this.canvasHeight = canvasHeight;
     this.type = type;
     this.enemyUnit = this.buildEnemyUnit();
+    this.bulletLastTime = Date.now();
   }
 
   buildEnemyUnit() {
@@ -68,18 +73,43 @@ export class PlaneEnemyUnit implements IMiniGam {
       this.planeEnemy.removeUnit(this);
     }
   }
-  /**
-   * 渲染敌方单位
-   * @param ctx Canvas的2D渲染上下文
-   */
+
+  // 生成子弹
+  generateBullet() {
+    const { shootCooldown } = this.enemyUnit;
+    const currentTime = Date.now();
+    if (currentTime - this.bulletLastTime >= shootCooldown * 1000) {
+      this.bulletLastTime = currentTime;
+      this.planeEnemy.addBullet(this.type, this);
+    }
+  }
+
+  // 碰撞检测
+  isHit(bullet: PlaneBullet) {
+    const { x, y, w, h } = this.enemyUnit;
+    const { x: bx, y: by, w: bw, h: bh } = bullet.config;
+
+    // todo: 添加生命值和分数逻辑
+    if (x < bx + bw && x + w > bx && y < by + bh && y + h > by) {
+      // 碰撞
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   render(ctx: CanvasRenderingContext2D) {
-    const e = this.enemyUnit;
-    ctx.strokeStyle = e.color;
+    const { x, y, w, h, color } = this.enemyUnit;
+    ctx.beginPath();
+    ctx.save();
+    ctx.strokeStyle = color;
     ctx.shadowBlur = 6;
     ctx.shadowColor = 'red';
-    ctx.strokeRect(e.x, e.y, e.w, e.h);
+    ctx.strokeRect(x, y, w, h);
+    ctx.restore();
     this.updatePos();
-    this.updateSate()
+    this.updateSate();
+    this.generateBullet();
   }
   actionStart = (p: IMiniActParams) => {};
   actionEnd = (p: IMiniActParams) => {};
