@@ -1,11 +1,10 @@
 import type {
   IMiniActParams,
   IMiniGam,
-  IMiniPlaneEnemyBullets,
-} from '../../../../type';
-import type { MiniPlaneEnemyType } from '../../../../utils/common';
+} from '../../../../../type';
 import type { PlaneEnemyUnit } from './planeEnemyUnit';
-import { bulletConfig } from '../config';
+import { bulletConfig } from '../../config';
+import type { IMiniPlaneEnemyBullets, MiniPlaneEnemyType } from '../../type';
 
 export class PlaneEnemyBullet implements IMiniGam {
   bulletType: MiniPlaneEnemyType;

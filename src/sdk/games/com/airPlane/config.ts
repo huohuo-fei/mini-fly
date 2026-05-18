@@ -1,6 +1,4 @@
-import type { IMiniPlaneEnemy, IMiniPlaneEnemyBullets } from '../../../type';
-import { MiniPlaneEnemyType } from '../../../utils/common';
-import { MyBulletType, type MyBulletConfig, type SpriteConfig } from './type';
+import { MyBulletType, type MyBulletConfig, type SpriteConfig, type IMiniPlaneEnemy, MiniPlaneEnemyType, type IMiniPlaneEnemyBullets } from './type';
 // 三种普通敌机的配置信息
 // 速度慢 体型大 生命值大 冷却时间长
 // 速度快 体型小 生命值小 冷却时间短
@@ -17,6 +15,9 @@ export const enemyConfig1: IMiniPlaneEnemy = {
   type: MiniPlaneEnemyType.LEVEL1,
   color: 'red',
   shootCooldown: 1,
+  score:10,
+  deadScore:20
+
 };
 
 export const enemyConfig2: IMiniPlaneEnemy = {
@@ -31,6 +32,8 @@ export const enemyConfig2: IMiniPlaneEnemy = {
   type: MiniPlaneEnemyType.LEVEL2,
   color: 'yellow',
   shootCooldown: 2,
+  score:10,
+  deadScore:20
 };
 
 export const enemyConfig3: IMiniPlaneEnemy = {
@@ -45,6 +48,8 @@ export const enemyConfig3: IMiniPlaneEnemy = {
   type: MiniPlaneEnemyType.LEVEL3,
   color: 'pink',
   shootCooldown: 3,
+  score:10,
+  deadScore:20
 };
 
 // 普通敌机子弹配置
@@ -67,6 +72,7 @@ export const myBulletConfig: MyBulletConfig = {
   size: 3,
   color: '#ffcc44',
   speedY: 10,
+  combat:2
 };
 
 

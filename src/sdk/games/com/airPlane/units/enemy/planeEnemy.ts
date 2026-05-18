@@ -1,12 +1,11 @@
-import type { MiniFly } from '..';
+import type { MiniFly } from '../..';
 import type {
   IMiniActParams,
   IMiniGam,
   IMiniGameParams,
-} from '../../../../type';
-import { MiniPlaneEnemyType } from '../../../../utils/common';
-import { IMiniPlaneEffectType } from '../type';
-import type { PlaneBullet } from './planeBullet';
+} from '../../../../../type';
+import { IMiniPlaneEffectType, MiniPlaneEnemyType } from '../../type';
+import type { PlaneBullet } from '../attacker/planeBullet';
 import { PlaneEnemyBullet } from './planeEnemyBullet';
 import { PlaneEnemyUnit } from './planeEnemyUnit';
 export class PlaneEnemy implements IMiniGam {
@@ -83,10 +82,23 @@ export class PlaneEnemy implements IMiniGam {
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i]) {
         if (this.enemyList[i].isHit(bullet)) {
-          const enemyCenterArr = this.enemyList[i].getPos()
-          this.miniFly.createEffect(IMiniPlaneEffectType.EXPLODE,enemyCenterArr[0],enemyCenterArr[1]);
-          // 需要将敌机从列表中移除
-          this.removeUnit(this.enemyList[i]);
+          this.enemyList[i].updateHp(bullet);
+          const dead = this.enemyList[i].isDead();
+          let score = 0;
+          if(dead){
+            // 敌机死亡
+            score = this.enemyList[i].enemyUnit.deadScore;
+            const enemyCenterArr = this.enemyList[i].getPos()
+            this.miniFly.createEffect(IMiniPlaneEffectType.EXPLODE,enemyCenterArr[0],enemyCenterArr[1]);
+            // 需要将敌机从列表中移除
+            this.removeUnit(this.enemyList[i]);
+          }else{
+            // 敌机未死亡
+            score = this.enemyList[i].enemyUnit.score;
+          }
+
+          this.miniFly.updateScore(score);
+
           return true;
         }
       }

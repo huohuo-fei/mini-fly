@@ -1,12 +1,10 @@
 import type {
   IMiniActParams,
   IMiniGam,
-  IMiniPlaneEnemy,
-  IMiniPlaneEnemyInfo,
-} from '../../../../type';
-import { MiniPlaneEnemyType } from '../../../../utils/common';
-import { enemyConfig1, enemyConfig2, enemyConfig3 } from '../config';
-import type { PlaneBullet } from './planeBullet';
+} from '../../../../../type';
+import { enemyConfig1, enemyConfig2, enemyConfig3 } from '../../config';
+import { MiniPlaneEnemyType, type IMiniPlaneEnemy, type IMiniPlaneEnemyInfo } from '../../type';
+import type { PlaneBullet } from '../attacker/planeBullet';
 import type { PlaneEnemy } from './planeEnemy';
 
 export class PlaneEnemyUnit implements IMiniGam {
@@ -17,6 +15,7 @@ export class PlaneEnemyUnit implements IMiniGam {
   type: MiniPlaneEnemyType;
   enemyInfo: IMiniPlaneEnemyInfo;
   planeEnemy: PlaneEnemy;
+  showHp: boolean = false;
 
   // 子弹相关
   bulletLastTime: number;
@@ -94,17 +93,40 @@ export class PlaneEnemyUnit implements IMiniGam {
       // 碰撞
       return true;
     } else {
+      this.showHp = false;
+
       return false;
     }
   }
 
   // 获取当前敌机的中心位置
   getPos() {
-    return [this.enemyUnit.x + this.enemyUnit.w / 2, this.enemyUnit.y+ this.enemyUnit.h / 2]
+    return [
+      this.enemyUnit.x + this.enemyUnit.w / 2,
+      this.enemyUnit.y + this.enemyUnit.h / 2,
+    ];
+  }
+
+  // 重新计算血条 和分数
+  updateHp(bullet: PlaneBullet) {
+    this.showHp = true;
+    const {combat} = bullet.config
+    const { health } = this.enemyUnit;
+    if (health <= 0) {
+      console.log('update hp error');
+    }else{
+      this.enemyUnit.health = health - combat;
+    }
+  }
+
+  // 敌机是否死亡
+  isDead() {
+    return this.enemyUnit.health <= 0;
   }
 
   render(ctx: CanvasRenderingContext2D) {
     const { x, y, w, h, color } = this.enemyUnit;
+    this.drawHp(ctx);
     ctx.beginPath();
     ctx.save();
     ctx.strokeStyle = color;
@@ -115,6 +137,25 @@ export class PlaneEnemyUnit implements IMiniGam {
     this.updatePos();
     this.updateSate();
     this.generateBullet();
+  }
+
+  drawHp(ctx: CanvasRenderingContext2D) {
+    if (!this.showHp) return;
+    const { x, y, w, health, maxHealth } = this.enemyUnit;
+    const hpw = w;
+    const hph = 4;
+    ctx.beginPath();
+    ctx.save();
+
+    // 血条背景色
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(x, y - 6, hpw, hph);
+
+    ctx.fillStyle = 'red';
+    const hp = health / maxHealth;
+    ctx.fillRect(x, y - 6, hpw * hp, hph);
+
+    ctx.restore();
   }
   actionStart = (p: IMiniActParams) => {};
   actionEnd = (p: IMiniActParams) => {};

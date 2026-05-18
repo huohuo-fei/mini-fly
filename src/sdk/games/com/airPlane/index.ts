@@ -1,9 +1,9 @@
 // 飞机大战
 import type { IMiniActParams, IMiniGam, IMiniGameParams } from '../../../type';
-import { PlaneAttacker } from './units/planeAttacker';
+import { PlaneAttacker } from './units/attacker/planeAttacker';
 
-import { PlaneBg } from './units/planeBg';
-import { PlaneEnemy } from './units/planeEnemy';
+import { PlaneBg } from './units/background/planeBg';
+import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
 import type { IMiniPlaneEffectType } from './type';
 
@@ -46,6 +46,11 @@ export class MiniFly implements IMiniGam {
   // 生成一个爆炸图
   createEffect(type:IMiniPlaneEffectType,x:number,y:number) {
     this.planeEffect.createEffect(type,x,y)
+  }
+
+  // 更新局内分数
+  updateScore(score:number) {
+    this.planeAttacker.updateScore(score)
   }
 
   actionStart(action: IMiniActParams) {

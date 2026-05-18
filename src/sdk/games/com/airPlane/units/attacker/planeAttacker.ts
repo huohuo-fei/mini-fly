@@ -2,10 +2,10 @@ import type {
   IMiniActParams,
   IMiniGam,
   IMiniGameParams,
-} from '../../../../type';
-import { MyBulletType, type MyBulletConfig } from '../type';
+} from '../../../../../type';
+import { MyBulletType, type MyBulletConfig } from '../../type';
 import { PlaneBullet } from './planeBullet';
-import { myBulletConfig } from '../config';
+import { myBulletConfig } from '../../config';
 
 export class PlaneAttacker implements IMiniGam {
   private PLAYER_WIDTH = 30;
@@ -19,6 +19,9 @@ export class PlaneAttacker implements IMiniGam {
   bullets: PlaneBullet[] = [];
   bulletType = MyBulletType.NORMAL;
   bulletTimer: number | null = null;
+
+  // 分数
+  score: number = 0;
 
   constructor(params: IMiniGameParams) {
     const playerX = params.canvasWidth / 2 - 15;
@@ -72,6 +75,12 @@ export class PlaneAttacker implements IMiniGam {
       gameParams.canvasWidth - PLAYER_WIDTH - 5
     );
     this.attackerX = resX;
+  }
+
+  updateScore(val:number) {
+    this.score += val;
+    console.log(this.score,'score');
+    
   }
   drawPlayer(ctx: CanvasRenderingContext2D) {
     const { PLAYER_WIDTH, PLAYER_HEIGHT, attackerX, attackerY } = this;

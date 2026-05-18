@@ -1,7 +1,7 @@
-import type { IMiniActParams, IMiniGam } from '../../../../type';
+import type { IMiniActParams, IMiniGam } from '../../../../../type';
 
-import type { MyBulletConfig, MyBulletType } from '../type';
-import { myBulletConfig } from '../config';
+import type { MyBulletConfig, MyBulletType } from '../../type';
+import { myBulletConfig } from '../../config';
 import type { PlaneAttacker } from './planeAttacker';
 
 export class PlaneBullet implements IMiniGam {
