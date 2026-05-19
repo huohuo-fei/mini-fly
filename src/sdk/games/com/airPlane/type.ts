@@ -1,5 +1,3 @@
-// todo:将之前的战机类型 抽离出来
-
 export enum MyBulletType {
   NORMAL = 'normal',
 }
@@ -9,6 +7,15 @@ export enum MiniPlaneEnemyType {
   LEVEL2 = 'level2', // 速度快 体型小 生命值小
   LEVEL3 = 'level3', // 速度快 体型大 生命值小
 }
+
+export enum MiniPlaneToolType {
+  LIFE = 'life',
+  SHIELD = 'shield',
+  BOMB = 'bomb',
+  DOUBLE = 'double',
+}
+
+
 
 
 // 我方子弹配置
@@ -72,8 +79,6 @@ export type IMiniPlaneEnemyInfo = {
   type:MiniPlaneEnemyType;
 }
 
-
-
 export type IMiniPlaneEnemyBullets = {
   x:number;
   y:number;
@@ -81,4 +86,13 @@ export type IMiniPlaneEnemyBullets = {
   h: number;
   speedY: number;
   color: string;
+}
+
+export type IMiniPlaneToolInfo = {
+  speedY:number
+  type:MiniPlaneToolType;
+  x:number;
+  y:number;
+  w:number;
+  h:number;
 }

@@ -6,6 +6,8 @@ import { PlaneBg } from './units/background/planeBg';
 import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
 import type { IMiniPlaneEffectType } from './type';
+import { PlaneBar } from './units/bar/planeBar';
+import { PlaneToolBox } from './units/tools/planeToolBox';
 
 
 export class MiniFly implements IMiniGam {
@@ -14,11 +16,15 @@ export class MiniFly implements IMiniGam {
   planeEnemy: PlaneEnemy;
 
   planeEffect: PlaneEffect;
+  planeBar: PlaneBar;
+  planeToolBox:PlaneToolBox
   constructor(gameParams: IMiniGameParams) {
     this.planeBackground = new PlaneBg();
     this.planeAttacker = new PlaneAttacker(gameParams);
     this.planeEnemy = new PlaneEnemy(gameParams,this)
     this.planeEffect = new PlaneEffect()
+    this.planeBar = new PlaneBar()
+    this.planeToolBox = new PlaneToolBox(gameParams,this)
   }
 
   // render 方法
@@ -27,6 +33,8 @@ export class MiniFly implements IMiniGam {
     this.planeAttacker.render(ctx);
     this.planeEnemy.render(ctx);
     this.planeEffect.render(ctx)
+    this.planeBar.render(ctx)
+    this.planeToolBox.render(ctx)
     this.bulletHitEnemy()
   }
 
@@ -50,7 +58,7 @@ export class MiniFly implements IMiniGam {
 
   // 更新局内分数
   updateScore(score:number) {
-    this.planeAttacker.updateScore(score)
+    this.planeBar.addScore(score)
   }
 
   actionStart(action: IMiniActParams) {

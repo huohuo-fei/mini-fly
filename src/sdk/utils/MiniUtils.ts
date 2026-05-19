@@ -13,17 +13,34 @@ export class MiniUtils {
         img.onload = () => {
           MiniUtils.imageStrMap.set(src, img);
           resolve(img);
-        }
-        img.onerror = () =>{
+        };
+        img.onerror = () => {
           reject();
-        }
+        };
       }
+    });
+  }
+
+  // 加载图片资源
+  static loadImageList(srcs: string[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const promises: Promise<any>[] = [];
+      for (let i = 0; i < srcs.length; i++) {
+        promises.push(MiniUtils.loadImage(srcs[i]));
+      }
+      Promise.all(promises)
+        .then((imgArr) => {
+          resolve(imgArr);
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 
   // 依据路劲获取图片
   static getImage(src: string): HTMLImageElement | null {
     const img = MiniUtils.imageStrMap.get(src);
-    return img?img:null;
+    return img ? img : null;
   }
 }

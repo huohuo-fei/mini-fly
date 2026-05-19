@@ -1,4 +1,4 @@
-import { MyBulletType, type MyBulletConfig, type SpriteConfig, type IMiniPlaneEnemy, MiniPlaneEnemyType, type IMiniPlaneEnemyBullets } from './type';
+import { MyBulletType, type MyBulletConfig, type SpriteConfig, type IMiniPlaneEnemy, MiniPlaneEnemyType, type IMiniPlaneEnemyBullets, type IMiniPlaneToolInfo, MiniPlaneToolType } from './type';
 // 三种普通敌机的配置信息
 // 速度慢 体型大 生命值大 冷却时间长
 // 速度快 体型小 生命值小 冷却时间短
@@ -76,7 +76,7 @@ export const myBulletConfig: MyBulletConfig = {
 };
 
 
-
+// 爆炸动画配置
 export const PlaneExplodeConfig: SpriteConfig = {
   x: 0,
   y: 0,
@@ -90,3 +90,13 @@ export const PlaneExplodeConfig: SpriteConfig = {
   frames: 8,
   delayF:5
 };
+
+// 生成的工具配置
+export const planeToolConfig: IMiniPlaneToolInfo = {
+  speedY: 0,
+  type: MiniPlaneToolType.LIFE,
+  x: 0,
+  y: 0,
+  w: 20,
+  h: 20
+}

@@ -20,9 +20,6 @@ export class PlaneAttacker implements IMiniGam {
   bulletType = MyBulletType.NORMAL;
   bulletTimer: number | null = null;
 
-  // 分数
-  score: number = 0;
-
   constructor(params: IMiniGameParams) {
     const playerX = params.canvasWidth / 2 - 15;
     const playerY = params.canvasHeight - 70;
@@ -77,11 +74,6 @@ export class PlaneAttacker implements IMiniGam {
     this.attackerX = resX;
   }
 
-  updateScore(val:number) {
-    this.score += val;
-    console.log(this.score,'score');
-    
-  }
   drawPlayer(ctx: CanvasRenderingContext2D) {
     const { PLAYER_WIDTH, PLAYER_HEIGHT, attackerX, attackerY } = this;
 
@@ -111,8 +103,8 @@ export class PlaneAttacker implements IMiniGam {
       b.render(ctx);
     }
   }
-  actionStart = (p: IMiniActParams) => {};
-  actionEnd = (p: IMiniActParams) => {};
+  actionStart = () => {};
+  actionEnd = () => {};
   actionDoing = (p: IMiniActParams) => {
     const { x } = p;
     this.updatePosX(x);
