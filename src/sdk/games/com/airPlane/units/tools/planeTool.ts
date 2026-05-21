@@ -1,6 +1,7 @@
 import { type IMiniPlaneToolInfo, MiniPlaneToolType } from '../../type';
 import type { IMiniGam, IMiniGameParams } from '../../../../../type';
 import type { PlaneBullet } from '../attacker/planeBullet';
+import type { PlaneToolBox } from './planeToolBox';
 
 export class PlaneTool implements IMiniGam {
   lastTime: number;
@@ -8,17 +9,20 @@ export class PlaneTool implements IMiniGam {
   toolInfo: IMiniPlaneToolInfo;
   gameParams: IMiniGameParams;
   resource: HTMLImageElement | null;
+  toolBox: PlaneToolBox;
 
   constructor(
     toolInfo: IMiniPlaneToolInfo,
     img: HTMLImageElement | null,
-    gameParams: IMiniGameParams
+    gameParams: IMiniGameParams,
+    toolBox: PlaneToolBox
   ) {
     this.type = toolInfo.type;
     this.toolInfo = toolInfo;
     this.lastTime = Date.now();
     this.gameParams = gameParams;
     this.resource = img;
+    this.toolBox = toolBox;
   }
 
   updatePos() {
@@ -29,18 +33,16 @@ export class PlaneTool implements IMiniGam {
   }
 
   updateSate() {
-    // if (this.toolInfo.y > this.canvasHeight) {
-    //   // 此时 需要移除当前单位
-    //   this.planeEnemy.removeUnit(this);
-    // }
+    if (this.toolInfo.y > this.gameParams.canvasHeight) {
+      // 此时 需要移除当前单位
+      this.toolBox.removeTool(this);
+    }
   }
 
   // 碰撞检测
-  isHit(bullet: PlaneBullet) {
+  isHit(ax:number,ay:number,aw:number,ah:number) {
     const { x, y, w, h } = this.toolInfo;
-    const { x: bx, y: by, w: bw, h: bh } = bullet.config;
-
-    if (x < bx + bw && x + w > bx && y < by + bh && y + h > by) {
+    if (x < ax + aw && x + w > ax && y < ay + ah && y + h > ay) {
       // 碰撞
       return true;
     } else {
@@ -55,19 +57,6 @@ export class PlaneTool implements IMiniGam {
     if (this.resource) {
       ctx.drawImage(this.resource, x, y, w, h);
     }
-    // switch (this.type) {
-    //   case MiniPlaneToolType.LIFE:
-    //     this.drawLife(ctx);
-    //     break;
-    //   case MiniPlaneToolType.SHIELD:
-    //     this.drawShield(ctx);
-    //     break;
-    //   case MiniPlaneToolType.BOMB:
-    //     this.drawBomb(ctx);
-    //     break;
-    //   case MiniPlaneToolType.DOUBLE:
-    //     this.drawDouble(ctx);
-    // }
     ctx.restore();
     this.updatePos();
     this.updateSate();

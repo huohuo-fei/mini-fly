@@ -71,7 +71,7 @@ export const myBulletConfig: MyBulletConfig = {
   h: 14,
   size: 3,
   color: '#ffcc44',
-  speedY: 10,
+  speedY: 8,
   combat:2
 };
 
@@ -93,7 +93,7 @@ export const PlaneExplodeConfig: SpriteConfig = {
 
 // 生成的工具配置
 export const planeToolConfig: IMiniPlaneToolInfo = {
-  speedY: 0,
+  speedY: 2,
   type: MiniPlaneToolType.LIFE,
   x: 0,
   y: 0,

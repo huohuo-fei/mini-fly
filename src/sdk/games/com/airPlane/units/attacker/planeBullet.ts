@@ -23,14 +23,14 @@ export class PlaneBullet implements IMiniGam {
     this.type = type;
   }
 
-  updatePos(){
+  updatePos() {
     this.config.y -= this.config.speedY;
   }
 
   updateSate() {
-    if (this.config.y < 0 ) {
+    if (this.config.y < -this.config.h * 3) {
       // 此时 需要移除当前单位
-     this.attacker.removeBullet(this)
+      this.attacker.removeBullet(this);
     }
   }
 
@@ -42,8 +42,8 @@ export class PlaneBullet implements IMiniGam {
     ctx.shadowBlur = 8;
     ctx.fillRect(x, y, w, h);
     ctx.restore();
-    this.updatePos()
-    this.updateSate()
+    this.updatePos();
+    this.updateSate();
   }
   actionStart = (p: IMiniActParams) => {};
   actionEnd = (p: IMiniActParams) => {};

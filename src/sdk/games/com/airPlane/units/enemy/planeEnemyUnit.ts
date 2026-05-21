@@ -16,6 +16,8 @@ export class PlaneEnemyUnit implements IMiniGam {
   enemyInfo: IMiniPlaneEnemyInfo;
   planeEnemy: PlaneEnemy;
   showHp: boolean = false;
+  cx: number = 0;
+  cy: number = 0;
 
   // 子弹相关
   bulletLastTime: number;
@@ -53,6 +55,8 @@ export class PlaneEnemyUnit implements IMiniGam {
     }
     eConfig = JSON.parse(JSON.stringify(eConfig));
     eConfig.x = x;
+    this.cx = x + eConfig.w / 2;
+    this.cy = eConfig.y + eConfig.h / 2;
     this.enemyInfo.x = x;
     this.enemyInfo.y = eConfig.y;
     this.enemyInfo.w = eConfig.w;
@@ -64,6 +68,8 @@ export class PlaneEnemyUnit implements IMiniGam {
     const diff = temp - this.lastTime;
     this.lastTime = temp;
     this.enemyUnit.y += (this.enemyUnit.speedY * diff) / 100;
+    this.cy = this.enemyUnit.y + this.enemyUnit.h / 2;
+
   }
 
   updateSate() {

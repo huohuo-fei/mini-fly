@@ -18,7 +18,7 @@ export class PlaneEnemy implements IMiniGam {
   // 子弹列表
   bulletList: PlaneEnemyBullet[] = [];
 
-  constructor(params: IMiniGameParams,miniFly:MiniFly) {
+  constructor(params: IMiniGameParams, miniFly: MiniFly) {
     this.miniFly = miniFly;
     this.gameParams = params;
     for (let i = 0; i < 10; i++) {
@@ -28,13 +28,13 @@ export class PlaneEnemy implements IMiniGam {
 
   render(ctx: CanvasRenderingContext2D) {
     // 绘制逻辑待优化:相同敌机 或者相同的子弹可否一笔绘制
-    ctx.beginPath()
+    ctx.beginPath();
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i]) {
         this.enemyList[i].render(ctx);
       }
     }
-    ctx.beginPath()
+    ctx.beginPath();
     for (let i = 0; i < this.bulletList.length; i++) {
       if (this.bulletList[i]) {
         this.bulletList[i].render(ctx);
@@ -78,21 +78,28 @@ export class PlaneEnemy implements IMiniGam {
   }
 
   // 判断是否命中敌机
-  isHitEnemy(bullet:PlaneBullet){
+  isHitEnemy(bullet: PlaneBullet) {
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i]) {
         if (this.enemyList[i].isHit(bullet)) {
           this.enemyList[i].updateHp(bullet);
           const dead = this.enemyList[i].isDead();
           let score = 0;
-          if(dead){
+          if (dead) {
             // 敌机死亡
             score = this.enemyList[i].enemyUnit.deadScore;
-            const enemyCenterArr = this.enemyList[i].getPos()
-            this.miniFly.createEffect(IMiniPlaneEffectType.EXPLODE,enemyCenterArr[0],enemyCenterArr[1]);
+            const enemyCenterArr = this.enemyList[i].getPos();
+            this.miniFly.createEffect(
+              IMiniPlaneEffectType.EXPLODE,
+              enemyCenterArr[0],
+              enemyCenterArr[1]
+            );
+
+            // 依据各种条件，生成装备
+            this.miniFly.updateToolBox(this.enemyList[i]);
             // 需要将敌机从列表中移除
             this.removeUnit(this.enemyList[i]);
-          }else{
+          } else {
             // 敌机未死亡
             score = this.enemyList[i].enemyUnit.score;
           }
@@ -104,8 +111,7 @@ export class PlaneEnemy implements IMiniGam {
       }
     }
 
-    return false
-
+    return false;
   }
 
   removeBullet(bullet: PlaneEnemyBullet) {

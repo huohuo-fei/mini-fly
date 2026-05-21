@@ -8,9 +8,9 @@ import { PlaneBullet } from './planeBullet';
 import { myBulletConfig } from '../../config';
 
 export class PlaneAttacker implements IMiniGam {
-  private PLAYER_WIDTH = 30;
-  private PLAYER_HEIGHT = 30;
-  private shootCooldown = 160;
+  PLAYER_WIDTH = 30;
+  PLAYER_HEIGHT = 30;
+  shootCooldown = 160;
   attackerX: number = 0;
   attackerY: number = 0;
   gameParams: IMiniGameParams;
@@ -19,6 +19,7 @@ export class PlaneAttacker implements IMiniGam {
   bullets: PlaneBullet[] = [];
   bulletType = MyBulletType.NORMAL;
   bulletTimer: number | null = null;
+  size: number = 1;
 
   constructor(params: IMiniGameParams) {
     const playerX = params.canvasWidth / 2 - 15;
@@ -28,6 +29,11 @@ export class PlaneAttacker implements IMiniGam {
     this.buildBullet();
   }
 
+  doubleBullet() {
+    if (this.size >= 3) return;
+    this.size++;
+  }
+
   // 生成子弹
   buildBullet() {
     if (!this.bulletTimer) {
@@ -35,10 +41,40 @@ export class PlaneAttacker implements IMiniGam {
         const config = JSON.parse(
           JSON.stringify(myBulletConfig)
         ) as MyBulletConfig;
-        config.x = this.attackerX + this.PLAYER_WIDTH / 2 - config.w / 2;
-        config.y = this.attackerY - this.PLAYER_HEIGHT;
-        const bullet = new PlaneBullet(this.bulletType, this, config);
-        this.bullets.push(bullet);
+        const speedY = config.speedY;
+        const cx = this.attackerX + this.PLAYER_WIDTH / 2 - config.w / 2;
+        const cy = this.attackerY - this.PLAYER_HEIGHT;
+
+        if (this.size === 1) {
+          config.x = cx;
+          config.y = cy;
+          const bullet = new PlaneBullet(this.bulletType, this, config);
+          this.bullets.push(bullet);
+        } else if (this.size === 2) {
+          config.x = cx - config.w;
+          config.y = cy;
+          const bullet = new PlaneBullet(this.bulletType, this, config);
+          this.bullets.push(bullet);  
+          config.x = cx + config.w;
+          config.y = cy;
+          const bullet2 = new PlaneBullet(this.bulletType, this, config);
+          this.bullets.push(bullet2);
+        }else if(this.size === 3){
+          config.x = cx - config.w *2;
+          config.y = cy;
+          const bullet = new PlaneBullet(this.bulletType, this, config);
+          this.bullets.push(bullet);
+          config.x = cx + config.w * 2;
+          config.y = cy;
+          const bullet2 = new PlaneBullet(this.bulletType, this, config);
+          this.bullets.push(bullet2);
+          config.x = cx;
+          config.y = cy;
+          config.speedY = speedY * 1.05;
+          
+          const bullet3 = new PlaneBullet(this.bulletType, this, config);
+          this.bullets.push(bullet3);
+        }
       }, this.shootCooldown);
     }
   }
