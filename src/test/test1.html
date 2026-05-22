@@ -1,419 +1,182 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>雷霆战机 · 苍穹捍卫者 - UI原型稿</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>径向渐变扇形护盾 - 纯净能量罩</title>
+  <style>
+    body {
+      background: linear-gradient(145deg, #0a0f1e 0%, #05080f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', monospace;
+    }
 
-        body {
-            background: linear-gradient(145deg, #0a0f1e 0%, #0a1a2f 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', 'Poppins', 'Orbitron', 'Courier New', monospace;
-            padding: 20px;
-        }
+    .demo-container {
+      text-align: center;
+    }
 
-        /* 手机容器 */
-        .phone {
-            width: 375px;
-            height: 700px;
-            background: #03050b;
-            border-radius: 48px;
-            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.5), 0 0 0 8px #2c2e3a, 0 0 0 12px #14161f;
-            overflow: hidden;
-            position: relative;
-        }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0, 200, 255, 0.2);
+      background: #03060c;
+      cursor: default;
+    }
 
-        /* 屏幕内容区域 */
-        .screen {
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 30%, #0b1120, #010101);
-            position: relative;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scroll-snap-type: y mandatory;
-        }
-
-        /* 三个界面通用样式 */
-        .page {
-            width: 100%;
-            min-height: 700px;
-            scroll-snap-align: start;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 20px;
-            position: relative;
-            box-sizing: border-box;
-        }
-
-        /* 装饰星尘 */
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.6;
-            animation: twinkle 2s infinite alternate;
-        }
-
-        @keyframes twinkle {
-            0% { opacity: 0.2; transform: scale(1);}
-            100% { opacity: 1; transform: scale(1.2);}
-        }
-
-        /* 主菜单logo */
-        .game-logo {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffd966, #ff9944, #ff4d4d);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 8px rgba(255,100,0,0.6);
-            margin-top: 40px;
-            letter-spacing: 2px;
-        }
-        .sub-logo {
-            font-size: 14px;
-            color: #7f8fa4;
-            letter-spacing: 4px;
-            margin-bottom: 50px;
-        }
-
-        /* 按钮 */
-        .btn {
-            width: 220px;
-            padding: 14px 0;
-            margin: 12px 0;
-            background: rgba(20, 30, 55, 0.85);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 200, 100, 0.5);
-            border-radius: 60px;
-            font-weight: bold;
-            font-size: 18px;
-            color: #ffecb3;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 5px 0 #0a0e16;
-        }
-        .btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 #0a0e16;
-            background: #ff9944;
-            color: #1e1a0c;
-        }
-        .btn-primary {
-            background: linear-gradient(95deg, #f0a34b, #ff5e2e);
-            color: white;
-            border: none;
-            box-shadow: 0 0 12px #ff6a2e;
-        }
-
-        /* 统计卡片 */
-        .stats-card {
-            background: rgba(0, 0, 0, 0.55);
-            border-radius: 36px;
-            padding: 16px 24px;
-            margin-top: 50px;
-            text-align: center;
-            backdrop-filter: blur(4px);
-            border: 1px solid #ffc28540;
-            width: 280px;
-        }
-        .stats-card p {
-            color: #ddd;
-            font-size: 14px;
-        }
-        .version {
-            margin-top: 40px;
-            color: #3a4a6e;
-            font-size: 10px;
-        }
-
-        /* 游戏界面头部 */
-        .game-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 16px;
-            background: #010314aa;
-            backdrop-filter: blur(12px);
-            border-radius: 32px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .pause-btn {
-            background: #2a2f42;
-            padding: 4px 14px;
-            border-radius: 30px;
-            color: #ffcd94;
-        }
-        .score-area {
-            color: #ffda99;
-        }
-
-        /* 战场区域（模拟） */
-        .battlefield {
-            background: radial-gradient(ellipse at 50% 20%, #13233f, #010101);
-            width: 100%;
-            flex: 1;
-            border-radius: 32px;
-            position: relative;
-            min-height: 380px;
-            margin: 10px 0;
-            border: 1px solid #ffcc8844;
-            overflow: hidden;
-        }
-        .enemy {
-            position: absolute;
-            font-size: 32px;
-            filter: drop-shadow(0 0 4px red);
-        }
-        .enemy1 { top: 40px; left: 60px; }
-        .enemy2 { top: 100px; right: 40px; }
-        .bullet-area {
-            position: absolute;
-            font-size: 18px;
-            color: yellow;
-            text-shadow: 0 0 5px orange;
-        }
-        .player {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 46px;
-            filter: drop-shadow(0 0 12px cyan);
-            transition: left 0.05s linear;
-        }
-        .boss-bar {
-            background: #3e1a2d;
-            height: 8px;
-            border-radius: 10px;
-            margin: 10px 16px;
-            overflow: hidden;
-        }
-        .boss-fill {
-            width: 70%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff5e6e, #ffb347);
-        }
-        .life-bomb {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 20px;
-            color: #ffae70;
-            font-size: 20px;
-        }
-
-        /* 结算界面 */
-        .result-box {
-            background: #071126cc;
-            backdrop-filter: blur(20px);
-            border-radius: 48px;
-            padding: 32px 20px;
-            width: 100%;
-            text-align: center;
-            border: 1px solid #ffbc6e;
-            margin-top: 80px;
-        }
-        .big-score {
-            font-size: 48px;
-            font-weight: bold;
-            background: linear-gradient(135deg, gold, #ff884d);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* 手势说明 */
-        .touch-hint {
-            font-size: 11px;
-            color: #6a7894;
-            text-align: center;
-            margin: 12px;
-        }
-
-        /* 滚动隐藏 */
-        .screen::-webkit-scrollbar {
-            width: 0;
-        }
-
-        button {
-            background: none;
-            border: none;
-        }
-    </style>
+    .caption {
+      margin-top: 16px;
+      color: #0cf;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 4px #0cf;
+      background: rgba(0, 0, 0, 0.5);
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 40px;
+      backdrop-filter: blur(4px);
+    }
+  </style>
 </head>
+
 <body>
-<div class="phone">
-    <div class="screen">
-        <!-- 页面1: 主菜单 -->
-        <div class="page" id="menuPage">
-            <div class="game-logo">⚡雷霆战机⚡</div>
-            <div class="sub-logo">苍穹捍卫者</div>
-            <div class="btn btn-primary" id="startBtn">🚀 开始游戏</div>
-            <div class="btn">🏆 成就图鉴</div>
-            <div class="btn">⚙️ 设置</div>
-            <div class="stats-card">
-                <p>🏅 最高分 &nbsp; 128,500</p>
-                <p>⏱️ 今日存活 &nbsp; 3分12秒</p>
-            </div>
-            <div class="version">Version 1.0.0 | 捍卫苍穹</div>
-        </div>
+  <div class="demo-container">
+    <canvas id="shieldCanvas" width="700" height="600"></canvas>
+    <div class="caption">🛡️ 径向渐变扇形护盾 | 仅外层能量罩 | 中间透明 🛡️</div>
+  </div>
 
-        <!-- 页面2: 游戏对局模拟 -->
-        <div class="page" id="gamePage" style="justify-content: start; padding: 16px;">
-            <div class="game-header">
-                <div class="pause-btn">⏸️ 暂停</div>
-                <div class="score-area">🎯 得分: 12,450</div>
-                <div>💣 x1</div>
-            </div>
-            <div class="battlefield" id="battlefield">
-                <!-- 动态拖动演示 -->
-                <div class="enemy enemy1">🪲 蜂群</div>
-                <div class="enemy enemy2">🛸 堡垒</div>
-                <div class="bullet-area" style="top:130px; left:100px;">• • •</div>
-                <div class="bullet-area" style="top:200px; left:280px;">•</div>
-                <div class="player" id="playerIcon">🛩️ ✨</div>
-                <div class="touch-hint" style="position: absolute; bottom: 0; width: 100%;">👇 触摸滑动模拟移动 👇</div>
-            </div>
-            <div class="boss-bar"><div class="boss-fill"></div></div>
-            <div class="life-bomb">
-                <span>❤️ ❤️ ❤️</span>
-                <span>💣 炸弹库存 1</span>
-            </div>
-            <div class="touch-hint">⭐ 双击屏幕释放清屏炸弹 (演示) ⭐</div>
-            <div class="btn" id="gameOverMock" style="margin-top: 12px; width: 80%;">💥 演示: 游戏结束 💥</div>
-        </div>
+  <script>
+    (function () {
+      const canvas = document.getElementById('shieldCanvas');
+      const ctx = canvas.getContext('2d');
 
-        <!-- 页面3: 结算界面 -->
-        <div class="page" id="resultPage">
-            <div class="result-box">
-                <h2 style="color:#ffbc6e">⚡ 游戏结束 ⚡</h2>
-                <div class="big-score">85,240</div>
-                <p style="color:gold">🏆 最高记录 128,500</p>
-                <p style="margin:12px 0">✈️ 击落敌机: 342 架<br>⏲️ 单局存活: 4分21秒</p>
-                <div class="btn" id="shareMock" style="width:180px; margin:8px auto;">📤 分享战绩</div>
-                <div class="btn btn-primary" id="restartMock" style="width:180px; margin:8px auto;">🔄 再来一局</div>
-                <div class="btn" id="backMenuFromResult" style="width:180px;">🏠 返回主菜单</div>
-            </div>
-        </div>
-    </div>
-</div>
+      // 飞机位置 (护盾以飞机为中心)
+      const centerX = 350;
+      const centerY = 500;
 
-<script>
-    // UI 交互演示: 模拟切换, 拖拽战机demo
-    const menuPage = document.getElementById('menuPage');
-    const gamePage = document.getElementById('gamePage');
-    const resultPage = document.getElementById('resultPage');
-    const startBtn = document.getElementById('startBtn');
-    const gameOverMock = document.getElementById('gameOverMock');
-    const restartMock = document.getElementById('restartMock');
-    const backMenuFromResult = document.getElementById('backMenuFromResult');
-    const shareMock = document.getElementById('shareMock');
-    const battlefield = document.getElementById('battlefield');
-    const playerIcon = document.getElementById('playerIcon');
+      // 扇形护盾参数 (朝向正上方，覆盖机头前方区域)
+      const shieldRadius = 66;           // 护盾半径
+      const startAngle = Math.PI;  // 起始角度 -147.6度
+      const endAngle = 2 * Math.PI     // 结束角度 -32.4度，形成约115度的扇形
 
-    function showPage(active) {
-        menuPage.style.display = 'none';
-        gamePage.style.display = 'none';
-        resultPage.style.display = 'none';
-        if (active === 'menu') menuPage.style.display = 'flex';
-        if (active === 'game') gamePage.style.display = 'flex';
-        if (active === 'result') resultPage.style.display = 'flex';
-    }
+      // 护盾边缘厚度
+      const edgeWidth = 4.5;
 
-    startBtn.addEventListener('click', () => {
-        showPage('game');
-    });
-    gameOverMock.addEventListener('click', () => {
-        showPage('result');
-    });
-    restartMock.addEventListener('click', () => {
-        showPage('game');
-    });
-    backMenuFromResult.addEventListener('click', () => {
-        showPage('menu');
-    });
-    shareMock.addEventListener('click', () => {
-        alert("✨ 模拟分享: 截图已保存到相册 (演示)");
-    });
+      // 绘制函数: 使用径向渐变绘制扇形能量罩，中间完全透明
+      function drawSectorShield() {
 
-    // 拖动战机模拟 (鼠标/手指)
-    let isDragging = false;
-    battlefield.addEventListener('mousedown', (e) => { isDragging = true; updatePlayerPos(e); });
-    window.addEventListener('mousemove', (e) => { if(isDragging) updatePlayerPos(e); });
-    window.addEventListener('mouseup', () => { isDragging = false; });
-    battlefield.addEventListener('touchstart', (e) => { isDragging = true; updatePlayerPos(e.touches[0]); e.preventDefault(); });
-    window.addEventListener('touchmove', (e) => { if(isDragging) { updatePlayerPos(e.touches[0]); e.preventDefault();} });
-    window.addEventListener('touchend', () => { isDragging = false; });
+        const renderCanvas = document.createElement('canvas');
+        const renderContext = renderCanvas.getContext('2d');
+        renderCanvas.width = shieldRadius * 2;
+        renderCanvas.height = shieldRadius;
+        // renderContext.fillStyle = 'yellow'
+        // renderContext.fillRect(0, 0, shieldRadius * 2, shieldRadius);
 
-    function updatePlayerPos(pointer) {
-        const rect = battlefield.getBoundingClientRect();
-        let x = pointer.clientX - rect.left;
-        x = Math.min(Math.max(x, 20), rect.width - 50);
-        playerIcon.style.left = x + 'px';
-        playerIcon.style.transform = 'translateX(0%)';
-    }
+        // 绘制示意飞机 (便于观察护盾位置)
+        renderContext.save()
+        // 做一个线性渐变，从内到外，颜色从透明到不透明
+        const gradient = renderContext.createLinearGradient(0,0,shieldRadius*2,0);
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        gradient.addColorStop(0.5, 'rgba(0, 0, 0, 1)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
-    // 双击清屏炸弹演示
-    let bombCount = 1;
-    const bombSpan = document.querySelector('.game-header div:last-child');
-    battlefield.addEventListener('dblclick', () => {
-        if(bombCount > 0){
-            bombCount--;
-            if(bombSpan) bombSpan.innerText = '💣 x0';
-            alert("💥 清屏炸弹引爆！全场敌人消灭 💥");
-        } else {
-            alert("⚠️ 没有炸弹库存，拾取绿色道具箱获得！");
-        }
-    });
-    battlefield.addEventListener('touchstart', (e) => {
-        if(e.touches.length === 2) {
-            if(bombCount > 0){
-                bombCount--;
-                if(bombSpan) bombSpan.innerText = '💣 x0';
-                alert("💥 双指触发清屏！");
-            } else alert("炸弹不足");
-            e.preventDefault();
-        }
-    });
+        // 绘制护盾主体
+        renderContext.beginPath();
+        renderContext.fillStyle = gradient
+        renderContext.fillRect(0,0, shieldRadius * 2, shieldRadius);
+        renderContext.fill();
 
-    // 初始显示主菜单
-    showPage('menu');
+        renderContext.globalCompositeOperation = "source-in";
 
-    // 增加星星背景装饰
-    function addStars() {
-        const pages = [menuPage, gamePage, resultPage];
-        pages.forEach(page => {
-            for(let i=0;i<70;i++) {
-                let star = document.createElement('div');
-                star.classList.add('star');
-                let size = Math.random() * 2 + 1;
-                star.style.width = size+'px';
-                star.style.height = size+'px';
-                star.style.left = Math.random()*100+'%';
-                star.style.top = Math.random()*100+'%';
-                star.style.animationDelay = Math.random()*3+'s';
-                page.appendChild(star);
-            }
-        });
-    }
-    addStars();
-</script>
+        renderContext.beginPath();
+        renderContext.moveTo(shieldRadius, shieldRadius);
+        renderContext.arc(shieldRadius,shieldRadius, shieldRadius, startAngle, endAngle);
+        renderContext.closePath();
+        const outerGlowGrad = renderContext.createRadialGradient(shieldRadius, shieldRadius, shieldRadius - 10, shieldRadius, shieldRadius, shieldRadius);
+        outerGlowGrad.addColorStop(0, 'rgba(0, 180, 240, 0)');
+        outerGlowGrad.addColorStop(0.8, 'rgba(0, 200, 255, 0.35)');
+        outerGlowGrad.addColorStop(1, 'rgba(0, 210, 255, 0.92)');
+        renderContext.fillStyle = outerGlowGrad;
+        renderContext.fill();
+        renderContext.restore()
+
+        ctx.drawImage(renderCanvas, centerX - shieldRadius, centerY - shieldRadius);
+        drawAirplane()
+      }
+
+      // 绘制简单的飞机轮廓 (仅用于示意护盾位置)
+      function drawAirplane() {
+        ctx.save();
+        ctx.shadowBlur = 0;
+        // 主体三角战机
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY - 28);
+        ctx.lineTo(centerX - 18, centerY + 6);
+        ctx.lineTo(centerX - 8, centerY + 2);
+        ctx.lineTo(centerX - 8, centerY + 14);
+        ctx.lineTo(centerX, centerY + 10);
+        ctx.lineTo(centerX + 8, centerY + 14);
+        ctx.lineTo(centerX + 8, centerY + 2);
+        ctx.lineTo(centerX + 18, centerY + 6);
+        ctx.closePath();
+        ctx.fillStyle = '#4a6a8a';
+        ctx.fill();
+        ctx.strokeStyle = '#8cc9ff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // 座舱
+        ctx.beginPath();
+        ctx.arc(centerX, centerY - 16, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#2f6f9f';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(centerX - 2, centerY - 18, 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#b3e4ff';
+        ctx.fill();
+
+        // 机翼
+        ctx.beginPath();
+        ctx.moveTo(centerX - 18, centerY + 6);
+        ctx.lineTo(centerX - 12, centerY);
+        ctx.lineTo(centerX - 8, centerY + 2);
+        ctx.fillStyle = '#3a5a7a';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(centerX + 18, centerY + 6);
+        ctx.lineTo(centerX + 12, centerY);
+        ctx.lineTo(centerX + 8, centerY + 2);
+        ctx.fill();
+
+        // 引擎尾焰
+        ctx.beginPath();
+        ctx.moveTo(centerX - 5, centerY + 12);
+        ctx.lineTo(centerX, centerY + 22);
+        ctx.lineTo(centerX + 5, centerY + 12);
+        ctx.fillStyle = '#ff8844aa';
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 简单的呼吸光效 (只改变护盾边缘亮度，无额外元素)
+      let phase = 0;
+      let animationId = null;
+
+      function animateShieldGlow() {
+        ctx.fillStyle = 'pink'
+        ctx.fillRect(0, 0, 1000, 500)
+        drawSectorShield();
+      }
+
+      animateShieldGlow();
+    })();
+  </script>
 </body>
+
 </html>
