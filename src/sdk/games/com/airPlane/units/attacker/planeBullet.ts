@@ -2,16 +2,16 @@ import type { IMiniActParams, IMiniGam } from '../../../../../type';
 
 import type { MyBulletConfig, MyBulletType } from '../../type';
 import { myBulletConfig } from '../../config';
-import type { PlaneAttacker } from './planeAttacker';
+import type { PlaneBullelBox } from './planeBulletBox';
 
 export class PlaneBullet implements IMiniGam {
   config: MyBulletConfig;
   type: MyBulletType;
-  attacker: PlaneAttacker;
+  bulletBox: PlaneBullelBox;
 
   constructor(
     type: MyBulletType,
-    attacker: PlaneAttacker,
+    bulletBox: PlaneBullelBox,
     params?: MyBulletConfig
   ) {
     if (params) {
@@ -19,7 +19,7 @@ export class PlaneBullet implements IMiniGam {
     } else {
       this.config = JSON.parse(JSON.stringify(myBulletConfig));
     }
-    this.attacker = attacker;
+    this.bulletBox = bulletBox;
     this.type = type;
   }
 
@@ -30,7 +30,7 @@ export class PlaneBullet implements IMiniGam {
   updateSate() {
     if (this.config.y < -this.config.h * 3) {
       // 此时 需要移除当前单位
-      this.attacker.removeBullet(this);
+      this.bulletBox.removeBullet(this);
     }
   }
 

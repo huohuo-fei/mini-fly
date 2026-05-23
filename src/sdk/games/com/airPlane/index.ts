@@ -41,10 +41,10 @@ export class MiniFly implements IMiniGam {
 
   // 子弹击中敌人
   bulletHitEnemy() {
-    for (let i = 0; i < this.planeAttacker.bullets.length; i++) {
-      const bullet = this.planeAttacker.bullets[i];
+    for (let i = 0; i < this.planeAttacker.planeBulletBox.bullets.length; i++) {
+      const bullet = this.planeAttacker.planeBulletBox.bullets[i];
       if (this.planeEnemy.isHitEnemy(bullet)) {
-        this.planeAttacker.bullets.splice(i, 1);
+        this.planeAttacker.planeBulletBox.bullets.splice(i, 1);
         // 每次判断，减少一个敌机 不做冗余循环
         break;
       }

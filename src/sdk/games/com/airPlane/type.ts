@@ -96,3 +96,13 @@ export type IMiniPlaneToolInfo = {
   w:number;
   h:number;
 }
+
+export type IMiniPlaneMainParams = {
+  canvasWidth: number;
+  canvasHeight: number;
+  w:number;
+  h: number;
+  shootCooldown:number;
+  x:number;
+  y:number
+};

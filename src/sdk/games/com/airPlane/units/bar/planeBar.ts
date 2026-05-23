@@ -3,6 +3,7 @@ export class PlaneBar implements IMiniGam {
   fontSize = 18;
   scoreVal: number = 0;
   lifeVal: number = 3;
+  maxLife: number = 5;
   drawScoreIcon(
 
     ctx: CanvasRenderingContext2D
@@ -20,8 +21,10 @@ export class PlaneBar implements IMiniGam {
     this.scoreVal += val; 
   }
 
-  addLife(val: number) {
-    this.lifeVal += val;
+  addLife() {
+    if(this.lifeVal < this.maxLife) { 
+      this.lifeVal += 1;
+    }
   }
   subLife(val: number) {
     this.lifeVal -= val;
