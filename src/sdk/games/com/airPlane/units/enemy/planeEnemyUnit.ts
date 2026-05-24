@@ -1,9 +1,10 @@
-import type {
-  IMiniActParams,
-  IMiniGam,
-} from '../../../../../type';
+import type { IMiniActParams, IMiniGam } from '../../../../../type';
 import { enemyConfig1, enemyConfig2, enemyConfig3 } from '../../config';
-import { MiniPlaneEnemyType, type IMiniPlaneEnemy, type IMiniPlaneEnemyInfo } from '../../type';
+import {
+  MiniPlaneEnemyType,
+  type IMiniPlaneEnemy,
+  type IMiniPlaneEnemyInfo,
+} from '../../type';
 import type { PlaneBullet } from '../attacker/planeBullet';
 import type { PlaneEnemy } from './planeEnemy';
 
@@ -69,7 +70,6 @@ export class PlaneEnemyUnit implements IMiniGam {
     this.lastTime = temp;
     this.enemyUnit.y += (this.enemyUnit.speedY * diff) / 100;
     this.cy = this.enemyUnit.y + this.enemyUnit.h / 2;
-
   }
 
   updateSate() {
@@ -100,7 +100,6 @@ export class PlaneEnemyUnit implements IMiniGam {
       return true;
     } else {
       this.showHp = false;
-
       return false;
     }
   }
@@ -116,12 +115,22 @@ export class PlaneEnemyUnit implements IMiniGam {
   // 重新计算血条 和分数
   updateHp(bullet: PlaneBullet) {
     this.showHp = true;
-    const {combat} = bullet.config
+    const { combat } = bullet.config;
     const { health } = this.enemyUnit;
     if (health <= 0) {
       console.log('update hp error');
-    }else{
+    } else {
       this.enemyUnit.health = health - combat;
+    }
+  }
+
+  updateHpByNum(num:number) {
+    this.showHp = true;
+    const { health } = this.enemyUnit;
+    if (health <= 0) {
+      console.log('update hp error');
+    } else {
+      this.enemyUnit.health = health - num ;
     }
   }
 

@@ -121,6 +121,35 @@ export class PlaneEnemy implements IMiniGam {
     }
   }
 
+  // 将屏幕中所有的敌机扣一条血，并移除所有子弹
+  clearEnemy() {
+    for (let i = 0; i < this.enemyList.length; i++) {
+      if (this.enemyList[i]) {
+        this.enemyList[i].updateHpByNum(1);
+        const dead = this.enemyList[i].isDead();
+        let score = 0;
+        const enemyCenterArr = this.enemyList[i].getPos();
+        this.miniFly.createEffect(
+          IMiniPlaneEffectType.EXPLODE,
+          enemyCenterArr[0],
+          enemyCenterArr[1]
+        );
+        if (dead) {
+          // 敌机死亡
+          score = this.enemyList[i].enemyUnit.deadScore;
+          this.removeUnit(this.enemyList[i]);
+        } else {
+          // 敌机未死亡
+          score = this.enemyList[i].enemyUnit.score;
+        }
+
+        this.miniFly.updateScore(score);
+      }
+    }
+
+    this.bulletList = []
+  }
+
   actionStart = (p: IMiniActParams) => {};
   actionEnd = (p: IMiniActParams) => {};
   actionDoing = (p: IMiniActParams) => {};

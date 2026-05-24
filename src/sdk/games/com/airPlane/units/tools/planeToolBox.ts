@@ -96,25 +96,25 @@ export class PlaneToolBox implements IMiniGam {
     }
   }
 
-  catchTool(x:number,y:number,w:number,h:number) {
+  catchTool(x: number, y: number, w: number, h: number) {
     for (let i = 0; i < this.toolList.length; i++) {
       const tool = this.toolList[i];
-      if (tool.isHit(x,y,w,h)) {
+      if (tool.isHit(x, y, w, h)) {
         this.removeTool(tool);
-         switch(tool.type){
+        switch (tool.type) {
           case MiniPlaneToolType.DOUBLE:
-            this.miniFly.planeAttacker.planeBulletBox.addBulletSize()
+            this.miniFly.planeAttacker.planeBulletBox.addBulletSize();
             break;
           case MiniPlaneToolType.LIFE:
-            this.miniFly.planeBar.addLife()
+            this.miniFly.planeBar.addLife();
             break;
           case MiniPlaneToolType.SHIELD:
-            this.miniFly.planeAttacker.createShield()
-
+            this.miniFly.planeAttacker.createShield();
             break;
           case MiniPlaneToolType.BOMB:
+            this.miniFly.planeEnemy.clearEnemy();
             break;
-         }
+        }
       }
     }
   }
