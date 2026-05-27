@@ -35,8 +35,8 @@ export class PlaneAttacker implements IMiniGam {
 
   constructor(params: IMiniGameParams) {
     const { PLAYER_HEIGHT, PLAYER_WIDTH, shootCooldown } = this;
-    const playerX = params.canvasWidth / 2 - 15;
-    const playerY = params.canvasHeight - 70;
+    const playerX = params.canvasWidth / 2;
+    const playerY = params.canvasHeight - 50;
     const mainConfig = buildMainPlaneConfig(
       PLAYER_WIDTH,
       PLAYER_HEIGHT,
@@ -59,14 +59,13 @@ export class PlaneAttacker implements IMiniGam {
   updatePos(x: number, y: number) {
     this.attackerX = x;
     this.attackerY = y;
-    this.cx = x + this.PLAYER_WIDTH / 2;
     this.cy = y + this.PLAYER_HEIGHT / 2;
   }
 
   updatePosX(x: number) {
     // 更新玩家位置 (平滑跟随鼠标/手指)
     const { PLAYER_WIDTH, attackerX, gameParams } = this;
-    let targetX = x - PLAYER_WIDTH / 2;
+    let targetX = x 
     targetX = Math.min(
       Math.max(targetX, 5),
       gameParams.canvasWidth - PLAYER_WIDTH - 5
@@ -79,7 +78,6 @@ export class PlaneAttacker implements IMiniGam {
       gameParams.canvasWidth - PLAYER_WIDTH - 5
     );
     this.attackerX = resX;
-    this.cx = this.attackerX + this.PLAYER_WIDTH / 2;
     this.planeMain.updatePosX(this.attackerX);
     this.planeBulletBox.updatePos(this.attackerX,this.attackerY);
     this.planeShield.updatePosX(this.attackerX)

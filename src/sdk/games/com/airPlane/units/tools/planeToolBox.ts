@@ -55,6 +55,14 @@ export class PlaneToolBox implements IMiniGam {
     }
   }
 
+  buildToolTest(enemyUnit: PlaneEnemyUnit, type: MiniPlaneToolType) {
+    if (!this.loaded) return;
+    const x = enemyUnit.cx;
+    const y = enemyUnit.cy;
+    const speedY = enemyUnit.enemyUnit.speedY;
+    this.addTool(x, y, type, speedY);
+  }
+
   // 添加一个工具
   addTool(x: number, y: number, type: MiniPlaneToolType, speedY: number = 2) {
     const config = JSON.parse(
@@ -80,8 +88,8 @@ export class PlaneToolBox implements IMiniGam {
     }
 
     const resource = MiniUtils.getImage(resourceUrl);
-    config.x = x - config.w / 2;
-    config.y = y - config.h / 2;
+    config.x = x;
+    config.y = y;
     config.type = type;
     config.speedY = speedY;
     const tool = new PlaneTool(config, resource, this.gameParams, this);

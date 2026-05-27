@@ -35,8 +35,8 @@ export class PlaneBullelBox implements IMiniGam {
           JSON.stringify(myBulletConfig)
         ) as MyBulletConfig;
         const speedY = config.speedY;
-        const cx = this.attackerX + this.planeWidth / 2 - config.w / 2;
-        const cy = this.attackerY - this.planeHeight;
+        const cx = this.attackerX ;
+        const cy = this.attackerY 
 
         if (this.size === 1) {
           config.x = cx;

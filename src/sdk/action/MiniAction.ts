@@ -56,6 +56,8 @@ export class MiniAction extends MiniBus implements IMiniAction {
       actionType: event.type as MiniActionType,
     };
 
+    
+
     this.screen.actionTransfer(params);
   }
 }

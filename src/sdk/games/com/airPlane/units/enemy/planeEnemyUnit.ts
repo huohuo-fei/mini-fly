@@ -1,4 +1,5 @@
 import type { IMiniActParams, IMiniGam } from '../../../../../type';
+import { Matrix3 } from '../../../../../utils/Matrix3';
 import { enemyConfig1, enemyConfig2, enemyConfig3 } from '../../config';
 import {
   MiniPlaneEnemyType,
@@ -19,6 +20,7 @@ export class PlaneEnemyUnit implements IMiniGam {
   showHp: boolean = false;
   cx: number = 0;
   cy: number = 0;
+  matrix: Matrix3 = new Matrix3();
 
   // 子弹相关
   bulletLastTime: number;
@@ -58,10 +60,11 @@ export class PlaneEnemyUnit implements IMiniGam {
     eConfig.x = x;
     this.cx = x + eConfig.w / 2;
     this.cy = eConfig.y + eConfig.h / 2;
-    this.enemyInfo.x = x;
+    this.enemyInfo.x = eConfig.x;
     this.enemyInfo.y = eConfig.y;
     this.enemyInfo.w = eConfig.w;
     this.enemyInfo.h = eConfig.h;
+    this.matrix.makeTranslation(this.cx, this.cy);
     return eConfig;
   }
   updatePos() {
@@ -70,6 +73,7 @@ export class PlaneEnemyUnit implements IMiniGam {
     this.lastTime = temp;
     this.enemyUnit.y += (this.enemyUnit.speedY * diff) / 100;
     this.cy = this.enemyUnit.y + this.enemyUnit.h / 2;
+    this.matrix.makeTranslation(this.cx, this.cy);
   }
 
   updateSate() {
@@ -106,10 +110,7 @@ export class PlaneEnemyUnit implements IMiniGam {
 
   // 获取当前敌机的中心位置
   getPos() {
-    return [
-      this.enemyUnit.x + this.enemyUnit.w / 2,
-      this.enemyUnit.y + this.enemyUnit.h / 2,
-    ];
+    return [this.cx, this.cy];
   }
 
   // 重新计算血条 和分数
@@ -124,13 +125,13 @@ export class PlaneEnemyUnit implements IMiniGam {
     }
   }
 
-  updateHpByNum(num:number) {
+  updateHpByNum(num: number) {
     this.showHp = true;
     const { health } = this.enemyUnit;
     if (health <= 0) {
       console.log('update hp error');
     } else {
-      this.enemyUnit.health = health - num ;
+      this.enemyUnit.health = health - num;
     }
   }
 
@@ -140,14 +141,15 @@ export class PlaneEnemyUnit implements IMiniGam {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    const { x, y, w, h, color } = this.enemyUnit;
+    const { w, h, color } = this.enemyUnit;
     this.drawHp(ctx);
     ctx.beginPath();
     ctx.save();
+    ctx.translate(this.matrix.elements[6], this.matrix.elements[7]);
     ctx.strokeStyle = color;
     ctx.shadowBlur = 6;
     ctx.shadowColor = 'red';
-    ctx.strokeRect(x, y, w, h);
+    ctx.strokeRect(-w / 2, -h / 2, w, h);
     ctx.restore();
     this.updatePos();
     this.updateSate();
@@ -156,19 +158,19 @@ export class PlaneEnemyUnit implements IMiniGam {
 
   drawHp(ctx: CanvasRenderingContext2D) {
     if (!this.showHp) return;
-    const { x, y, w, health, maxHealth } = this.enemyUnit;
+    const { w, h, health, maxHealth } = this.enemyUnit;
     const hpw = w;
     const hph = 4;
     ctx.beginPath();
     ctx.save();
-
+    ctx.translate(this.matrix.elements[6], this.matrix.elements[7]);
     // 血条背景色
     ctx.fillStyle = '#000000';
-    ctx.fillRect(x, y - 6, hpw, hph);
+    ctx.fillRect(-hpw / 2, -h / 2 - 6, hpw, hph);
 
     ctx.fillStyle = 'red';
     const hp = health / maxHealth;
-    ctx.fillRect(x, y - 6, hpw * hp, hph);
+    ctx.fillRect(-hpw / 2, -h / 2 - 6, hpw * hp, hph);
 
     ctx.restore();
   }

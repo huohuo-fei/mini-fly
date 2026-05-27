@@ -1,4 +1,5 @@
 import type { IMiniActParams, IMiniGam } from '../../../../../type';
+import { Matrix3 } from '../../../../../utils/Matrix3';
 import { PlaneExplodeConfig } from '../../config';
 import { IMiniPlaneEffectType, type SpriteConfig } from '../../type';
 import type { PlaneEffect } from './planeEffects';
@@ -9,31 +10,38 @@ export class BaseEffect implements IMiniGam {
   spriteConfig: SpriteConfig;
   sprite: HTMLImageElement | null = null;
   delay: number = 0;
+  matrix: Matrix3 = new Matrix3();
 
-  constructor(sprite: HTMLImageElement | null, cx: number, cy: number,planeEffect:PlaneEffect,type:IMiniPlaneEffectType) {
-    this.type = type
+  constructor(
+    sprite: HTMLImageElement | null,
+    cx: number,
+    cy: number,
+    planeEffect: PlaneEffect,
+    type: IMiniPlaneEffectType
+  ) {
+    this.type = type;
     this.spriteConfig = JSON.parse(JSON.stringify(PlaneExplodeConfig));
     this.planeEffect = planeEffect;
     this.spriteConfig.tx = cx - this.spriteConfig.tw / 2;
     this.spriteConfig.ty = cy - this.spriteConfig.th / 2;
     this.sprite = sprite;
+    this.matrix.makeTranslation(cx, cy);
   }
 
   animate(ctx: CanvasRenderingContext2D) {
     // 绘制精灵图
     if (this.sprite) {
-      const { x, y, w, h, tx, ty, tw, th, frames, cFrame, delayF } =
+      ctx.translate(this.matrix.elements[6], this.matrix.elements[7]);
+      const { x, y, w, h,tw, th, frames, cFrame, delayF } =
         this.spriteConfig;
 
       const sx = x + w * cFrame;
       const sy = y;
       const sw = w;
       const sh = h;
-      const dx = tx;
-      const dy = ty;
       const dw = tw;
       const dh = th;
-      ctx.drawImage(this.sprite, sx, sy, sw, sh, dx, dy, dw, dh);
+      ctx.drawImage(this.sprite, sx, sy, sw, sh, -dw / 2, -dh / 2, dw, dh);
       this.delay++;
       if (this.delay > delayF) {
         this.delay = 0;
@@ -48,7 +56,9 @@ export class BaseEffect implements IMiniGam {
   }
 
   render(ctx: CanvasRenderingContext2D) {
+    ctx.save();
     this.animate(ctx);
+    ctx.restore();
   }
 
   actionStart = (p: IMiniActParams) => {};

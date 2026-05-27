@@ -3,11 +3,13 @@ import type { IMiniActParams, IMiniGam } from '../../../../../type';
 import type { MyBulletConfig, MyBulletType } from '../../type';
 import { myBulletConfig } from '../../config';
 import type { PlaneBullelBox } from './planeBulletBox';
+import { Matrix3 } from '../../../../../utils/Matrix3';
 
 export class PlaneBullet implements IMiniGam {
   config: MyBulletConfig;
   type: MyBulletType;
   bulletBox: PlaneBullelBox;
+  matrix: Matrix3 = new Matrix3();
 
   constructor(
     type: MyBulletType,
@@ -21,10 +23,12 @@ export class PlaneBullet implements IMiniGam {
     }
     this.bulletBox = bulletBox;
     this.type = type;
+    this.matrix.makeTranslation(this.config.x, this.config.y);
   }
 
   updatePos() {
     this.config.y -= this.config.speedY;
+    this.matrix.makeTranslation(this.config.x, this.config.y);
   }
 
   updateSate() {
@@ -35,12 +39,13 @@ export class PlaneBullet implements IMiniGam {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    const { x, y, w, h } = this.config;
+    const {w, h } = this.config;
     ctx.save();
+    ctx.translate(this.matrix.elements[6], this.matrix.elements[7])
     ctx.shadowColor = 'red';
     ctx.fillStyle = '#ffcc44';
     ctx.shadowBlur = 8;
-    ctx.fillRect(x, y, w, h);
+    ctx.fillRect(-w / 2, -h / 2, w, h);
     ctx.restore();
     this.updatePos();
     this.updateSate();

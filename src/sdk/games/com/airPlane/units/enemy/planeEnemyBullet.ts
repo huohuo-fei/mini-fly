@@ -1,16 +1,16 @@
-import type {
-  IMiniActParams,
-  IMiniGam,
-} from '../../../../../type';
+import type { IMiniActParams, IMiniGam } from '../../../../../type';
 import type { PlaneEnemyUnit } from './planeEnemyUnit';
 import { bulletConfig } from '../../config';
 import type { IMiniPlaneEnemyBullets, MiniPlaneEnemyType } from '../../type';
+import { Matrix3 } from '../../../../../utils/Matrix3';
 
 export class PlaneEnemyBullet implements IMiniGam {
   bulletType: MiniPlaneEnemyType;
   planeEnemyUnit: PlaneEnemyUnit;
   enemyBullet: IMiniPlaneEnemyBullets;
   lastTime: number;
+
+  matrix: Matrix3 = new Matrix3();
   constructor(type: MiniPlaneEnemyType, planeEnemyUnit: PlaneEnemyUnit) {
     this.bulletType = type;
     this.planeEnemyUnit = planeEnemyUnit;
@@ -23,14 +23,14 @@ export class PlaneEnemyBullet implements IMiniGam {
   }
 
   buildEnemyBullet() {
-    const { speedY, x, y, h, w } = this.planeEnemyUnit.enemyUnit;
-    // this.enemyBullet.x += x + w / 2 - this.enemyBullet.w / 2;
-    // this.enemyBullet.y += y + h;
-
+    const { speedY, h } = this.planeEnemyUnit.enemyUnit;
+    const { cx, cy } = this.planeEnemyUnit;
     // 将子弹中心和敌方飞机中心对齐
-    this.enemyBullet.x += x + w / 2 - this.enemyBullet.w / 2 ;
-    this.enemyBullet.y += y + h;
-    
+    this.enemyBullet.x += cx;
+    this.enemyBullet.y += cy + h / 2;
+
+    this.matrix.makeTranslation(this.enemyBullet.x, this.enemyBullet.y);
+
     this.enemyBullet.speedY += speedY;
   }
 
@@ -39,6 +39,7 @@ export class PlaneEnemyBullet implements IMiniGam {
     const diff = temp - this.lastTime;
     this.lastTime = temp;
     this.enemyBullet.y += (this.enemyBullet.speedY * diff) / 100;
+    this.matrix.makeTranslation(this.enemyBullet.x, this.enemyBullet.y);
   }
 
   updateSate() {
@@ -49,16 +50,17 @@ export class PlaneEnemyBullet implements IMiniGam {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    const { w, h, x, y,color } = this.enemyBullet;
-    ctx.beginPath()
-    ctx.save()
+    const { w, color } = this.enemyBullet;
+    ctx.save();
+    ctx.translate(this.matrix.elements[6], this.matrix.elements[7]);
+    ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.moveTo(x + w, y + h / 2);
-    ctx.arc(x + w / 2, y + h / 2, w/2, 0, 2 * Math.PI);
-    ctx.fill()
-    ctx.restore()
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, w / 2, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.restore();
     this.updatePos();
-    this.updateSate()
+    this.updateSate();
   }
   actionStart = (p: IMiniActParams) => {};
   actionEnd = (p: IMiniActParams) => {};

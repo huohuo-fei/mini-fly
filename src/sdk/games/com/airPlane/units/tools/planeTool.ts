@@ -1,7 +1,7 @@
 import { type IMiniPlaneToolInfo, MiniPlaneToolType } from '../../type';
 import type { IMiniGam, IMiniGameParams } from '../../../../../type';
-import type { PlaneBullet } from '../attacker/planeBullet';
 import type { PlaneToolBox } from './planeToolBox';
+import { Matrix3 } from '../../../../../utils/Matrix3';
 
 export class PlaneTool implements IMiniGam {
   lastTime: number;
@@ -10,6 +10,7 @@ export class PlaneTool implements IMiniGam {
   gameParams: IMiniGameParams;
   resource: HTMLImageElement | null;
   toolBox: PlaneToolBox;
+  matrix: Matrix3 = new Matrix3();
 
   constructor(
     toolInfo: IMiniPlaneToolInfo,
@@ -23,6 +24,8 @@ export class PlaneTool implements IMiniGam {
     this.gameParams = gameParams;
     this.resource = img;
     this.toolBox = toolBox;
+
+    this.matrix.makeTranslation(this.toolInfo.x, this.toolInfo.y);
   }
 
   updatePos() {
@@ -30,6 +33,7 @@ export class PlaneTool implements IMiniGam {
     const diff = temp - this.lastTime;
     this.lastTime = temp;
     this.toolInfo.y += (this.toolInfo.speedY * diff) / 100;
+    this.matrix.makeTranslation(this.toolInfo.x, this.toolInfo.y);
   }
 
   updateSate() {
@@ -40,7 +44,7 @@ export class PlaneTool implements IMiniGam {
   }
 
   // 碰撞检测
-  isHit(ax:number,ay:number,aw:number,ah:number) {
+  isHit(ax: number, ay: number, aw: number, ah: number) {
     const { x, y, w, h } = this.toolInfo;
     if (x < ax + aw && x + w > ax && y < ay + ah && y + h > ay) {
       // 碰撞
@@ -51,11 +55,12 @@ export class PlaneTool implements IMiniGam {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    const { x, y, w, h } = this.toolInfo;
-    ctx.beginPath();
+    const { w, h } = this.toolInfo;
     ctx.save();
+    ctx.beginPath();
     if (this.resource) {
-      ctx.drawImage(this.resource, x, y, w, h);
+      ctx.translate(this.matrix.elements[6], this.matrix.elements[7]);
+      ctx.drawImage(this.resource, -w / 2, -h / 2, w, h);
     }
     ctx.restore();
     this.updatePos();
