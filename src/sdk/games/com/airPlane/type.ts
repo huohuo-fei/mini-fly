@@ -34,11 +34,12 @@ export type MyBulletConfig = {
 // 特效类型
 export enum IMiniPlaneEffectType {
   EXPLODE = 'explode',
+  LIFE= 'life',
 }
 
 // 特效中 精灵图的配置
 export type SpriteConfig = {
-  // 精灵图位置
+  // 当前帧的位置
   x: number;
   y: number;
   w: number;
@@ -46,6 +47,7 @@ export type SpriteConfig = {
   cFrame: number; // 当前帧数
   frames:number; // 精灵图帧数 
   delayF: number; // 延迟帧数
+  
   // 精灵图在画布上的位置
   tx: number;
   ty: number;

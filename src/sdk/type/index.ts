@@ -64,4 +64,9 @@ export type IMiniActParams = {
   actionType: MiniActionType;
 };
 
+export interface Point {
+  x: number;
+  y: number;
+}
+
 

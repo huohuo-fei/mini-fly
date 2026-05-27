@@ -1,13 +1,17 @@
+import type { MiniFly } from '../..';
 import type { IMiniGam } from '../../../../../type';
+import { IMiniPlaneEffectType } from '../../type';
 export class PlaneBar implements IMiniGam {
   fontSize = 18;
   scoreVal: number = 0;
   lifeVal: number = 3;
   maxLife: number = 5;
-  drawScoreIcon(
+  miniFly: MiniFly;
 
-    ctx: CanvasRenderingContext2D
-  ) {
+  constructor(miniFly: MiniFly) {
+    this.miniFly = miniFly;
+  }
+  drawScoreIcon(ctx: CanvasRenderingContext2D) {
     ctx.save();
     ctx.beginPath();
     ctx.fillStyle = 'white';
@@ -18,12 +22,19 @@ export class PlaneBar implements IMiniGam {
   }
 
   addScore(val: number) {
-    this.scoreVal += val; 
+    this.scoreVal += val;
   }
 
   addLife() {
-    if(this.lifeVal < this.maxLife) { 
-      this.lifeVal += 1;
+    if (this.lifeVal < this.maxLife || true) {
+      const x = this.miniFly.planeAttacker.attackerX;
+      const y = this.miniFly.planeAttacker.attackerY;
+      this.miniFly.createEffect(IMiniPlaneEffectType.LIFE, x, y, {
+        posx: 10,
+        posy: 10,
+      },() => {
+        this.lifeVal += 1;
+      });
     }
   }
   subLife(val: number) {

@@ -23,7 +23,7 @@ export class MiniFly implements IMiniGam {
     this.planeAttacker = new PlaneAttacker(gameParams);
     this.planeEnemy = new PlaneEnemy(gameParams, this);
     this.planeEffect = new PlaneEffect();
-    this.planeBar = new PlaneBar();
+    this.planeBar = new PlaneBar(this);
     this.planeToolBox = new PlaneToolBox(gameParams, this);
   }
 
@@ -33,7 +33,7 @@ export class MiniFly implements IMiniGam {
     this.planeAttacker.render(ctx);
     this.planeEnemy.render(ctx);
     this.planeEffect.render(ctx);
-    // this.planeBar.render(ctx);
+    this.planeBar.render(ctx);
     this.planeToolBox.render(ctx);
     this.bulletHitEnemy();
     this.catchTool();
@@ -64,8 +64,8 @@ export class MiniFly implements IMiniGam {
   }
 
   // 生成一个爆炸图
-  createEffect(type: IMiniPlaneEffectType, x: number, y: number) {
-    this.planeEffect.createEffect(type, x, y);
+  createEffect(type: IMiniPlaneEffectType, x: number, y: number,other?:any,cb?:() => void) {
+    this.planeEffect.createEffect(type, x, y,other,cb);
   }
 
   // 更新局内分数
@@ -76,7 +76,7 @@ export class MiniFly implements IMiniGam {
   // 更新道具
   updateToolBox(enemy: PlaneEnemyUnit) {
     this.planeToolBox.buildTool(enemy);
-    // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.SHIELD)
+    // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.LIFE)
   }
 
   actionStart(action: IMiniActParams) {

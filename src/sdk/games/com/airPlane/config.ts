@@ -102,6 +102,21 @@ export const PlaneExplodeConfig: SpriteConfig = {
   delayF:5
 };
 
+// 生命值配置
+export const PlaneLifeConfig: SpriteConfig = {
+  x: 0,
+  y: 0,
+  w: 20,
+  h: 20,
+  tx: 0,
+  ty: 0,
+  tw: 20,
+  th: 20,
+  cFrame: 0,
+  frames: 8,
+  delayF:5
+};
+
 // 生成的工具配置
 export const planeToolConfig: IMiniPlaneToolInfo = {
   speedY: 2,

@@ -11,20 +11,26 @@ export class BaseEffect implements IMiniGam {
   sprite: HTMLImageElement | null = null;
   delay: number = 0;
   matrix: Matrix3 = new Matrix3();
+  cb?: () => void;
+  other?: any;
 
   constructor(
     sprite: HTMLImageElement | null,
     cx: number,
     cy: number,
     planeEffect: PlaneEffect,
-    type: IMiniPlaneEffectType
+    type: IMiniPlaneEffectType,
+    other?: any,
+    cb?:() => void
   ) {
     this.type = type;
     this.spriteConfig = JSON.parse(JSON.stringify(PlaneExplodeConfig));
+    this.spriteConfig.tx = cx ;
+    this.spriteConfig.ty = cy ;
     this.planeEffect = planeEffect;
-    this.spriteConfig.tx = cx - this.spriteConfig.tw / 2;
-    this.spriteConfig.ty = cy - this.spriteConfig.th / 2;
     this.sprite = sprite;
+    this.other = other;
+    this.cb = cb;
     this.matrix.makeTranslation(cx, cy);
   }
 
