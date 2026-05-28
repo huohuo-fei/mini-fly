@@ -1,6 +1,8 @@
 import type { IMiniActParams, IMiniGam } from '../../../../../type';
 import { Matrix3 } from '../../../../../utils/Matrix3';
 import { type IMiniPlaneMainParams } from '../../type';
+import { EasedMove } from '../../../../../utils/Animate';
+import { SHIELD_FRAME_NUM } from '../../config';
 
 export class PlaneShield implements IMiniGam {
   planeWidth: number = 0;
@@ -15,7 +17,19 @@ export class PlaneShield implements IMiniGam {
   // 离屏canvas todo:后续由外部统一管理
   offScreenCanvas: HTMLCanvasElement | null = null;
   enable: boolean = false;
-  time: number = 10000;
+
+  // 护盾总时间
+  time: number = 20000;
+  // 护盾开始的时间
+  curTime: number = 0;
+  // 护盾开始闪烁的时间
+  blinkTime: number = 16000;
+  // 护盾闪烁的帧数
+  blinkFrame: number = SHIELD_FRAME_NUM;
+  // 护盾闪烁的帧数计数
+  blinkFrameCount: number = 0;
+
+  move: EasedMove | null = null;
 
   constructor(params: IMiniPlaneMainParams) {
     const playerX = params.x;
@@ -42,13 +56,16 @@ export class PlaneShield implements IMiniGam {
   changeState(state: boolean) {
     if (this.enable) return;
     this.enable = state;
+    this.curTime = Date.now();
     setTimeout(() => {
       this.enable = false;
+      this.move = null;
     }, this.time);
   }
 
   render(ctx: CanvasRenderingContext2D) {
     if (!this.enable) return;
+    if (this.aniBlink()) return;
 
     const { planeWidth } = this;
     const shieldRadius = planeWidth;
@@ -76,7 +93,13 @@ export class PlaneShield implements IMiniGam {
     offScreenCtx.globalCompositeOperation = 'source-in';
     offScreenCtx.beginPath();
     offScreenCtx.moveTo(shieldRadius, shieldRadius);
-    offScreenCtx.arc(shieldRadius, shieldRadius, shieldRadius, Math.PI, 2 * Math.PI);
+    offScreenCtx.arc(
+      shieldRadius,
+      shieldRadius,
+      shieldRadius,
+      Math.PI,
+      2 * Math.PI
+    );
     offScreenCtx.closePath();
     const outerGlowGrad = offScreenCtx.createRadialGradient(
       shieldRadius,
@@ -94,8 +117,41 @@ export class PlaneShield implements IMiniGam {
 
     ctx.save();
     ctx.translate(this.matrix.elements[6], this.matrix.elements[7]);
-    ctx.drawImage(this.offScreenCanvas, -shieldRadius,-shieldRadius);
+    this.aniStart(ctx);
+    ctx.drawImage(this.offScreenCanvas, -shieldRadius, -shieldRadius);
     ctx.restore();
+  }
+
+  aniStart(ctx: CanvasRenderingContext2D) {
+    if (!this.move) {
+      this.move = new EasedMove({ x: 0, y: 0 }, { x: 1, y: 1 }, 16, 'linear');
+    }
+
+    this.move.update();
+    const { x, y } = this.move.getCurrentPosition();
+    ctx.scale(x, y);
+  }
+
+  aniBlink(): boolean {
+    const { blinkFrame, blinkFrameCount,curTime, blinkTime} = this;
+    // 是否开启闪烁
+    if (Date.now() - curTime < blinkTime) return false;
+
+    // 闪烁记时
+    if (blinkFrameCount >= blinkFrame) {
+      // 临时隐藏护盾
+      if (blinkFrame > 0) {
+        this.blinkFrame--;
+        return true;
+      }
+
+      // 护盾闪烁结束，恢复显示
+      this.blinkFrame = SHIELD_FRAME_NUM
+      this.blinkFrameCount = 0;
+      return true;
+    }
+    this.blinkFrameCount += 1;
+    return false;
   }
 
   actionStart = () => {};

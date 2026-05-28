@@ -126,3 +126,6 @@ export const planeToolConfig: IMiniPlaneToolInfo = {
   w: 20,
   h: 20
 }
+
+// 护盾闪烁帧数间隔
+export const SHIELD_FRAME_NUM = 20;
