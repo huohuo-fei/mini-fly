@@ -7,6 +7,7 @@ import { PlaneMain } from './planeMain';
 import { buildMainPlaneConfig } from '../../utils';
 import { PlaneBullelBox } from './planeBulletBox';
 import { PlaneShield } from './planeToolShield';
+import { PlaneBulletDouble } from './planeBulletDouble';
 
 export class PlaneAttacker implements IMiniGam {
   // 飞机配置参数
@@ -28,6 +29,8 @@ export class PlaneAttacker implements IMiniGam {
 
   // 护盾
   planeShield: PlaneShield ;
+  // 双倍子弹
+  planeBulletDouble: PlaneBulletDouble;
 
 
   // 离屏canvas todo:后续由外部统一管理
@@ -49,6 +52,7 @@ export class PlaneAttacker implements IMiniGam {
     this.planeMain = new PlaneMain(mainConfig);
     this.planeBulletBox = new PlaneBullelBox(mainConfig);
     this.planeShield = new PlaneShield(mainConfig);
+    this.planeBulletDouble = new PlaneBulletDouble(mainConfig);
 
 
     this.gameParams = params;
@@ -80,18 +84,28 @@ export class PlaneAttacker implements IMiniGam {
     this.attackerX = resX;
     this.planeMain.updatePosX(this.attackerX);
     this.planeBulletBox.updatePos(this.attackerX,this.attackerY);
+
+    // 这两个不需要每次都更新
     this.planeShield.updatePosX(this.attackerX)
+    this.planeBulletDouble.updatePosX(this.attackerX)
   }
 
   render(ctx: CanvasRenderingContext2D) {
     this.planeMain.render(ctx);
     this.planeBulletBox.render(ctx);
     this.planeShield.render(ctx);
+    this.planeBulletDouble.render(ctx);
   }
 
   // 生成光罩
   createShield() {
     this.planeShield.changeState(true);
+  }
+
+  // 生成双倍子弹
+  createDoubleBullet() {
+    this.planeBulletDouble.startAni(this.attackerX)
+    this.planeBulletBox.addBulletSize()
   }
 
 

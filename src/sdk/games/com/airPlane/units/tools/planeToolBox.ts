@@ -111,7 +111,8 @@ export class PlaneToolBox implements IMiniGam {
         this.removeTool(tool);
         switch (tool.type) {
           case MiniPlaneToolType.DOUBLE:
-            this.miniFly.planeAttacker.planeBulletBox.addBulletSize();
+            // this.miniFly.planeAttacker.planeBulletBox.addBulletSize();
+            this.miniFly.planeAttacker.createDoubleBullet()
             break;
           case MiniPlaneToolType.LIFE:
             this.miniFly.planeBar.addLife();

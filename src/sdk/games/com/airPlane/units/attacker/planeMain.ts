@@ -1,6 +1,8 @@
 import type { IMiniActParams, IMiniGam } from '../../../../../type';
 import { type IMiniPlaneMainParams } from '../../type';
 import { Matrix3 } from '../../../../../utils/Matrix3';
+import { MiniUtils } from '../../../../../utils/MiniUtils';
+import planeAttackerSvg from '@/assets/game/plane/attacker_bg.svg';
 
 export class PlaneMain implements IMiniGam {
   planeWidth: number = 0;
@@ -32,9 +34,10 @@ export class PlaneMain implements IMiniGam {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    const {  planeWidth, planeHeight } = this;
+    const { planeWidth, planeHeight } = this;
     ctx.save();
-    ctx.translate(this.matrix.elements[6], this.matrix.elements[7])
+    ctx.translate(this.matrix.elements[6], this.matrix.elements[7]);
+    // this.test(ctx, this.attackerX, this.attackerY);
     // 先绘制飞机的外形框
     ctx.strokeStyle = 'red';
     ctx.strokeRect(-planeWidth / 2, -planeHeight / 2, planeWidth, planeHeight);
@@ -55,19 +58,23 @@ export class PlaneMain implements IMiniGam {
     ctx.beginPath();
     ctx.rect(-5, -5, 10, 10);
     ctx.fill();
-
     ctx.restore();
   }
 
   test(ctx: CanvasRenderingContext2D, x: number, y: number) {
-    ctx.save();
-    const w = ctx.canvas.width;
-    const h = ctx.canvas.height;
-    const cx = w / 2;
-    const cy = h / 2;
-    ctx.strokeStyle = 'yellow';
-    ctx.strokeRect(250, y, 100, 100);
-    ctx.restore();
+    // setTimeout(() => {
+    const { planeWidth, planeHeight } = this;
+    const img = MiniUtils.getImage(planeAttackerSvg);
+    if (img) {
+      ctx.drawImage(
+        img,
+        -planeWidth / 2,
+        -planeHeight / 2,
+        planeWidth,
+        planeHeight
+      );
+    }
+    // },100);
   }
 
   actionStart = () => {};

@@ -3,6 +3,7 @@ import { MiniUtils } from '../../../../../utils/MiniUtils';
 
 import planeExplodSvg from '@/assets/game/plane/explod.svg';
 import planeLifeSvg from '@/assets/game/plane/life.svg';
+import planeAttackerSvg from '@/assets/game/plane/attacker_bg.svg';
 import { BaseEffect } from './baseEffect';
 import { IMiniPlaneEffectType } from '../../type';
 import { LifeEffect } from './lifeEffect';
@@ -14,7 +15,7 @@ export class PlaneEffect implements IMiniGam {
 
   constructor() {
     // 加载所有的特效资源 使用 all
-    MiniUtils.loadImageList([planeExplodSvg,planeLifeSvg]).then((img) => {
+    MiniUtils.loadImageList([planeExplodSvg,planeLifeSvg,planeAttackerSvg]).then((img) => {
       this.loaded = true;
     });
   }
