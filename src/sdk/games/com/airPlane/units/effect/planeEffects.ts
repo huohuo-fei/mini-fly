@@ -10,15 +10,9 @@ import { LifeEffect } from './lifeEffect';
 // 飞机大战中需要的各种特效管理
 export class PlaneEffect implements IMiniGam {
   // 特效资源加载完毕
-  loaded: boolean = false;
   effectList: BaseEffect[] = [];
 
-  constructor() {
-    // 加载所有的特效资源 使用 all
-    MiniUtils.loadImageList([planeExplodSvg,planeLifeSvg,planeAttackerSvg]).then((img) => {
-      this.loaded = true;
-    });
-  }
+
 
   // 依据类型和位置生成一个特效
   createEffect(type: IMiniPlaneEffectType, x: number, y: number, other?: any,cb?:() => void) {
@@ -65,7 +59,6 @@ export class PlaneEffect implements IMiniGam {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    if (!this.loaded) return;
     for (let i = 0; i < this.effectList.length; i++) {
       this.effectList[i].render(ctx);
     }

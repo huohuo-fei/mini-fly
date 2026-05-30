@@ -38,6 +38,38 @@ export class MiniUtils {
     });
   }
 
+  // 加载图片资源
+  static loadImageListProg(
+    srcs: string[],
+    onProgress: (n1: number, n2: number) => void
+  ): Promise<any> {
+    let completedCount = 0;
+    const total = srcs.length;
+
+    const totalPromise = srcs.map((src) => {
+      return new Promise((resolve, reject) => {
+        if (MiniUtils.imageStrMap.has(src)) {
+          resolve(MiniUtils.imageStrMap.get(src));
+        } else {
+          const img = new Image();
+          img.src = src;
+          img.onload = () => {
+            completedCount++;
+            if (onProgress && typeof onProgress === 'function') {
+              onProgress(completedCount, total);
+            }
+            MiniUtils.imageStrMap.set(src, img);
+            resolve(img);
+          };
+          img.onerror = () => {
+            reject('load image error:');
+          };
+        }
+      });
+    });
+    return Promise.all(totalPromise);
+  }
+
   // 依据路劲获取图片
   static getImage(src: string): HTMLImageElement | null {
     const img = MiniUtils.imageStrMap.get(src);

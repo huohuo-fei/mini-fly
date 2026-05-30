@@ -31,7 +31,6 @@ export class MiniScreen implements IMiniScreen {
       canvasWidth: this.width,
     });
     this.gamAcion = new MiniAction(canvas, this);
-    this.initAni();
   }
 
   initAni() {

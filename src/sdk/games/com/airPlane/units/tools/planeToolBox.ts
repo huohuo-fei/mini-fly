@@ -14,30 +14,15 @@ export class PlaneToolBox implements IMiniGam {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
   toolList: PlaneTool[] = [];
-  loaded: boolean = false;
 
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
     this.miniFly = miniFly;
     this.gameParams = params;
-    this.loadResources();
   }
 
-  loadResources() {
-    MiniUtils.loadImageList([boomSvg, lifeSvg, shieldSvg, doubleSvg]).then(
-      (res: any) => {
-        // 加载资源完毕
-        console.log('res>>>>>>', res);
-        // this.addTool(50, 20, MiniPlaneToolType.BOMB);
-        // this.addTool(50, 50, MiniPlaneToolType.LIFE);
-        // this.addTool(50, 90, MiniPlaneToolType.SHIELD);
-        // this.addTool(50, 140, MiniPlaneToolType.DOUBLE);
-        this.loaded = true;
-      }
-    );
-  }
+
 
   buildTool(enemyUnit: PlaneEnemyUnit) {
-    if (!this.loaded) return;
     // todo:抽取资源加载逻辑，或者加缓存队列
     // 生成工具，有两个前置条件：
     // 1. 当前工具数量小于5
@@ -56,7 +41,6 @@ export class PlaneToolBox implements IMiniGam {
   }
 
   buildToolTest(enemyUnit: PlaneEnemyUnit, type: MiniPlaneToolType) {
-    if (!this.loaded) return;
     const x = enemyUnit.cx;
     const y = enemyUnit.cy;
     const speedY = enemyUnit.enemyUnit.speedY;
