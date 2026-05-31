@@ -1,4 +1,15 @@
-import { MyBulletType, type MyBulletConfig, type SpriteConfig, type IMiniPlaneEnemy, MiniPlaneEnemyType, type IMiniPlaneEnemyBullets, type IMiniPlaneToolInfo, MiniPlaneToolType, type IMiniPlaneMainParams } from './type';
+import {
+  MyBulletType,
+  type MyBulletConfig,
+  type SpriteConfig,
+  type IMiniPlaneEnemy,
+  MiniPlaneEnemyType,
+  type IMiniPlaneEnemyBullets,
+  type IMiniPlaneToolInfo,
+  MiniPlaneToolType,
+  type IMiniPlaneMainParams,
+  type IMiniSquadronConfig,
+} from './type';
 // 三种普通敌机的配置信息
 // 速度慢 体型大 生命值大 冷却时间长
 // 速度快 体型小 生命值小 冷却时间短
@@ -15,9 +26,8 @@ export const enemyConfig1: IMiniPlaneEnemy = {
   type: MiniPlaneEnemyType.LEVEL1,
   color: 'red',
   shootCooldown: 1,
-  score:10,
-  deadScore:20
-
+  score: 10,
+  deadScore: 20,
 };
 
 export const enemyConfig2: IMiniPlaneEnemy = {
@@ -32,8 +42,8 @@ export const enemyConfig2: IMiniPlaneEnemy = {
   type: MiniPlaneEnemyType.LEVEL2,
   color: 'yellow',
   shootCooldown: 2,
-  score:10,
-  deadScore:20
+  score: 10,
+  deadScore: 20,
 };
 
 export const enemyConfig3: IMiniPlaneEnemy = {
@@ -48,8 +58,8 @@ export const enemyConfig3: IMiniPlaneEnemy = {
   type: MiniPlaneEnemyType.LEVEL3,
   color: 'pink',
   shootCooldown: 3,
-  score:10,
-  deadScore:20
+  score: 10,
+  deadScore: 20,
 };
 
 // 主战机配置
@@ -58,10 +68,10 @@ export const mainPlaneConfig: IMiniPlaneMainParams = {
   canvasHeight: 0,
   w: 0,
   h: 0,
-  x:0,
-  y:0,
-  shootCooldown: 0
-}
+  x: 0,
+  y: 0,
+  shootCooldown: 0,
+};
 
 // 普通敌机子弹配置
 export const bulletConfig: IMiniPlaneEnemyBullets = {
@@ -83,9 +93,8 @@ export const myBulletConfig: MyBulletConfig = {
   size: 3,
   color: '#ffcc44',
   speedY: 8,
-  combat:2
+  combat: 2,
 };
-
 
 // 爆炸动画配置
 export const PlaneExplodeConfig: SpriteConfig = {
@@ -99,7 +108,7 @@ export const PlaneExplodeConfig: SpriteConfig = {
   th: 50,
   cFrame: 0,
   frames: 8,
-  delayF:5
+  delayF: 5,
 };
 
 // 生命值配置
@@ -114,7 +123,7 @@ export const PlaneLifeConfig: SpriteConfig = {
   th: 20,
   cFrame: 0,
   frames: 8,
-  delayF:5
+  delayF: 5,
 };
 
 // 生成的工具配置
@@ -124,8 +133,19 @@ export const planeToolConfig: IMiniPlaneToolInfo = {
   x: 0,
   y: 0,
   w: 20,
-  h: 20
-}
+  h: 20,
+};
 
 // 护盾闪烁帧数间隔
 export const SHIELD_FRAME_NUM = 20;
+
+// 敌机编队默认配置
+export const enemySquadronConfig: IMiniSquadronConfig = {
+  count: 6,
+  angle: Math.PI / 6,
+  enterHeight: 100,
+  shootCooldown: 3000,
+  speed: 1,
+  unitSize: 30,
+  direction: 'r',
+};

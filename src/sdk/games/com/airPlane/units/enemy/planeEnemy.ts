@@ -4,10 +4,12 @@ import type {
   IMiniGam,
   IMiniGameParams,
 } from '../../../../../type';
-import { IMiniPlaneEffectType, MiniPlaneEnemyType } from '../../type';
+import { IMiniPlaneEffectType, MiniPlaneEnemyType, type IMiniSquadronConfig } from '../../type';
 import type { PlaneBullet } from '../attacker/planeBullet';
 import { PlaneEnemyBullet } from './planeEnemyBullet';
 import { PlaneEnemyUnit } from './planeEnemyUnit';
+import { PlaneEnemySquadron } from './squadron';
+import { enemySquadronConfig } from '../../config';
 export class PlaneEnemy implements IMiniGam {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
@@ -18,23 +20,53 @@ export class PlaneEnemy implements IMiniGam {
   // 子弹列表
   bulletList: PlaneEnemyBullet[] = [];
 
+  // 编队
+  squadron: PlaneEnemySquadron[] = [];
+
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
     this.miniFly = miniFly;
     this.gameParams = params;
     for (let i = 0; i < 10; i++) {
       this.spawnEnemy();
     }
+
+    this.buildSquadron()
+
+  }
+
+  buildSquadron(){
+    const c1 = JSON.parse(JSON.stringify(enemySquadronConfig)) as IMiniSquadronConfig
+    const c2 = JSON.parse(JSON.stringify(enemySquadronConfig)) as IMiniSquadronConfig
+    const c3 = JSON.parse(JSON.stringify(enemySquadronConfig)) as IMiniSquadronConfig
+    const c4 = JSON.parse(JSON.stringify(enemySquadronConfig)) as IMiniSquadronConfig
+    c1.angle = Math.PI / 6  
+    c1.enterHeight = 350
+    c2.angle = -Math.PI / 6
+    c2.direction = 'l' 
+    c2.enterHeight = 50
+    c2.enterHeight = 350
+    c3.angle = -Math.PI / 6
+    c4.angle = Math.PI / 6
+    c4.direction = 'l'
+    c4.enterHeight = 50
+    this.squadron.push(new PlaneEnemySquadron(c1,this));
+    this.squadron.push(new PlaneEnemySquadron(c2,this));
+    this.squadron.push(new PlaneEnemySquadron(c3,this));
+    this.squadron.push(new PlaneEnemySquadron(c4,this));
   }
 
   render(ctx: CanvasRenderingContext2D) {
     // 绘制逻辑待优化:相同敌机 或者相同的子弹可否一笔绘制
-    ctx.beginPath();
+    for (let i = 0; i < this.squadron.length; i++) {
+      this.squadron[i].render(ctx);
+    }
+
+    return;
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i]) {
         this.enemyList[i].render(ctx);
       }
     }
-    ctx.beginPath();
     for (let i = 0; i < this.bulletList.length; i++) {
       if (this.bulletList[i]) {
         this.bulletList[i].render(ctx);
@@ -77,7 +109,7 @@ export class PlaneEnemy implements IMiniGam {
     }
   }
 
-  // 判断是否命中敌机
+  // 判断是否命中普通敌机
   isHitEnemy(bullet: PlaneBullet) {
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i]) {
@@ -111,7 +143,34 @@ export class PlaneEnemy implements IMiniGam {
       }
     }
 
+    if (this.isHitSquadron(bullet)) {
+      return true;
+    }
+
     return false;
+  }
+
+  // 判断是否命中编队
+  isHitSquadron(bullet: PlaneBullet) {
+    // 判断是否命中编队
+    for (let i = 0; i < this.squadron.length; i++) {
+      const res = this.squadron[i].isHit(bullet)
+      if (res.flag) {
+        if (res.isDead) {
+          // 敌机死亡
+          this.miniFly.createEffect(
+            IMiniPlaneEffectType.EXPLODE,
+            res.x,
+            res.y
+          );
+        }
+
+        this.miniFly.updateScore(res.score);
+        return true;
+      }
+    }
+
+    return false
   }
 
   removeBullet(bullet: PlaneEnemyBullet) {
@@ -147,7 +206,20 @@ export class PlaneEnemy implements IMiniGam {
       }
     }
 
-    this.bulletList = []
+    this.bulletList = [];
+  }
+
+  // 获取战机的位置
+  getPlanePos() {
+    return this.miniFly.planeAttacker.getPos();
+  }
+
+  // 移除编队
+  removeSquadron(squadron: PlaneEnemySquadron) {
+    const ind = this.squadron.indexOf(squadron);
+    if (ind > -1) {
+      this.squadron.splice(ind, 1);
+    }
   }
 
   actionStart = (p: IMiniActParams) => {};

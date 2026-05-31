@@ -39,7 +39,7 @@ export class MiniFly implements IMiniGam {
     this.catchTool();
   }
 
-  // 子弹击中敌人
+  // 子弹击中敌机
   bulletHitEnemy() {
     for (let i = 0; i < this.planeAttacker.planeBulletBox.bullets.length; i++) {
       const bullet = this.planeAttacker.planeBulletBox.bullets[i];

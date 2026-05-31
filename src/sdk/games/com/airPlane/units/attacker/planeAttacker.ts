@@ -108,6 +108,10 @@ export class PlaneAttacker implements IMiniGam {
     this.planeBulletBox.addBulletSize()
   }
 
+  getPos() {
+    return { x: this.attackerX, y: this.attackerY }; 
+  }
+
 
   actionStart = () => {};
   actionEnd = () => {};

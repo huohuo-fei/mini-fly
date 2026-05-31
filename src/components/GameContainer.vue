@@ -24,8 +24,7 @@ onMounted(() => {
     canvas.height = height;
     canvasElement = canvas;
     miniGameInstance = new MiniScreen(canvas);
-    MiniUtils.loadImageListProg(imageList,(c,p) => {
-      console.log('加载进度', c, p);
+    MiniUtils.loadImageListProg(imageList,() => {
     }).then(() =>{
     miniGameInstance?.initAni()
   })
