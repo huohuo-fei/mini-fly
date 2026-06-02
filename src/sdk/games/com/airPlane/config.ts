@@ -9,6 +9,7 @@ import {
   MiniPlaneToolType,
   type IMiniPlaneMainParams,
   type IMiniSquadronConfig,
+  type IBigEnemyConfig,
 } from './type';
 // 三种普通敌机的配置信息
 // 速度慢 体型大 生命值大 冷却时间长
@@ -148,4 +149,14 @@ export const enemySquadronConfig: IMiniSquadronConfig = {
   speed: 1,
   unitSize: 30,
   direction: 'r',
+};
+
+// 敌机大头兵
+export const bigEnemyConfig: IBigEnemyConfig = {
+  x: 100,
+  speed: 1,
+  targetHeight: 100,
+  shootCooldown: 600,
+  radius: 20,
+  angleSpeed: 0.01,
 };

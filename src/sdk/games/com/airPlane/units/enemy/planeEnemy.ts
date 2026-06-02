@@ -4,12 +4,18 @@ import type {
   IMiniGam,
   IMiniGameParams,
 } from '../../../../../type';
-import { IMiniPlaneEffectType, MiniPlaneEnemyType, type IMiniSquadronConfig } from '../../type';
+import {
+  IMiniPlaneEffectType,
+  MiniPlaneEnemyType,
+  type IMiniSquadronConfig,
+  type IBigEnemyConfig,
+} from '../../type';
 import type { PlaneBullet } from '../attacker/planeBullet';
 import { PlaneEnemyBullet } from './planeEnemyBullet';
 import { PlaneEnemyUnit } from './planeEnemyUnit';
 import { PlaneEnemySquadron } from './squadron';
-import { enemySquadronConfig } from '../../config';
+import { enemySquadronConfig, bigEnemyConfig } from '../../config';
+import { BigEnemyUnit } from './bigUnit';
 export class PlaneEnemy implements IMiniGam {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
@@ -23,6 +29,9 @@ export class PlaneEnemy implements IMiniGam {
   // 编队
   squadron: PlaneEnemySquadron[] = [];
 
+  // 大敌机
+  bigEnemyList: BigEnemyUnit[] = [];
+
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
     this.miniFly = miniFly;
     this.gameParams = params;
@@ -30,38 +39,66 @@ export class PlaneEnemy implements IMiniGam {
       this.spawnEnemy();
     }
 
-    this.buildSquadron()
-
+    this.buildSquadron();
+    this.buildBigEnemy();
   }
 
-  buildSquadron(){
-    const c1 = JSON.parse(JSON.stringify(enemySquadronConfig)) as IMiniSquadronConfig
-    const c2 = JSON.parse(JSON.stringify(enemySquadronConfig)) as IMiniSquadronConfig
-    const c3 = JSON.parse(JSON.stringify(enemySquadronConfig)) as IMiniSquadronConfig
-    const c4 = JSON.parse(JSON.stringify(enemySquadronConfig)) as IMiniSquadronConfig
-    c1.angle = Math.PI / 6  
-    c1.enterHeight = 350
-    c2.angle = -Math.PI / 6
-    c2.direction = 'l' 
-    c2.enterHeight = 50
-    c2.enterHeight = 350
-    c3.angle = -Math.PI / 6
-    c4.angle = Math.PI / 6
-    c4.direction = 'l'
-    c4.enterHeight = 50
-    this.squadron.push(new PlaneEnemySquadron(c1,this));
-    this.squadron.push(new PlaneEnemySquadron(c2,this));
-    this.squadron.push(new PlaneEnemySquadron(c3,this));
-    this.squadron.push(new PlaneEnemySquadron(c4,this));
+  buildSquadron() {
+    const c1 = JSON.parse(
+      JSON.stringify(enemySquadronConfig)
+    ) as IMiniSquadronConfig;
+    const c2 = JSON.parse(
+      JSON.stringify(enemySquadronConfig)
+    ) as IMiniSquadronConfig;
+    const c3 = JSON.parse(
+      JSON.stringify(enemySquadronConfig)
+    ) as IMiniSquadronConfig;
+    const c4 = JSON.parse(
+      JSON.stringify(enemySquadronConfig)
+    ) as IMiniSquadronConfig;
+    c1.angle = Math.PI / 6;
+    c1.enterHeight = 350;
+    c2.angle = -Math.PI / 6;
+    c2.direction = 'l';
+    c2.enterHeight = 50;
+    c2.enterHeight = 350;
+
+    c3.angle = -Math.PI / 6;
+    c3.enterHeight = 50;
+    c4.angle = Math.PI / 6;
+    c4.direction = 'l';
+    c4.enterHeight = 50;
+    this.squadron.push(new PlaneEnemySquadron(c1, this));
+    this.squadron.push(new PlaneEnemySquadron(c2, this));
+    this.squadron.push(new PlaneEnemySquadron(c3, this));
+    this.squadron.push(new PlaneEnemySquadron(c4, this));
+  }
+
+  buildBigEnemy() {
+    const bc1 = JSON.parse(JSON.stringify(bigEnemyConfig)) as IBigEnemyConfig
+    bc1.x = 60
+    bc1.targetHeight = 100
+    const b1 = new BigEnemyUnit(this,bc1);
+    this.bigEnemyList.push(b1);
+
+    const bc2 = JSON.parse(JSON.stringify(bigEnemyConfig)) as IBigEnemyConfig
+    bc2.x = 400
+    bc2.targetHeight = 100
+    const b2 = new BigEnemyUnit(this,bc2);
+    this.bigEnemyList.push(b2);
   }
 
   render(ctx: CanvasRenderingContext2D) {
     // 绘制逻辑待优化:相同敌机 或者相同的子弹可否一笔绘制
-    for (let i = 0; i < this.squadron.length; i++) {
-      this.squadron[i].render(ctx);
+
+    for (let i = 0; i < this.bigEnemyList.length; i++) {
+      this.bigEnemyList[i].render(ctx);
     }
 
     return;
+    for (let i = 0; i < this.squadron.length; i++) {
+      this.squadron[i].render(ctx);
+    }
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i]) {
         this.enemyList[i].render(ctx);
@@ -154,15 +191,11 @@ export class PlaneEnemy implements IMiniGam {
   isHitSquadron(bullet: PlaneBullet) {
     // 判断是否命中编队
     for (let i = 0; i < this.squadron.length; i++) {
-      const res = this.squadron[i].isHit(bullet)
+      const res = this.squadron[i].isHit(bullet);
       if (res.flag) {
         if (res.isDead) {
           // 敌机死亡
-          this.miniFly.createEffect(
-            IMiniPlaneEffectType.EXPLODE,
-            res.x,
-            res.y
-          );
+          this.miniFly.createEffect(IMiniPlaneEffectType.EXPLODE, res.x, res.y);
         }
 
         this.miniFly.updateScore(res.score);
@@ -170,7 +203,7 @@ export class PlaneEnemy implements IMiniGam {
       }
     }
 
-    return false
+    return false;
   }
 
   removeBullet(bullet: PlaneEnemyBullet) {

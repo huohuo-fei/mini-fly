@@ -116,3 +116,13 @@ export type IMiniSquadronConfig = {
   unitSize: number;
   direction: 'r' | 'l';
 };
+
+// bigEnemy 配置
+export type IBigEnemyConfig = {
+  x: number;
+  speed: number;
+  targetHeight: number;
+  shootCooldown: number;
+  radius: number;
+  angleSpeed: number;
+};
