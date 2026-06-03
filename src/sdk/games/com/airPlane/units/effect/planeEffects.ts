@@ -3,19 +3,33 @@ import { MiniUtils } from '../../../../../utils/MiniUtils';
 
 import planeExplodSvg from '@/assets/game/plane/explod.svg';
 import planeLifeSvg from '@/assets/game/plane/life.svg';
-import planeAttackerSvg from '@/assets/game/plane/attacker_bg.svg';
 import { BaseEffect } from './baseEffect';
 import { IMiniPlaneEffectType } from '../../type';
 import { LifeEffect } from './lifeEffect';
+import { DamageEffect } from './damageEffect';
 // 飞机大战中需要的各种特效管理
 export class PlaneEffect implements IMiniGam {
   // 特效资源加载完毕
   effectList: BaseEffect[] = [];
-
-
+  effectStore: Map<
+    { type: IMiniPlaneEffectType; x: number; y: number },
+    BaseEffect
+  > = new Map();
 
   // 依据类型和位置生成一个特效
-  createEffect(type: IMiniPlaneEffectType, x: number, y: number, other?: any,cb?:() => void) {
+  createEffect(
+    type: IMiniPlaneEffectType,
+    x: number,
+    y: number,
+    other?: any,
+    cb?: () => void
+  ) {
+    for (const [key] of this.effectStore) {
+      if (key.type === type && key.x === x && key.y === y) {
+        // 同一位置 统一类型 过滤
+        return;
+      }
+    }
     let effect = null;
     switch (type) {
       case IMiniPlaneEffectType.EXPLODE:
@@ -40,20 +54,36 @@ export class PlaneEffect implements IMiniGam {
           cb
         );
         break;
-      
+      case IMiniPlaneEffectType.DAMAGE:
+        effect = new DamageEffect(
+          MiniUtils.getImage(planeExplodSvg),
+          x,
+          y,
+          this,
+          type,
+          other,
+          cb
+        );
+        break;
     }
 
-    if(effect){
+    if (effect) {
       this.effectList.push(effect);
-    }else{
+      this.effectStore.set({ type, x, y }, effect);
+    } else {
       console.warn('effect is null');
-      
     }
   }
 
   removeEffect(effect: BaseEffect) {
     const index = this.effectList.indexOf(effect);
     if (index > -1) {
+      for (const [key, value] of this.effectStore) {
+        if (value === effect) {
+          this.effectStore.delete(key);
+          break;
+        }
+      }
       this.effectList.splice(index, 1);
     }
   }

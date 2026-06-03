@@ -32,6 +32,7 @@ export type MyBulletConfig = {
 export enum IMiniPlaneEffectType {
   EXPLODE = 'explode',
   LIFE = 'life',
+  DAMAGE='damage'
 }
 
 // 特效中 精灵图的配置

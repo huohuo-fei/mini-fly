@@ -1,9 +1,10 @@
 import type { IMiniGam } from '../../../../../../type';
-import { Matrix3 } from '../../../../../../utils/Matrix3';
+import { Matrix3, Vector2 } from '../../../../../../utils/Matrix3';
 import type { PlaneEnemy } from '../planeEnemy';
 import { EasedMove } from '../../../../../../utils/Animate';
 import { BigEnemyBullet } from './bullet';
 import type { IBigEnemyConfig } from '../../../type';
+import type { PlaneBullet } from '../../attacker/planeBullet';
 
 export class BigEnemyUnit implements IMiniGam {
   matrix: Matrix3 = new Matrix3();
@@ -24,9 +25,9 @@ export class BigEnemyUnit implements IMiniGam {
   // 子弹列表
   bulletList: BigEnemyBullet[] = [];
 
-  constructor(planeEnemy: PlaneEnemy,config:IBigEnemyConfig) {
+  constructor(planeEnemy: PlaneEnemy, config: IBigEnemyConfig) {
     this.planeEnemy = planeEnemy;
-    Object.assign(this,config);
+    Object.assign(this, config);
   }
 
   buildBullet() {
@@ -43,7 +44,7 @@ export class BigEnemyUnit implements IMiniGam {
         const vy = cy * speed;
         const x = this.matrix.elements[6] + radius * cx;
         const y = this.matrix.elements[7] + radius * cy;
-        const bullet = new BigEnemyBullet(x, y, vx, vy,this);
+        const bullet = new BigEnemyBullet(x, y, vx, vy, this);
         this.bulletList.push(bullet);
       }
 
@@ -54,7 +55,7 @@ export class BigEnemyUnit implements IMiniGam {
         const y = this.matrix.elements[7] + radius * cy;
         const vx = cx * speed;
         const vy = cy * speed;
-        const bullet2 = new BigEnemyBullet(x, y, vx, vy,this);
+        const bullet2 = new BigEnemyBullet(x, y, vx, vy, this);
         this.bulletList.push(bullet2);
       }
 
@@ -65,7 +66,7 @@ export class BigEnemyUnit implements IMiniGam {
         const y = this.matrix.elements[7] + radius * cy;
         const vx = cx * speed;
         const vy = cy * speed;
-        const bullet3 = new BigEnemyBullet(x, y, vx, vy,this);
+        const bullet3 = new BigEnemyBullet(x, y, vx, vy, this);
         this.bulletList.push(bullet3);
       }
 
@@ -76,7 +77,7 @@ export class BigEnemyUnit implements IMiniGam {
         const y = this.matrix.elements[7] + radius * cy;
         const vx = cx * speed;
         const vy = cy * speed;
-        const bullet3 = new BigEnemyBullet(x, y, vx, vy,this);
+        const bullet3 = new BigEnemyBullet(x, y, vx, vy, this);
         this.bulletList.push(bullet3);
       }
     }, this.shootCooldown);
@@ -86,6 +87,32 @@ export class BigEnemyUnit implements IMiniGam {
     const index = this.bulletList.indexOf(bullet);
     if (index > -1) {
       this.bulletList.splice(index, 1);
+    }
+  }
+
+  isHit(planeBullet: PlaneBullet) {
+    const { x: bx, y: by } = planeBullet.config;
+    const x = this.matrix.elements[6];
+    const y = this.matrix.elements[7];
+    const { radius } = this;
+
+    const v1 = new Vector2(bx - x, by - y);
+    if (v1.length() < radius) {
+      return {
+        flag: true,
+        isDead: false,
+        x: x,
+        y: y,
+        score: 100,
+      };
+    } else {
+      return {
+        flag: false,
+        isDead: false,
+        x: x,
+        y: y,
+        score: 0,
+      };
     }
   }
 
@@ -130,7 +157,7 @@ export class BigEnemyUnit implements IMiniGam {
     this.matrix.makeTranslation(x, y);
 
     if (!moveUpdate) {
-      this.buildBullet();
+      // this.buildBullet();
       this.matrix.rotate(this.angle);
       this.angle += this.angleSpeed;
     }

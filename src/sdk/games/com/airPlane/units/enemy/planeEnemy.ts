@@ -75,16 +75,16 @@ export class PlaneEnemy implements IMiniGam {
   }
 
   buildBigEnemy() {
-    const bc1 = JSON.parse(JSON.stringify(bigEnemyConfig)) as IBigEnemyConfig
-    bc1.x = 60
-    bc1.targetHeight = 100
-    const b1 = new BigEnemyUnit(this,bc1);
+    const bc1 = JSON.parse(JSON.stringify(bigEnemyConfig)) as IBigEnemyConfig;
+    bc1.x = 60;
+    bc1.targetHeight = 100;
+    const b1 = new BigEnemyUnit(this, bc1);
     this.bigEnemyList.push(b1);
 
-    const bc2 = JSON.parse(JSON.stringify(bigEnemyConfig)) as IBigEnemyConfig
-    bc2.x = 400
-    bc2.targetHeight = 100
-    const b2 = new BigEnemyUnit(this,bc2);
+    const bc2 = JSON.parse(JSON.stringify(bigEnemyConfig)) as IBigEnemyConfig;
+    bc2.x = 400;
+    bc2.targetHeight = 100;
+    const b2 = new BigEnemyUnit(this, bc2);
     this.bigEnemyList.push(b2);
   }
 
@@ -184,6 +184,10 @@ export class PlaneEnemy implements IMiniGam {
       return true;
     }
 
+    if (this.isHitBigEnemy(bullet)) {
+      return true;
+    }
+
     return false;
   }
 
@@ -196,6 +200,29 @@ export class PlaneEnemy implements IMiniGam {
         if (res.isDead) {
           // 敌机死亡
           this.miniFly.createEffect(IMiniPlaneEffectType.EXPLODE, res.x, res.y);
+        }
+
+        this.miniFly.updateScore(res.score);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // 判断是否命中大头兵
+  isHitBigEnemy(bullet: PlaneBullet) {
+    // 判断是否命中编队
+    for (let i = 0; i < this.bigEnemyList.length; i++) {
+      const res = this.bigEnemyList[i].isHit(bullet);
+      if (res.flag) {
+        if (res.isDead) {
+          // 敌机死亡
+          this.miniFly.createEffect(IMiniPlaneEffectType.DAMAGE, res.x, res.y);
+        }else{
+          // 敌机未死亡
+          this.miniFly.createEffect(IMiniPlaneEffectType.DAMAGE, res.x, res.y);
+
         }
 
         this.miniFly.updateScore(res.score);
