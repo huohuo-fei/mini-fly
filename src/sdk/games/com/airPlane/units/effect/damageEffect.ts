@@ -27,7 +27,7 @@ export class DamageEffect implements IMiniGam {
     this.spriteConfig = JSON.parse(JSON.stringify(PlaneExplodeConfig));
     this.spriteConfig.tx = cx ;
     this.spriteConfig.ty = cy ;
-    this.spriteConfig.cFrame = 3 
+    this.spriteConfig.cFrame = 4  // 爆炸动画从第四帧开始
 
     this.planeEffect = planeEffect;
     this.sprite = sprite;
