@@ -218,7 +218,7 @@ export class PlaneEnemy implements IMiniGam {
       if (res.flag) {
         if (res.isDead) {
           // 敌机死亡
-          this.miniFly.createEffect(IMiniPlaneEffectType.DAMAGE, res.x, res.y);
+          this.miniFly.createEffect(IMiniPlaneEffectType.EXPLODE, res.x, res.y);
         }else{
           // 敌机未死亡
           this.miniFly.createEffect(IMiniPlaneEffectType.DAMAGE, res.x, res.y);
@@ -279,6 +279,14 @@ export class PlaneEnemy implements IMiniGam {
     const ind = this.squadron.indexOf(squadron);
     if (ind > -1) {
       this.squadron.splice(ind, 1);
+    }
+  }
+
+  // 移除大头兵
+  removeBigEnemy(bigEnemy: BigEnemyUnit) {
+    const ind = this.bigEnemyList.indexOf(bigEnemy);
+    if (ind > -1) {
+      this.bigEnemyList.splice(ind, 1);
     }
   }
 
