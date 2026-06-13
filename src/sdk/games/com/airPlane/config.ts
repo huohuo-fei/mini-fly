@@ -10,6 +10,7 @@ import {
   type IMiniPlaneMainParams,
   type IMiniSquadronConfig,
   type IBigEnemyConfig,
+  type IBossConfig,
 } from './type';
 // 三种普通敌机的配置信息
 // 速度慢 体型大 生命值大 冷却时间长
@@ -160,3 +161,13 @@ export const bigEnemyConfig: IBigEnemyConfig = {
   radius: 20,
   angleSpeed: 0.01,
 };
+
+// boss
+export const bossConfig: IBossConfig = {
+  frame: 140,
+  w: 80,
+  h: 60,
+  targetHeight: 100,
+  healthArr:[1000,1000,1000]
+}
+

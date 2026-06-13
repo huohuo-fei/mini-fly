@@ -5,7 +5,7 @@ import { PlaneAttacker } from './units/attacker/planeAttacker';
 import { PlaneBg } from './units/background/planeBg';
 import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
-import { MiniPlaneToolType, type IMiniPlaneEffectType } from './type';
+import {type IMiniPlaneEffectType } from './type';
 import { PlaneBar } from './units/bar/planeBar';
 import { PlaneToolBox } from './units/tools/planeToolBox';
 import type { PlaneEnemyUnit } from './units/enemy/planeEnemyUnit';

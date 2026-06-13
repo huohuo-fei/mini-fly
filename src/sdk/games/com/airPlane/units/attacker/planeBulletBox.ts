@@ -18,7 +18,7 @@ export class PlaneBullelBox implements IMiniGam {
   bullets: PlaneBullet[] = [];
   bulletType = MyBulletType.NORMAL;
   bulletTimer: number | null = null;
-  size: number = 1;
+  size: number = 3;
 
   constructor(params: IMiniPlaneMainParams) {
     this.planeWidth = params.w;

@@ -32,6 +32,13 @@ export interface IMiniGam {
   actionDoing: (p: IMiniActParams) => void;
 }
 
+export interface IMiniG extends IMiniBus {
+  render: (ctx: CanvasRenderingContext2D) => void;
+  actionStart: (p: IMiniActParams) => void;
+  actionEnd: (p: IMiniActParams) => void;
+  actionDoing: (p: IMiniActParams) => void;
+}
+
 export interface IMiniScreen {
   gamList: Set<IMiniGam>;
   canvas: HTMLCanvasElement;
@@ -46,9 +53,8 @@ export interface IMiniScreen {
   initAni: () => void;
   pauseAni: () => void;
   setActiveGam: (gam: IMiniGam) => void;
-  actionTransfer:(p:IMiniActParams)=>void;
+  actionTransfer: (p: IMiniActParams) => void;
   draw: () => void;
-
 }
 
 export type IMiniGameParams = {
@@ -68,5 +74,3 @@ export interface Point {
   x: number;
   y: number;
 }
-
-

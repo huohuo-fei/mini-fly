@@ -8,6 +8,7 @@ import { buildMainPlaneConfig } from '../../utils';
 import { PlaneBullelBox } from './planeBulletBox';
 import { PlaneShield } from './planeToolShield';
 import { PlaneBulletDouble } from './planeBulletDouble';
+import { PlaneBase } from '../../base/planeBase';
 
 export class PlaneAttacker implements IMiniGam {
   // 飞机配置参数
@@ -63,7 +64,6 @@ export class PlaneAttacker implements IMiniGam {
   updatePos(x: number, y: number) {
     this.attackerX = x;
     this.attackerY = y;
-    this.cy = y + this.PLAYER_HEIGHT / 2;
   }
 
   updatePosX(x: number) {
@@ -119,4 +119,95 @@ export class PlaneAttacker implements IMiniGam {
     const { x } = p;
     this.updatePosX(x);
   };
+}
+
+export class PlaneAttacker2 extends PlaneBase{
+
+  // 战机的配置参数
+  PLAYER_WIDTH = 30;
+  PLAYER_HEIGHT = 30;
+  shootCooldown = 160;
+
+  // 位置信息
+  attackerX: number = 0;
+  attackerY: number = 0;
+  cx: number = 0;
+  cy: number = 0;
+  offsetY:number = 50
+
+  // 游戏参数，
+  gameParams: IMiniGameParams;
+
+  // 主战机实例
+  planeMain: PlaneMain;
+
+  constructor(params: IMiniGameParams){
+    super()
+    const { PLAYER_HEIGHT, PLAYER_WIDTH, shootCooldown ,offsetY} = this;
+    const playerX = params.canvasWidth / 2;
+    const playerY = params.canvasHeight - offsetY;
+    this.gameParams = params;
+    const mainConfig = buildMainPlaneConfig(
+      PLAYER_WIDTH,
+      PLAYER_HEIGHT,
+      playerX,
+      playerY,
+      params.canvasWidth,
+      params.canvasHeight,
+      shootCooldown
+    );
+    this.planeMain = new PlaneMain(mainConfig);
+
+
+  }
+
+  updatePos(x: number, y: number) {
+    this.attackerX = x;
+    this.attackerY = y;
+  }
+
+  updatePosX(x: number) {
+    // 更新玩家位置 (平滑跟随鼠标/手指)
+    const { PLAYER_WIDTH, attackerX, gameParams } = this;
+    let targetX = x 
+    targetX = Math.min(
+      Math.max(targetX, 5),
+      gameParams.canvasWidth - PLAYER_WIDTH - 5
+    );
+    let resX = attackerX * 0.85 + targetX * 0.15;
+
+    // 边界限制最终
+    resX = Math.min(
+      Math.max(resX, 5),
+      gameParams.canvasWidth - PLAYER_WIDTH - 5
+    );
+    this.attackerX = resX;
+    this.planeMain.updatePosX(this.attackerX);
+  }
+
+  render(ctx: CanvasRenderingContext2D) {
+    this.planeMain.render(ctx);
+  }
+
+    // 生成光罩
+    createShield() {
+      // this.planeShield.changeState(true);
+    }
+  
+    // 生成双倍子弹
+    createDoubleBullet() {
+      // this.planeBulletDouble.startAni(this.attackerX)
+      // this.planeBulletBox.addBulletSize()
+    }
+
+  getPos() {
+    return { x: this.attackerX, y: this.attackerY }; 
+  }
+
+  actionDoing = (p: IMiniActParams) => {
+    const { x } = p;
+    this.updatePosX(x);
+  };
+
+
 }

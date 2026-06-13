@@ -9,13 +9,15 @@ import {
   MiniPlaneEnemyType,
   type IMiniSquadronConfig,
   type IBigEnemyConfig,
+  type IBossConfig,
 } from '../../type';
 import type { PlaneBullet } from '../attacker/planeBullet';
 import { PlaneEnemyBullet } from './planeEnemyBullet';
 import { PlaneEnemyUnit } from './planeEnemyUnit';
 import { PlaneEnemySquadron } from './squadron';
-import { enemySquadronConfig, bigEnemyConfig } from '../../config';
+import { enemySquadronConfig, bigEnemyConfig, bossConfig } from '../../config';
 import { BigEnemyUnit } from './bigUnit';
+import  { EnemyBoss } from './boss';
 export class PlaneEnemy implements IMiniGam {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
@@ -32,6 +34,10 @@ export class PlaneEnemy implements IMiniGam {
   // 大敌机
   bigEnemyList: BigEnemyUnit[] = [];
 
+  // boss 
+  bossList: EnemyBoss[] = [];
+
+
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
     this.miniFly = miniFly;
     this.gameParams = params;
@@ -39,8 +45,9 @@ export class PlaneEnemy implements IMiniGam {
       this.spawnEnemy();
     }
 
-    this.buildSquadron();
+    // this.buildSquadron();
     this.buildBigEnemy();
+    this.buildBoss()
   }
 
   buildSquadron() {
@@ -88,17 +95,30 @@ export class PlaneEnemy implements IMiniGam {
     this.bigEnemyList.push(b2);
   }
 
+  buildBoss() {
+    const b1 = JSON.parse(JSON.stringify(bossConfig)) as IBossConfig;
+    const boss = new EnemyBoss(this, b1);
+    this.bossList.push(boss);
+  }
+
   render(ctx: CanvasRenderingContext2D) {
     // 绘制逻辑待优化:相同敌机 或者相同的子弹可否一笔绘制
+
+    for (let i = 0; i < this.bossList.length; i++) {
+      this.bossList[i].render(ctx);
+    }
+
+    for (let i = 0; i < this.squadron.length; i++) {
+      this.squadron[i].render(ctx);
+    }
+
+    return;
 
     for (let i = 0; i < this.bigEnemyList.length; i++) {
       this.bigEnemyList[i].render(ctx);
     }
 
-    return;
-    for (let i = 0; i < this.squadron.length; i++) {
-      this.squadron[i].render(ctx);
-    }
+
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i]) {
         this.enemyList[i].render(ctx);
@@ -188,6 +208,10 @@ export class PlaneEnemy implements IMiniGam {
       return true;
     }
 
+    if( this.isHitBoss(bullet)){
+      return true;
+    }
+
     return false;
   }
 
@@ -215,6 +239,28 @@ export class PlaneEnemy implements IMiniGam {
     // 判断是否命中编队
     for (let i = 0; i < this.bigEnemyList.length; i++) {
       const res = this.bigEnemyList[i].isHit(bullet);
+      if (res.flag) {
+        if (res.isDead) {
+          // 敌机死亡
+          this.miniFly.createEffect(IMiniPlaneEffectType.EXPLODE, res.x, res.y);
+        }else{
+          // 敌机未死亡
+          this.miniFly.createEffect(IMiniPlaneEffectType.DAMAGE, res.x, res.y);
+
+        }
+
+        this.miniFly.updateScore(res.score);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // 判断是否命中boss
+  isHitBoss(bullet: PlaneBullet){
+    for (let i = 0; i < this.bossList.length; i++) {
+      const res = this.bossList[i].isHit(bullet);
       if (res.flag) {
         if (res.isDead) {
           // 敌机死亡

@@ -127,3 +127,12 @@ export type IBigEnemyConfig = {
   radius: number;
   angleSpeed: number;
 };
+
+// boss 配置
+export type IBossConfig = {
+  frame: number;
+  w:number;
+  h:number;
+  targetHeight: number;
+  healthArr:number[]
+}
