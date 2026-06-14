@@ -33,12 +33,12 @@ export class BossButtleDot implements IMiniGam {
   }
 
   buildEnemyBullet() {
-    const { speedY, h } = this.enemyBullet;
-    const { cx, cy } = this.boss;
-    // 将子弹中心和敌方飞机中心对齐
-    this.enemyBullet.x += cx;
-    this.enemyBullet.y += cy + h / 2;
-    this.enemyBullet.speedY += speedY;
+    // const { speedY, h } = this.enemyBullet;
+    // const { cx, cy } = this.boss;
+    // // 将子弹中心和敌方飞机中心对齐
+    // this.enemyBullet.x += cx;
+    // this.enemyBullet.y += cy + h / 2;
+    // this.enemyBullet.speedY += speedY;
   }
 
   updatePos() {
@@ -54,17 +54,17 @@ export class BossButtleDot implements IMiniGam {
   }
 
  destroy() {
-  const x = this.matrix.elements[6]
-  const y = this.matrix.elements[7]
-  const { w } = this.enemyBullet;
-  const radius = w / 2
+  // const x = this.matrix.elements[6]
+  // const y = this.matrix.elements[7]
+  // const { w } = this.enemyBullet;
+  // const radius = w / 2
 
-  const {canvasHeight,canvasWidth} = this.boss.planeEnemy.gameParams
-  const {} = this
+  // const {canvasHeight,canvasWidth} = this.boss.planeEnemy.gameParams
+  // const {} = this
 
-  if(x < -radius || x > canvasWidth + radius || y < -radius || y > canvasHeight + radius){
-    this.boss.removeBulletDot(this)
-  }
+  // if(x < -radius || x > canvasWidth + radius || y < -radius || y > canvasHeight + radius){
+  //   this.boss.removeBulletDot(this)
+  // }
  }
 
   render(ctx: CanvasRenderingContext2D) {

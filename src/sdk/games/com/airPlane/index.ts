@@ -5,7 +5,7 @@ import { PlaneAttacker } from './units/attacker/planeAttacker';
 import { PlaneBg } from './units/background/planeBg';
 import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
-import {type IMiniPlaneEffectType } from './type';
+import { type IMiniPlaneEffectType } from './type';
 import { PlaneBar } from './units/bar/planeBar';
 import { PlaneToolBox } from './units/tools/planeToolBox';
 import type { PlaneEnemyUnit } from './units/enemy/planeEnemyUnit';
@@ -41,14 +41,9 @@ export class MiniFly implements IMiniGam {
 
   // 子弹击中敌机
   bulletHitEnemy() {
-    for (let i = 0; i < this.planeAttacker.planeBulletBox.bullets.length; i++) {
-      const bullet = this.planeAttacker.planeBulletBox.bullets[i];
-      if (this.planeEnemy.isHitEnemy(bullet)) {
-        this.planeAttacker.planeBulletBox.bullets.splice(i, 1);
-        // 每次判断，减少一个敌机 不做冗余循环
-        break;
-      }
-    }
+    this.planeAttacker.checkHitEnemy((bullet) => {
+      return this.planeEnemy.isHitEnemy(bullet);
+    });
   }
 
   // 战机捕获工具
@@ -64,8 +59,14 @@ export class MiniFly implements IMiniGam {
   }
 
   // 生成一个爆炸图
-  createEffect(type: IMiniPlaneEffectType, x: number, y: number,other?:any,cb?:() => void) {
-    this.planeEffect.createEffect(type, x, y,other,cb);
+  createEffect(
+    type: IMiniPlaneEffectType,
+    x: number,
+    y: number,
+    other?: any,
+    cb?: () => void
+  ) {
+    this.planeEffect.createEffect(type, x, y, other, cb);
   }
 
   // 更新局内分数
