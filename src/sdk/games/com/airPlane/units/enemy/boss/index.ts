@@ -26,9 +26,10 @@ export class EnemyBoss extends PlaneUnit {
   angleSpeed: number = 0.042;
   bulletSpeed: number = 1;
 
+  // 编队子弹配置  todo:抽取编队 可以使之任意嵌套
   constructor(params: PlaneUnitParams, config: IBossConfig) {
     super(params);
-    this.config = config;
+    this.config = JSON.parse(JSON.stringify(config)) as IBossConfig;
 
     this.planeBody = new BossBody({
       bodyWidth: this.unitWidth,

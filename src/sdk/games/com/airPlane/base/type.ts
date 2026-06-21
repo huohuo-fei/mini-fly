@@ -1,4 +1,3 @@
-import type { Vector2 } from "../../../../utils/Matrix3";
 
 export type PlaneUnitParams = {
   canvasWidth:number;
@@ -10,6 +9,8 @@ export type PlaneUnitParams = {
   speedX:number;
   speedY:number;
   shootCooldown:number
+  health:number;
+  score:number
 }
 
 export type PlaneBodyParams = {

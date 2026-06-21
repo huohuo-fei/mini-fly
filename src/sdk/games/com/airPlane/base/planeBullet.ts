@@ -1,11 +1,9 @@
 import { Matrix3, Vector2 } from '../../../../utils/Matrix3';
 import type { PlaneBulletBox } from './PlaneBulletBox';
 import { PlaneBase } from './planeBase';
-import type { PlaneUnit } from './planeUnit';
 import {
   PlaneBulletType,
   type PlaneBulletParams,
-  type PlaneUnitParams,
   PlaneBulletShape,
 } from './type';
 

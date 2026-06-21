@@ -16,6 +16,7 @@ import {
   type IMiniSquadronConfig,
   type IBigEnemyConfig,
   type IBossConfig,
+  type ISquadronConfig,
 } from './type';
 // 三种普通敌机的配置信息
 // 速度慢 体型大 生命值大 冷却时间长
@@ -194,7 +195,7 @@ export const planeMainBulletConfig: PlaneBulletParams = {
   speedX: 0,
   speedY: 8,
   combat: 2,
-  shootCooldown: 300,
+  shootCooldown: 100,
   direction: [0, -1],
   canvasHeight: 0,
   canvasWidth: 0,
@@ -219,4 +220,55 @@ export const planeBossDotBullet: PlaneBulletParams = {
   canvasWidth: 0,
   bulletAngle:0,
   bulletAngleSpeed:0.342
+};
+
+export const planeSquadronConfig:ISquadronConfig = {
+  count: 5,
+  angle: Math.PI / 6,
+  w: 30,
+  h: 30,
+  startX: 20,
+  startY: 20,
+  gap:10,
+  health:10
+}
+
+export const planeSquadronBullet: PlaneBulletParams = {
+  type: PlaneBulletType.Trace,
+  shape: PlaneBulletShape.Circle,
+  bulletWidth: 6,
+  bulletHeight: 6,
+  bulletX: 0,
+  bulletY: 0,
+  bodyX: 0,
+  bodyY: 0,
+  size: 2,
+  speedX: 4,
+  speedY: 4,
+  combat: 2,
+  shootCooldown: 1000,
+  direction: [0, 1],
+  canvasHeight: 0,
+  canvasWidth: 0,
+};
+
+export const planeBigBullet: PlaneBulletParams = {
+  type: PlaneBulletType.Normal,
+  shape: PlaneBulletShape.Circle,
+  bulletWidth: 6,
+  bulletHeight: 6,
+  bulletX: 0,
+  bulletY: 0,
+  bodyX: 0,
+  bodyY: 0,
+  size: 2,
+  speedX: 4,
+  speedY: 4,
+  combat: 2,
+  shootCooldown: 200,
+  direction: [0, 1],
+  canvasHeight: 0,
+  canvasWidth: 0,
+  bulletAngle:0,
+  bulletAngleSpeed:0.01
 };

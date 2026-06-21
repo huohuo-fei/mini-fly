@@ -14,9 +14,14 @@ export class PlaneUnit extends PlaneBase {
   speedX: number = 0;
   speedY: number = 0;
   shootCooldown: number = 0;
+  health: number = 0;
 
   planeBody: PlaneBody | null = null;
   bulletBoxList: PlaneBulletBox[] = [];
+
+  // 外层战机的位置
+  attackerX: number = 0;
+  attackerY: number = 0;
 
   score: number = 0;
   deadScore: number = 0;
@@ -35,6 +40,8 @@ export class PlaneUnit extends PlaneBase {
     this.speedX = params.speedX;
     this.speedY = params.speedY;
     this.shootCooldown = params.shootCooldown;
+    this.health = params.health;
+    this.score = params.score;
   }
 
   render(ctx: CanvasRenderingContext2D) {
@@ -42,15 +49,21 @@ export class PlaneUnit extends PlaneBase {
     ctx.transform(...this.matrix.toCanvasTransform());
     this.planeBody?.render(ctx);
     // this.bullet?.render(ctx);
-    for(let i = 0; i < this.bulletBoxList.length; i++){
+    for (let i = 0; i < this.bulletBoxList.length; i++) {
       this.bulletBoxList[i].render(ctx);
     }
     ctx.restore();
   }
 
+  // 同步最新的战机位置
+  syncAttackerPos(x: number, y: number) {
+    this.attackerX = x;
+    this.attackerY = y;
+  }
+
   // 遍历子弹
   traverseBullet(callback: (bullet: PlaneBullet) => boolean) {
-    for(let i = 0; i < this.bulletBoxList.length; i++){
+    for (let i = 0; i < this.bulletBoxList.length; i++) {
       const bulletBox = this.bulletBoxList[i];
       for (let i = 0; i < bulletBox.bullets.length; i++) {
         const bullet = bulletBox.bullets[i];
@@ -67,9 +80,9 @@ export class PlaneUnit extends PlaneBase {
 
   // 移除子弹
   removeBullet(bullet: PlaneBullet) {
-    for(let i = 0; i < this.bulletBoxList.length; i++){
+    for (let i = 0; i < this.bulletBoxList.length; i++) {
       const res = this.bulletBoxList[i].removeBullet(bullet);
-      if(res)break 
+      if (res) break;
     }
   }
 
@@ -91,5 +104,17 @@ export class PlaneUnit extends PlaneBase {
       };
     }
     return null;
+  }
+
+  destroy() {
+    this.planeBody = null;
+    for (let i = 0; i < this.bulletBoxList.length; i++) {
+      this.bulletBoxList[i].stopBullet();
+    }
+  }
+
+  // 判断是否需要销毁当前作战单元
+  isDestroy() {
+    return true;
   }
 }

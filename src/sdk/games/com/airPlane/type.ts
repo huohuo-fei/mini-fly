@@ -136,3 +136,27 @@ export type IBossConfig = {
   targetHeight: number;
   healthArr:number[]
 }
+
+// 编队配置
+export type ISquadronConfig = {
+  w:number;
+  h:number;
+  count: number;
+  angle:number;
+  startX: number;
+  startY: number;
+  gap: number;
+  health: number;
+}
+
+export type ISquadronEnemy = {
+  left:number;
+  top:number;
+  w:number;
+  h:number;
+  cx:number;
+  cy:number;
+  health:number;
+  dead:boolean;
+}
+

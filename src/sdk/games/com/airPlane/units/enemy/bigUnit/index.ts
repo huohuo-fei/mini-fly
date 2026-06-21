@@ -1,244 +1,184 @@
-import type { IMiniGam } from '../../../../../../type';
-import { Matrix3, Vector2 } from '../../../../../../utils/Matrix3';
+import { Vector2 } from '../../../../../../utils/Matrix3';
 import type { PlaneEnemy } from '../planeEnemy';
 import { EasedMove } from '../../../../../../utils/Animate';
-import { BigEnemyBullet } from './bullet';
 import { IMiniPlaneEffectType, type IBigEnemyConfig } from '../../../type';
-import type { PlaneBullet } from '../../attacker/planeBullet';
-import { BigEnemyMissile } from './missile';
+import { PlaneUnit } from '../../../base/planeUnit';
+import {
+  PlaneBulletType,
+  type PlaneBulletParams,
+  type PlaneUnitParams,
+  type HitInfo,
+} from '../../../base/type';
+import { BigBody } from './bigBody';
+import { planeBigBullet } from '../../../config';
+import { BigBullet } from './bigBullet';
+import type { PlaneBullet } from '../../../base/planeBullet';
+import { PlaneMissile } from '../../../base/planeMissile';
 
-export class BigEnemyUnit implements IMiniGam {
-  matrix: Matrix3 = new Matrix3();
-  x: number = 100;
-  speed: number = 1;
-  targetHeight: number = 200;
+export class BigEnemyUnit extends PlaneUnit {
+  config: IBigEnemyConfig;
   move: EasedMove | null = null;
-  shootCooldown: number = 600;
-  radius: number = 20;
   angle: number = 0;
-  angleSpeed: number = 0.01;
-
-  heath: number = 20;
-
-  // 子弹定时器
-  timer: number | null = null;
-
+  rotateBullet: boolean = false;
   planeEnemy: PlaneEnemy;
 
-  // 子弹列表
-  bulletList: BigEnemyBullet[] = [];
+  missileList: PlaneMissile[] = [];
+  missileHeight: number = 200;
+  missileStep: number = 0.003;
 
-  // 导弹列表
-  missileList: BigEnemyMissile[] = [];
-
-  // 是否已经死亡
-  isDead: boolean = false;
-
-  constructor(planeEnemy: PlaneEnemy, config: IBigEnemyConfig) {
+  constructor(
+    params: PlaneUnitParams,
+    config: IBigEnemyConfig,
+    planeEnemy: PlaneEnemy
+  ) {
+    super(params);
+    this.config = JSON.parse(JSON.stringify(config)) as IBigEnemyConfig;
     this.planeEnemy = planeEnemy;
-    Object.assign(this, config);
+    this.unitHeight = this.config.radius * 2;
+    this.unitWidth = this.config.radius * 2;
+    this.planeBody = new BigBody({
+      bodyWidth: this.config.radius,
+      bodyHeight: this.config.radius,
+      bodyX: this.config.x,
+      bodyY: this.unitY,
+      speedX: this.speedX,
+      speedY: this.speedY,
+    });
+
+    this.updatePos(this.config.x, this.unitY);
+  }
+
+  updatePos(x: number, y: number) {
+    this.unitX = x;
+    this.unitY = y;
+    this.matrix.makeTranslation(x, y);
   }
 
   buildBullet() {
-    if (this.timer) return;
-    this.timer = setInterval(() => {
-      // 生成子弹逻辑
-      const { speed, radius } = this;
-
-      // 四个方向的子弹
-      {
-        const cx = Math.cos(this.angle);
-        const cy = Math.sin(this.angle);
-        const vx = cx * speed;
-        const vy = cy * speed;
-        const x = this.matrix.elements[6] + radius * cx;
-        const y = this.matrix.elements[7] + radius * cy;
-        const bullet = new BigEnemyBullet(x, y, vx, vy, this);
-        this.bulletList.push(bullet);
-      }
-
-      {
-        const cx = Math.cos(this.angle + Math.PI / 2);
-        const cy = Math.sin(this.angle + Math.PI / 2);
-        const x = this.matrix.elements[6] + radius * cx;
-        const y = this.matrix.elements[7] + radius * cy;
-        const vx = cx * speed;
-        const vy = cy * speed;
-        const bullet2 = new BigEnemyBullet(x, y, vx, vy, this);
-        this.bulletList.push(bullet2);
-      }
-
-      {
-        const cx = Math.cos(this.angle + Math.PI);
-        const cy = Math.sin(this.angle + Math.PI);
-        const x = this.matrix.elements[6] + radius * cx;
-        const y = this.matrix.elements[7] + radius * cy;
-        const vx = cx * speed;
-        const vy = cy * speed;
-        const bullet3 = new BigEnemyBullet(x, y, vx, vy, this);
-        this.bulletList.push(bullet3);
-      }
-
-      {
-        const cx = Math.cos(this.angle + (Math.PI * 3) / 2);
-        const cy = Math.sin(this.angle + (Math.PI * 3) / 2);
-        const x = this.matrix.elements[6] + radius * cx;
-        const y = this.matrix.elements[7] + radius * cy;
-        const vx = cx * speed;
-        const vy = cy * speed;
-        const bullet3 = new BigEnemyBullet(x, y, vx, vy, this);
-        this.bulletList.push(bullet3);
-      }
-    }, this.shootCooldown);
+    if (this.rotateBullet) return;
+    this.rotateBullet = true;
+    const { unitX, unitY } = this;
+    const bulletParams = JSON.parse(
+      JSON.stringify(planeBigBullet)
+    ) as PlaneBulletParams;
+    bulletParams.bulletX = unitX;
+    bulletParams.bulletY = unitY;
+    bulletParams.type = PlaneBulletType.Spiral;
+    // 四个方向
+    for (let i = 0; i < 4; i++) {
+      const bullet = new BigBullet(PlaneBulletType.Spiral, bulletParams, this);
+      this.bulletBoxList.push(bullet);
+    }
   }
 
-  buildMissile() {
+  buildMissile(p1: Vector2, p2: Vector2) {
     if (this.missileList.length) return;
-    // 生成导弹逻辑
-    const p1 = new Vector2(this.matrix.elements[6], this.matrix.elements[7]);
-    const planePos = this.planeEnemy.getPlanePos();
-    const missile = new BigEnemyMissile(
-      new Vector2(p1.x, p1.y),
-      new Vector2(planePos.x, planePos.y),
-      this
-    );
+    let checkHeight = this.missileHeight;
+    if (p1.x < this.missileHeight) {
+      checkHeight *= -1;
+    }
+    const missile = new PlaneMissile(
+      p1,
+      p2,
+      checkHeight,
+      this.missileStep,
+      (dotPos: Vector2) => {
+        // 需要申请一个爆炸特效
+        this.planeEnemy.requestEffect(
+          IMiniPlaneEffectType.EXPLODE,
+          dotPos.x,
+          dotPos.y
+        );
+        this.missileList = [];
 
+        // 销毁当前实例
+        this.planeEnemy.removeBigEnemy(this);
+      }
+    );
     this.missileList.push(missile);
   }
 
-  removeBullet(bullet: BigEnemyBullet) {
-    const index = this.bulletList.indexOf(bullet);
-    if (index > -1) {
-      this.bulletList.splice(index, 1);
-    }
-  }
-
-  removeMissile(missile: BigEnemyMissile) {
-    const index = this.missileList.indexOf(missile);
-    if (index > -1) {
-      this.missileList.splice(index, 1);
-
-      // 此时需要申请一个爆炸帧 todo:需要判断战机是否被命中
-      this.planeEnemy.miniFly.createEffect(IMiniPlaneEffectType.EXPLODE,missile.planeX,missile.planeY);
-      this.planeEnemy.removeBigEnemy(this)
-
-    }
-  }
-
-  isHit(planeBullet: PlaneBullet) {
-    const { x: bx, y: by } = planeBullet.config;
-    const x = this.matrix.elements[6];
-    const y = this.matrix.elements[7];
-    const { radius } = this;
-    const combat = planeBullet.config.combat;
-    const v1 = new Vector2(bx - x, by - y);
-
-    // 已经处于死亡状态
-    if (this.isDead) {
-      return {
-        flag: false,
-        isDead: this.isDead,
-        x: x,
-        y: y,
-        score: 0,
-      };
-    }
-    if (v1.length() < radius) {
-      this.heath -= combat;
-
-      if (this.heath <= 0) {
-        this.isDead = true;
-        this.buildMissile();
-        return {
-          flag: true,
-          isDead: this.isDead,
-          x: x,
-          y: y,
-          score: 500,
-        };
-      } else {
-        return {
-          flag: true,
-          isDead: this.isDead,
-          x: x,
-          y: y,
-          score: 100,
-        };
-      }
-    } else {
-      return {
-        flag: false,
-        isDead: this.isDead,
-        x: x,
-        y: y,
-        score: 0,
-      };
-    }
-  }
-
-  drawBox(ctx: CanvasRenderingContext2D) {
-    const { radius } = this;
-    ctx.beginPath();
-    ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = 'red';
-    ctx.stroke();
-
-    // 绘制四个发射点
-    ctx.beginPath();
-    ctx.strokeStyle = 'aqua';
-    ctx.arc(0, -radius, 5, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(0, radius, 5, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(-radius, 0, 5, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(radius, 0, 5, 0, 2 * Math.PI);
-    ctx.stroke();
-  }
-
   render(ctx: CanvasRenderingContext2D) {
-    // 开启入场动画
+    this.aniMove();
+    ctx.save();
+    ctx.transform(...this.matrix.toCanvasTransform());
+    ctx.restore();
+    super.render(ctx);
+
+    for (const missile of this.missileList) {
+      missile.render(ctx);
+    }
+  }
+
+  aniMove() {
+    const { x: startX, targetHeight, angleSpeed } = this.config;
     if (!this.move) {
-      const { x, targetHeight } = this;
-      this.move = new EasedMove({ x: x, y: 0 }, { x: x, y: targetHeight }, 100);
+      this.move = new EasedMove(
+        { x: startX, y: 0 },
+        { x: startX, y: targetHeight },
+        100
+      );
     }
     const moveUpdate = this.move.update();
     const { x, y } = this.move.getCurrentPosition();
-    this.matrix.makeTranslation(x, y);
+    this.updatePos(x, y);
 
     if (!moveUpdate) {
       this.buildBullet();
       this.matrix.rotate(this.angle);
-      this.angle += this.angleSpeed;
+      this.angle += angleSpeed;
       this.angle = this.angle % (Math.PI * 2);
-    }
 
-    // 导弹
-    for (let i = 0; i < this.missileList.length; i++) {
-      this.missileList[i].render(ctx);
-    }
-
-    // 当前大头兵没有被击毁
-    if (!this.isDead) {
-      // 螺旋子弹
-      for (let i = 0; i < this.bulletList.length; i++) {
-        this.bulletList[i].render(ctx);
+      for (let i = 0; i < this.bulletBoxList.length; i++) {
+        const bullet = this.bulletBoxList[i];
+        bullet.updateAngle(this.angle + (Math.PI / 2) * i);
       }
-
-      ctx.save();
-      ctx.transform(...this.matrix.toCanvasTransform());
-      this.drawBox(ctx);
-      ctx.restore();
     }
   }
 
-  actionStart = () => {};
-  actionEnd = () => {};
-  actionDoing = () => {};
+  isHitUnit(bullet: PlaneBullet): HitInfo | null {
+
+    if(!this.planeBody)return null
+
+    const { bulletWidth, bulletX, bulletY, combat } = bullet.params;
+    const { unitX, unitY } = this;
+    const v1 = new Vector2(unitX, unitY);
+    const v2 = new Vector2(bulletX, bulletY);
+    const dis = v1.sub(v2).length();
+    if (dis <= this.config.radius + bulletWidth / 2) {
+      this.health -= combat;
+      const dead = this.health <= 0;
+
+      // 击中后需要判断是否死亡
+      if (dead) {
+        const attackerPos = this.planeEnemy.getPlanePos();
+        this.buildMissile(
+          new Vector2(this.unitX, this.unitY),
+          new Vector2(attackerPos.x, attackerPos.y)
+        );
+
+        this.planeBody = null
+        for(const bullet of this.bulletBoxList){
+          bullet.stopBullet()
+        }
+      }
+      return {
+        x: unitX,
+        y: unitY,
+        score: this.score,
+        dead,
+      };
+    }
+    
+    return null;
+  }
+
+  destroy(){
+    for (const bullet of this.bulletBoxList) {
+      bullet.stopBullet();
+    }
+    this.planeBody = null;
+
+    this.planeEnemy.removeBigEnemy(this);
+  }
 }

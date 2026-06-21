@@ -1,13 +1,8 @@
 import type {
   IMiniActParams,
-  IMiniGam,
   IMiniGameParams,
 } from '../../../../../type';
 import { PlaneMain } from './planeMain';
-import { buildMainPlaneConfig } from '../../utils';
-import { PlaneBullelBox } from './planeBulletBox';
-import { PlaneShield } from './planeToolShield';
-import { PlaneBulletDouble } from './planeBulletDouble';
 import { PlaneBase } from '../../base/planeBase';
 import type { PlaneBullet } from '../../base/planeBullet';
 
@@ -46,6 +41,8 @@ export class PlaneAttacker extends PlaneBase {
       shootCooldown,
       canvasHeight: this.gameParams.canvasHeight,
       canvasWidth: this.gameParams.canvasWidth,
+      health:1,
+      score:1
     });
   }
 
@@ -94,7 +91,7 @@ export class PlaneAttacker extends PlaneBase {
   }
 
   getPos() {
-    return { x: this.attackerX, y: this.attackerY };
+    return { x: this.planeMain.unitX, y: this.planeMain.unitY };
   }
 
   actionDoing = (p: IMiniActParams) => {
