@@ -1,0 +1,9 @@
+import { PlaneBulletBox } from "../../../base/PlaneBulletBox";
+import type { PlaneUnit } from "../../../base/planeUnit";
+import type { PlaneBulletParams, PlaneBulletType } from "../../../base/type";
+
+export class JokerBullet extends PlaneBulletBox{
+  constructor(type:PlaneBulletType,params:PlaneBulletParams,planeUnit:PlaneUnit){
+    super(type,params,planeUnit);
+  }
+}

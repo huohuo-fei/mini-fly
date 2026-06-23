@@ -88,7 +88,8 @@ export class PlaneUnit extends PlaneBase {
 
   // 判断子弹是否击中当前作战单元
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
-    const { bulletHeight, bulletWidth, bulletX, bulletY } = bullet.params;
+    const { bulletHeight, bulletWidth, bulletX, bulletY, combat } =
+      bullet.params;
     const { unitHeight, unitWidth, unitX, unitY } = this;
     const disX = Math.abs(bulletX - unitX);
     const disY = Math.abs(bulletY - unitY);
@@ -96,11 +97,13 @@ export class PlaneUnit extends PlaneBase {
       disX < unitWidth / 2 + bulletWidth / 2 &&
       disY < unitHeight / 2 + bulletHeight / 2
     ) {
+      this.health -= combat;
+      const dead = this.health <= 0;
       return {
         x: unitX,
         y: unitY,
         score: this.score,
-        dead: false,
+        dead: dead,
       };
     }
     return null;

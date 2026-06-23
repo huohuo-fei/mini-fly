@@ -7,27 +7,22 @@ import type {
 import {
   IMiniPlaneEffectType,
   MiniPlaneEnemyType,
-  type IMiniSquadronConfig,
   type IBigEnemyConfig,
   type IBossConfig,
   type ISquadronConfig,
 } from '../../type';
-import { PlaneEnemyBullet } from './planeEnemyBullet';
-import { PlaneEnemyUnit } from './planeEnemyUnit';
 import { PlaneEnemySquadron } from './squadron';
 import { bigEnemyConfig, bossConfig, planeSquadronConfig } from '../../config';
 import { BigEnemyUnit } from './bigUnit';
 import { EnemyBoss } from './boss';
 import type { PlaneBullet } from '../../base/planeBullet';
+import { EnemyJoker } from './joker';
 export class PlaneEnemy implements IMiniGam {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
 
-  // 所有敌人列表
-  enemyList: PlaneEnemyUnit[] = [];
-
-  // 子弹列表
-  bulletList: PlaneEnemyBullet[] = [];
+  // 所有普通敌人列表
+  enemyList: EnemyJoker[] = [];
 
   // 编队
   squadron: PlaneEnemySquadron[] = [];
@@ -146,6 +141,13 @@ export class PlaneEnemy implements IMiniGam {
   render(ctx: CanvasRenderingContext2D) {
     // 绘制逻辑待优化:相同敌机 或者相同的子弹可否一笔绘制
 
+    for (let i = 0; i < this.enemyList.length; i++) {
+      if (this.enemyList[i]) {
+        this.enemyList[i].render(ctx);
+      }
+    }
+    return;
+
     for (let i = 0; i < this.bigEnemyList.length; i++) {
       this.bigEnemyList[i].render(ctx);
     }
@@ -163,16 +165,10 @@ export class PlaneEnemy implements IMiniGam {
         this.enemyList[i].render(ctx);
       }
     }
-    for (let i = 0; i < this.bulletList.length; i++) {
-      if (this.bulletList[i]) {
-        this.bulletList[i].render(ctx);
-      }
-    }
   }
 
   // 生成敌机
   spawnEnemy() {
-    const { canvasWidth, canvasHeight } = this.gameParams;
     let type: any = Math.floor(Math.random() * 3);
     // let type: any = 0;
 
@@ -183,61 +179,42 @@ export class PlaneEnemy implements IMiniGam {
     } else if (type == 2) {
       type = MiniPlaneEnemyType.LEVEL3;
     }
-    const unit = new PlaneEnemyUnit(type, canvasWidth, canvasHeight, this);
 
-    this.enemyList.push(unit);
-  }
-
-  // 添加子弹
-  addBullet(type: MiniPlaneEnemyType, planeEnemyUnit: PlaneEnemyUnit) {
-    const bulletInstance = new PlaneEnemyBullet(type, planeEnemyUnit);
-    this.bulletList.push(bulletInstance);
+    const joker = new EnemyJoker(
+      {
+        unitWidth: 80,
+        unitHeight: 60,
+        unitX: 0,
+        unitY: 0,
+        speedX: 0,
+        speedY: 0,
+        shootCooldown: 10,
+        canvasHeight: this.gameParams.canvasHeight,
+        canvasWidth: this.gameParams.canvasWidth,
+        health: 1000,
+        score: 2000,
+      },
+      type,
+      this
+    );
+    this.enemyList.push(joker);
   }
 
   // 移除敌机 todo:现在同屏敌机少，后续优化
-  removeUnit(unit: PlaneEnemyUnit) {
+  removeJoker(unit: EnemyJoker) {
     const ind = this.enemyList.indexOf(unit);
     if (ind > -1) {
       this.enemyList.splice(ind, 1);
-
-      // 此时随机生成一个新的敌机
-      this.spawnEnemy();
+      // 此时随机生成一个新的敌机  todo 后续加游戏流程控制器 进行控制
+      // this.spawnEnemy();
     }
   }
 
   // 判断是否命中普通敌机
   isHitEnemy(bullet: PlaneBullet) {
-    // for (let i = 0; i < this.enemyList.length; i++) {
-    //   if (this.enemyList[i]) {
-    //     if (this.enemyList[i].isHit(bullet)) {
-    //       this.enemyList[i].updateHp(bullet);
-    //       const dead = this.enemyList[i].isDead();
-    //       let score = 0;
-    //       if (dead) {
-    //         // 敌机死亡
-    //         score = this.enemyList[i].enemyUnit.deadScore;
-    //         const enemyCenterArr = this.enemyList[i].getPos();
-    //         this.miniFly.createEffect(
-    //           IMiniPlaneEffectType.EXPLODE,
-    //           enemyCenterArr[0],
-    //           enemyCenterArr[1]
-    //         );
-
-    //         // 依据各种条件，生成装备
-    //         this.miniFly.updateToolBox(this.enemyList[i]);
-    //         // 需要将敌机从列表中移除
-    //         this.removeUnit(this.enemyList[i]);
-    //       } else {
-    //         // 敌机未死亡
-    //         score = this.enemyList[i].enemyUnit.score;
-    //       }
-
-    //       this.miniFly.updateScore(score);
-
-    //       return true;
-    //     }
-    //   }
-    // }
+    if (this.isHitJoker(bullet)) {
+      return true;
+    }
 
     if (this.isHitSquadron(bullet)) {
       return true;
@@ -249,6 +226,36 @@ export class PlaneEnemy implements IMiniGam {
 
     if (this.isHitBoss(bullet)) {
       return true;
+    }
+
+    return false;
+  }
+
+  // 判断是否命中普通的joker
+  isHitJoker(bullet: PlaneBullet) {
+    for (let i = 0; i < this.enemyList.length; i++) {
+      const hitInfo = this.enemyList[i].isHitUnit(bullet);
+      if (hitInfo) {
+        // 命中
+        if (hitInfo.dead) {
+          // boss死亡
+          this.miniFly.createEffect(
+            IMiniPlaneEffectType.EXPLODE,
+            hitInfo.x,
+            hitInfo.y
+          );
+        } else {
+          // boss未死亡
+          this.miniFly.createEffect(
+            IMiniPlaneEffectType.DAMAGE,
+            hitInfo.x,
+            hitInfo.y
+          );
+        }
+
+        this.miniFly.updateScore(hitInfo.score);
+        return true;
+      }
     }
 
     return false;
@@ -345,40 +352,31 @@ export class PlaneEnemy implements IMiniGam {
     return false;
   }
 
-  removeBullet(bullet: PlaneEnemyBullet) {
-    const ind = this.bulletList.indexOf(bullet);
-    if (ind > -1) {
-      this.bulletList.splice(ind, 1);
-    }
-  }
-
   // 将屏幕中所有的敌机扣一条血，并移除所有子弹
   clearEnemy() {
-    for (let i = 0; i < this.enemyList.length; i++) {
-      if (this.enemyList[i]) {
-        this.enemyList[i].updateHpByNum(1);
-        const dead = this.enemyList[i].isDead();
-        let score = 0;
-        const enemyCenterArr = this.enemyList[i].getPos();
-        this.miniFly.createEffect(
-          IMiniPlaneEffectType.EXPLODE,
-          enemyCenterArr[0],
-          enemyCenterArr[1]
-        );
-        if (dead) {
-          // 敌机死亡
-          score = this.enemyList[i].enemyUnit.deadScore;
-          this.removeUnit(this.enemyList[i]);
-        } else {
-          // 敌机未死亡
-          score = this.enemyList[i].enemyUnit.score;
-        }
-
-        this.miniFly.updateScore(score);
-      }
-    }
-
-    this.bulletList = [];
+    // for (let i = 0; i < this.enemyList.length; i++) {
+    //   if (this.enemyList[i]) {
+    //     this.enemyList[i].updateHpByNum(1);
+    //     const dead = this.enemyList[i].isDead();
+    //     let score = 0;
+    //     const enemyCenterArr = this.enemyList[i].getPos();
+    //     this.miniFly.createEffect(
+    //       IMiniPlaneEffectType.EXPLODE,
+    //       enemyCenterArr[0],
+    //       enemyCenterArr[1]
+    //     );
+    //     if (dead) {
+    //       // 敌机死亡
+    //       score = this.enemyList[i].enemyUnit.deadScore;
+    //       this.removeUnit(this.enemyList[i]);
+    //     } else {
+    //       // 敌机未死亡
+    //       score = this.enemyList[i].enemyUnit.score;
+    //     }
+    //     this.miniFly.updateScore(score);
+    //   }
+    // }
+    // this.bulletList = [];
   }
 
   // 获取战机的位置

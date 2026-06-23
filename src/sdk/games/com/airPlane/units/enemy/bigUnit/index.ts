@@ -92,7 +92,7 @@ export class BigEnemyUnit extends PlaneUnit {
         this.missileList = [];
 
         // 销毁当前实例
-        this.planeEnemy.removeBigEnemy(this);
+        this.destroy()
       }
     );
     this.missileList.push(missile);
