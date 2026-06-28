@@ -1,5 +1,6 @@
 import { EasedMove } from '../../../../../../utils/Animate';
 import {
+  EnemyType,
   type IBossConfig,
 } from '../../../type';
 import {
@@ -16,6 +17,8 @@ import { BossBullet } from './bossBullet';
 
 
 export class EnemyBoss extends PlaneUnit {
+  type:EnemyType = EnemyType.BOSS
+
   config: IBossConfig;
   move: EasedMove | null = null;
 

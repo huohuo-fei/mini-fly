@@ -99,25 +99,6 @@ export class PlaneBulletBox extends PlaneBase {
     }
   }
 
-  buildMissileBullet(p1:Vector2, p2:Vector2,height:number) {
-    // 外层实现
-    // 1. 计算中点
-    const mx = (p1.x + p2.x) / 2;
-    const my = (p1.y + p2.y) / 2;
-
-    // 2. 计算垂直方向 (标准化向量)
-    const dx = p2.x - p1.x;
-    const dy = p2.y - p1.y;
-    const len = Math.sqrt(dx * dx + dy * dy);
-    // 垂直向量: (-dy, dx) 再除以长度得到单位向量
-    const nx = -dy / len;
-    const ny = dx / len;
-
-    // 3. 计算顶点 (在中点基础上偏移)
-    const vertexX = mx + nx * height;
-    const vertexY = my + ny * height;
-  }
-
   updatePosX(x: number) {
     this.params.bulletX = x;
   }

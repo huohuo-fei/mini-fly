@@ -3,6 +3,7 @@ import type { PlaneBody } from './planeBody';
 import type { PlaneBullet } from './planeBullet';
 import type { PlaneBulletBox } from './PlaneBulletBox';
 import type { HitInfo, PlaneUnitParams } from './type';
+import { nanoid } from 'nanoid';
 
 export class PlaneUnit extends PlaneBase {
   canvasWidth: number = 0;
@@ -25,6 +26,8 @@ export class PlaneUnit extends PlaneBase {
 
   score: number = 0;
   deadScore: number = 0;
+
+  id: string = nanoid();
   constructor(params: PlaneUnitParams) {
     super();
     this.parseParams(params);
@@ -53,6 +56,7 @@ export class PlaneUnit extends PlaneBase {
       this.bulletBoxList[i].render(ctx);
     }
     ctx.restore();
+    this.invisible()
   }
 
   // 同步最新的战机位置
@@ -119,5 +123,23 @@ export class PlaneUnit extends PlaneBase {
   // 判断是否需要销毁当前作战单元
   isDestroy() {
     return true;
+  }
+
+  // 当前body 超出了可视范围，则销毁
+  invisible() {
+    const { unitX, unitY, unitWidth, unitHeight, canvasHeight, canvasWidth } =
+      this;
+
+    const t = unitY + unitHeight;
+    const l = unitX + unitWidth;
+    const b = unitY - unitHeight;
+    const r = unitX - unitWidth;
+
+    if (t < 0 || l < 0 || b > canvasHeight || r > canvasWidth) {
+      // 不可见的范围
+      this.destroy();
+    } else {
+      // 可见范围
+    }
   }
 }

@@ -37,7 +37,10 @@ export class PlaneBullet extends PlaneBase {
     this.matrix.makeTranslation(this.params.bulletX, this.params.bulletY);
   }
   render(ctx: CanvasRenderingContext2D) {
-    if(!this.isDraw())return
+    if(!this.isDraw()){
+      this.bulletBox.removeBullet(this)
+      return
+    }
     ctx.save();
     ctx.translate(this.matrix.elements[6], this.matrix.elements[7]);
     ctx.beginPath();

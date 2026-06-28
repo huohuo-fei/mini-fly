@@ -1,6 +1,6 @@
 import { Vector2 } from '../../../../../../utils/Matrix3';
 import type { PlaneEnemy } from '../planeEnemy';
-import type { ISquadronConfig } from '../../../type';
+import { EnemyType, type ISquadronConfig } from '../../../type';
 import { PlaneUnit } from '../../../base/planeUnit';
 import {
   PlaneBulletType,
@@ -16,7 +16,8 @@ import type { PlaneBullet } from '../../../base/planeBullet';
 export class PlaneEnemySquadron extends PlaneUnit {
   config: ISquadronConfig;
   planeEnemy: PlaneEnemy;
-  planeBody: SquadronBody;
+  planeBody: SquadronBody | null = null;
+  type: EnemyType = EnemyType.SQUADRON;
   constructor(
     params: PlaneUnitParams,
     config: ISquadronConfig,
@@ -55,6 +56,7 @@ export class PlaneEnemySquadron extends PlaneUnit {
   }
 
   buildBullet() {
+    if (!this.planeBody) return;
     const bulletParams = JSON.parse(
       JSON.stringify(planeSquadronBullet)
     ) as PlaneBulletParams;
@@ -88,6 +90,7 @@ export class PlaneEnemySquadron extends PlaneUnit {
   }
 
   updateEnemyPos() {
+    if (!this.planeBody) return;
     for (let i = 0; i < this.planeBody.enemyList.length; i++) {
       const enemy = this.planeBody.enemyList[i];
       const vec = new Vector2(enemy.cx, enemy.cy);
@@ -98,6 +101,7 @@ export class PlaneEnemySquadron extends PlaneUnit {
   }
 
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
+    if (!this.planeBody) return null;
     const {
       bulletX: bx,
       bulletY: by,
@@ -125,7 +129,7 @@ export class PlaneEnemySquadron extends PlaneUnit {
         if (newHealth <= 0) {
           enemy.dead = true;
           const bullet = this.bulletBoxList[i];
-          bullet.stopBullet()
+          bullet.stopBullet();
         }
         return {
           x: vec2.x,
@@ -142,21 +146,44 @@ export class PlaneEnemySquadron extends PlaneUnit {
   render(ctx: CanvasRenderingContext2D) {
     const { speedX } = this;
     this.matrix.translate(speedX, 0);
-    super.render(ctx);
     this.updateAttackerPos();
     this.updateEnemyPos();
-    this.destroy()
+    super.render(ctx);
+    this.test(ctx);
+    this.removeInstance();
   }
 
   destroy() {
-    const flag = this.isDestroy();
-    if(flag){
-      super.destroy()
-      this.planeEnemy.removeSquadron(this)
+    super.destroy();
+  }
+
+  // 在移除机体后，先不能移除整个实例，因为子弹还在运行
+  // todo:后续考虑是否需要把子弹和机体分离
+  removeInstance() {
+    if (!this.planeBody) {
+      for (let i = 0; i < this.bulletBoxList.length; i++) {
+        const bullet = this.bulletBoxList[i];
+        // console.log(bullet);
+        if (bullet.bullets.length !== 0) {
+          return;
+        }
+      }
+    this.planeEnemy.removeSquadron(this);
+
     }
   }
 
-  isDestroy(): boolean {
+  test(ctx: CanvasRenderingContext2D) {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const posX = this.matrix.elements[6];
+    const posY = this.matrix.elements[7];
+    ctx.strokeStyle = 'red';
+    ctx.strokeRect(posX, posY, 10, 10);
+    ctx.restore();
+  }
+
+  invisible() {
     // 判断当前编队是否在屏幕内
     const { unitWidth, canvasHeight, canvasWidth } = this;
 
@@ -164,17 +191,16 @@ export class PlaneEnemySquadron extends PlaneUnit {
     const posX = this.matrix.elements[6];
     const posY = this.matrix.elements[7];
 
+    const h = Math.abs(Math.sin(this.config.angle) * w);
+
     if (
       posX < 0 - w / 2 ||
       posX > canvasWidth + w / 2 ||
-      posY < -w ||
-      posY > canvasHeight + w
+      posY < -h ||
+      posY > canvasHeight + h
     ) {
-      // console.log('编队超出屏幕',posX);
-      return true;
+      this.destroy();
     } else {
-      // console.log('编队未超出屏幕',posX);
-      return false;
     }
   }
 }

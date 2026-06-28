@@ -6,27 +6,31 @@ import type {
 } from '../../../../../type';
 import {
   IMiniPlaneEffectType,
-  MiniPlaneEnemyType,
   type IBigEnemyConfig,
   type IBossConfig,
   type ISquadronConfig,
+  EnemyType,
+  type IMiniPlaneEnemy,
 } from '../../type';
 import { PlaneEnemySquadron } from './squadron';
-import { bigEnemyConfig, bossConfig, planeSquadronConfig } from '../../config';
+import { bigEnemyConfig, bossConfig } from '../../config';
 import { BigEnemyUnit } from './bigUnit';
 import { EnemyBoss } from './boss';
 import type { PlaneBullet } from '../../base/planeBullet';
 import { EnemyJoker } from './joker';
+import type { PlaneUnitParams } from '../../base/type';
+import type { PlaneUnit } from '../../base/planeUnit';
 export class PlaneEnemy implements IMiniGam {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
 
-  // 所有普通敌人列表
-  enemyList: EnemyJoker[] = [];
-
-  // 编队
-  squadron: PlaneEnemySquadron[] = [];
-
+  // 所有类型的敌机
+  enemyMap: { [EnemyType: string]: PlaneUnit[] } = {
+    [EnemyType.JOKER]: [],
+    [EnemyType.SQUADRON]: [],
+    [EnemyType.BIG]: [],
+    [EnemyType.BOSS]: [],
+  };
   // 大敌机
   bigEnemyList: BigEnemyUnit[] = [];
 
@@ -36,42 +40,51 @@ export class PlaneEnemy implements IMiniGam {
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
     this.miniFly = miniFly;
     this.gameParams = params;
-    for (let i = 0; i < 10; i++) {
-      this.spawnEnemy();
+  }
+
+  buildEnemyByConfig(config: any) {
+    const type = config.type as EnemyType;
+
+    switch (type) {
+      case EnemyType.JOKER:
+        this.buildJoker(config);
+        return;
+      case EnemyType.SQUADRON:
+        this.buildSquadron(config);
+        return;
+      case EnemyType.BIG:
+        this.buildBigEnemy(config);
+        return;
+      case EnemyType.BOSS:
+        this.buildBoss(config);
+        return;
     }
-
-    this.buildSquadron();
-    this.buildBigEnemy();
-    this.buildBoss();
   }
 
-  buildSquadron() {
-    const c1 = JSON.parse(
-      JSON.stringify(planeSquadronConfig)
-    ) as ISquadronConfig;
-
-    const newS = new PlaneEnemySquadron(
-      {
-        unitWidth: 80,
-        unitHeight: 60,
-        unitX: 0,
-        unitY: 0,
-        speedX: 1,
-        speedY: 1,
-        shootCooldown: 10,
-        canvasHeight: this.gameParams.canvasHeight,
-        canvasWidth: this.gameParams.canvasWidth,
-        health: 10,
-        score: 100,
-      },
-      c1,
-      this
-    );
-
-    this.squadron.push(newS);
+  buildJoker(info: any) {
+    const unitParams = info.params as PlaneUnitParams;
+    const config = info.config as IMiniPlaneEnemy;
+    const joker = new EnemyJoker(unitParams, config.type, this);
+    this.enemyMap[EnemyType.JOKER].push(joker);
   }
 
-  buildBigEnemy() {
+  buildSquadron(info: any) {
+    const unitParams = info.params as PlaneUnitParams;
+    const config = info.config as ISquadronConfig;
+    const squadron = new PlaneEnemySquadron(unitParams, config, this);
+    this.enemyMap[EnemyType.SQUADRON].push(squadron);
+  }
+
+  buildBigEnemy(info: any) {
+    const unitParams = info.params as PlaneUnitParams;
+    const config = info.config as IBigEnemyConfig;
+
+    const bigEnemy = new BigEnemyUnit(unitParams, config, this);
+    this.bigEnemyList.push(bigEnemy);
+    this.enemyMap[EnemyType.BIG].push(bigEnemy);
+
+    return;
+
     const bc = JSON.parse(JSON.stringify(bigEnemyConfig)) as IBigEnemyConfig;
     bc.x = 60;
     bc.targetHeight = 100;
@@ -115,7 +128,16 @@ export class PlaneEnemy implements IMiniGam {
     this.bigEnemyList.push(b2);
   }
 
-  buildBoss() {
+  buildBoss(info: any) {
+    const unitParams = info.params as PlaneUnitParams;
+    const config = info.config as IBossConfig;
+
+    const b = new EnemyBoss(unitParams, config);
+    this.bossList.push(b);
+    this.enemyMap[EnemyType.BOSS].push(b);
+
+    return;
+
     const b1 = JSON.parse(JSON.stringify(bossConfig)) as IBossConfig;
 
     const cx = this.gameParams.canvasWidth / 2;
@@ -141,72 +163,16 @@ export class PlaneEnemy implements IMiniGam {
   render(ctx: CanvasRenderingContext2D) {
     // 绘制逻辑待优化:相同敌机 或者相同的子弹可否一笔绘制
 
-    for (let i = 0; i < this.enemyList.length; i++) {
-      if (this.enemyList[i]) {
-        this.enemyList[i].render(ctx);
+    for (const key in this.enemyMap) {
+      const list = this.enemyMap[key];
+      // if (key === EnemyType.JOKER) {
+      //   console.log(list.length,'joker');
+      // }
+      for (let i = 0; i < list.length; i++) {
+        if (list[i]) {
+          list[i].render(ctx);
+        }
       }
-    }
-    return;
-
-    for (let i = 0; i < this.bigEnemyList.length; i++) {
-      this.bigEnemyList[i].render(ctx);
-    }
-    for (let i = 0; i < this.squadron.length; i++) {
-      this.squadron[i].render(ctx);
-    }
-    return;
-
-    for (let i = 0; i < this.bossList.length; i++) {
-      this.bossList[i].render(ctx);
-    }
-
-    for (let i = 0; i < this.enemyList.length; i++) {
-      if (this.enemyList[i]) {
-        this.enemyList[i].render(ctx);
-      }
-    }
-  }
-
-  // 生成敌机
-  spawnEnemy() {
-    let type: any = Math.floor(Math.random() * 3);
-    // let type: any = 0;
-
-    if (type == 0) {
-      type = MiniPlaneEnemyType.LEVEL1;
-    } else if (type == 1) {
-      type = MiniPlaneEnemyType.LEVEL2;
-    } else if (type == 2) {
-      type = MiniPlaneEnemyType.LEVEL3;
-    }
-
-    const joker = new EnemyJoker(
-      {
-        unitWidth: 80,
-        unitHeight: 60,
-        unitX: 0,
-        unitY: 0,
-        speedX: 0,
-        speedY: 0,
-        shootCooldown: 10,
-        canvasHeight: this.gameParams.canvasHeight,
-        canvasWidth: this.gameParams.canvasWidth,
-        health: 1000,
-        score: 2000,
-      },
-      type,
-      this
-    );
-    this.enemyList.push(joker);
-  }
-
-  // 移除敌机 todo:现在同屏敌机少，后续优化
-  removeJoker(unit: EnemyJoker) {
-    const ind = this.enemyList.indexOf(unit);
-    if (ind > -1) {
-      this.enemyList.splice(ind, 1);
-      // 此时随机生成一个新的敌机  todo 后续加游戏流程控制器 进行控制
-      // this.spawnEnemy();
     }
   }
 
@@ -233,8 +199,9 @@ export class PlaneEnemy implements IMiniGam {
 
   // 判断是否命中普通的joker
   isHitJoker(bullet: PlaneBullet) {
-    for (let i = 0; i < this.enemyList.length; i++) {
-      const hitInfo = this.enemyList[i].isHitUnit(bullet);
+    const jokerList = this.enemyMap[EnemyType.JOKER];
+    for (let i = 0; i < jokerList.length; i++) {
+      const hitInfo = jokerList[i].isHitUnit(bullet);
       if (hitInfo) {
         // 命中
         if (hitInfo.dead) {
@@ -263,9 +230,11 @@ export class PlaneEnemy implements IMiniGam {
 
   // 判断是否命中编队
   isHitSquadron(bullet: PlaneBullet) {
+    
+    const squadronList = this.enemyMap[EnemyType.SQUADRON];
     // 判断是否命中编队
-    for (let i = 0; i < this.squadron.length; i++) {
-      const hitInfo = this.squadron[i].isHitUnit(bullet);
+    for (let i = 0; i < squadronList.length; i++) {
+      const hitInfo = squadronList[i].isHitUnit(bullet);
       if (hitInfo) {
         // 命中
         if (hitInfo.dead) {
@@ -384,11 +353,24 @@ export class PlaneEnemy implements IMiniGam {
     return this.miniFly.planeAttacker.getPos();
   }
 
+  // 移除敌机 todo:现在同屏敌机少，后续优化
+  removeJoker(unit: EnemyJoker) {
+    const jokerList = this.enemyMap[EnemyType.JOKER];
+    const ind = jokerList.indexOf(unit);
+    if (ind > -1) {
+      jokerList.splice(ind, 1);
+      this.removeEnemyByType(EnemyType.JOKER);
+    }
+  }
+
   // 移除编队
   removeSquadron(squadron: PlaneEnemySquadron) {
-    const ind = this.squadron.indexOf(squadron);
+    const squadronList = this.enemyMap[EnemyType.SQUADRON];
+    const ind = squadronList.indexOf(squadron);
     if (ind > -1) {
-      this.squadron.splice(ind, 1);
+      squadronList.splice(ind, 1);
+      this.removeEnemyByType(EnemyType.SQUADRON);
+
     }
   }
 
@@ -397,7 +379,13 @@ export class PlaneEnemy implements IMiniGam {
     const ind = this.bigEnemyList.indexOf(bigEnemy);
     if (ind > -1) {
       this.bigEnemyList.splice(ind, 1);
+      this.removeEnemyByType(EnemyType.BIG);
+
     }
+  }
+
+  removeEnemyByType(type: EnemyType) {
+    this.miniFly.removeControlEnemyByType(type);
   }
 
   requestEffect(effectType: IMiniPlaneEffectType, x: number, y: number) {

@@ -5,7 +5,11 @@ import {
   type PlaneUnitParams,
   type HitInfo,
 } from '../../../base/type';
-import { MiniPlaneEnemyType, type IMiniPlaneEnemy } from '../../../type';
+import {
+  MiniPlaneEnemyType,
+  type IMiniPlaneEnemy,
+  EnemyType,
+} from '../../../type';
 import { JokerBody } from './jokerBody';
 import {
   enemyConfig2,
@@ -20,25 +24,24 @@ import type { PlaneEnemy } from '../planeEnemy';
 export class EnemyJoker extends PlaneUnit {
   config: IMiniPlaneEnemy;
   planeEnemy: PlaneEnemy;
+  type: EnemyType = EnemyType.JOKER;
   constructor(
     params: PlaneUnitParams,
     type: MiniPlaneEnemyType,
-    planeEnemy: PlaneEnemy,
-    config?: IMiniPlaneEnemy,
+    planeEnemy: PlaneEnemy
   ) {
     super(params);
 
-    if (!config) {
-      if (type === MiniPlaneEnemyType.LEVEL1) {
-        config = JSON.parse(JSON.stringify(enemyConfig1));
-      } else if (type === MiniPlaneEnemyType.LEVEL2) {
-        config = JSON.parse(JSON.stringify(enemyConfig2));
-      } else if (type === MiniPlaneEnemyType.LEVEL3) {
-        config = JSON.parse(JSON.stringify(enemyConfig3));
-      }
+    let config = null;
+    if (type === MiniPlaneEnemyType.LEVEL1) {
+      config = JSON.parse(JSON.stringify(enemyConfig1));
+    } else if (type === MiniPlaneEnemyType.LEVEL2) {
+      config = JSON.parse(JSON.stringify(enemyConfig2));
+    } else if (type === MiniPlaneEnemyType.LEVEL3) {
+      config = JSON.parse(JSON.stringify(enemyConfig3));
     }
-    this.config = JSON.parse(JSON.stringify(config));
-    this.planeEnemy = planeEnemy
+    this.config = JSON.parse(JSON.stringify(config)) as IMiniPlaneEnemy
+    this.planeEnemy = planeEnemy;
     this.updateParams();
 
     this.planeBody = new JokerBody(
@@ -102,9 +105,13 @@ export class EnemyJoker extends PlaneUnit {
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
     const res = super.isHitUnit(bullet);
     if (res && res.dead) {
-      this.planeEnemy.removeJoker(this)
       this.destroy();
     }
     return res;
+  }
+
+  destroy(): void {
+    super.destroy()
+    this.planeEnemy.removeJoker(this);
   }
 }

@@ -1,7 +1,7 @@
 import { Vector2 } from '../../../../../../utils/Matrix3';
 import type { PlaneEnemy } from '../planeEnemy';
 import { EasedMove } from '../../../../../../utils/Animate';
-import { IMiniPlaneEffectType, type IBigEnemyConfig } from '../../../type';
+import { IMiniPlaneEffectType, type IBigEnemyConfig, EnemyType } from '../../../type';
 import { PlaneUnit } from '../../../base/planeUnit';
 import {
   PlaneBulletType,
@@ -16,6 +16,7 @@ import type { PlaneBullet } from '../../../base/planeBullet';
 import { PlaneMissile } from '../../../base/planeMissile';
 
 export class BigEnemyUnit extends PlaneUnit {
+  type:EnemyType = EnemyType.BIG
   config: IBigEnemyConfig;
   move: EasedMove | null = null;
   angle: number = 0;
@@ -178,7 +179,6 @@ export class BigEnemyUnit extends PlaneUnit {
       bullet.stopBullet();
     }
     this.planeBody = null;
-
     this.planeEnemy.removeBigEnemy(this);
   }
 }

@@ -5,10 +5,11 @@ import { PlaneAttacker } from './units/attacker/planeAttacker';
 import { PlaneBg } from './units/background/planeBg';
 import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
-import { type IMiniPlaneEffectType } from './type';
+import { EnemyType, type IMiniPlaneEffectType } from './type';
 import { PlaneBar } from './units/bar/planeBar';
 import { PlaneToolBox } from './units/tools/planeToolBox';
-import type { PlaneEnemyUnit } from './units/enemy/planeEnemyUnit';
+
+import { PlaneControl } from './units/control';
 
 export class MiniFly implements IMiniGam {
   planeBackground: PlaneBg;
@@ -18,6 +19,7 @@ export class MiniFly implements IMiniGam {
   planeEffect: PlaneEffect;
   planeBar: PlaneBar;
   planeToolBox: PlaneToolBox;
+  planeControl: PlaneControl;
   constructor(gameParams: IMiniGameParams) {
     this.planeBackground = new PlaneBg();
     this.planeAttacker = new PlaneAttacker(gameParams);
@@ -25,10 +27,12 @@ export class MiniFly implements IMiniGam {
     this.planeEffect = new PlaneEffect();
     this.planeBar = new PlaneBar(this);
     this.planeToolBox = new PlaneToolBox(gameParams, this);
+    this.planeControl = new PlaneControl(this, this.planeEnemy);
   }
 
   // render 方法
   render(ctx: CanvasRenderingContext2D) {
+    this.planeControl.render();
     this.planeBackground.render(ctx);
     this.planeAttacker.render(ctx);
     this.planeEnemy.render(ctx);
@@ -75,9 +79,13 @@ export class MiniFly implements IMiniGam {
   }
 
   // 更新道具
-  updateToolBox(enemy: PlaneEnemyUnit) {
-    this.planeToolBox.buildTool(enemy);
-    // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.BOMB)
+  // updateToolBox(enemy: PlaneEnemyUnit) {
+  // this.planeToolBox.buildTool(enemy);
+  // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.BOMB)
+  // }
+
+  removeControlEnemyByType(type: EnemyType) {
+    this.planeControl.updateEnemyCountSub(type);
   }
 
   actionStart(action: IMiniActParams) {

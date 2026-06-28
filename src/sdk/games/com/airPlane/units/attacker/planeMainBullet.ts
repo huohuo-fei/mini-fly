@@ -3,7 +3,6 @@ import type { PlaneUnit } from '../../base/planeUnit';
 import type {
   PlaneBulletParams,
   PlaneBulletType,
-  PlaneUnitParams,
 } from '../../base/type';
 
 export class PlaneMainBullet extends PlaneBulletBox {

@@ -1,5 +1,14 @@
+import type { PlaneUnitParams } from "./base/type";
+
 export enum MyBulletType {
   NORMAL = 'normal',
+}
+
+export enum EnemyType {
+  BIG = 'big',
+  JOKER = 'joker',
+  SQUADRON = 'squadron',
+  BOSS = 'boss',
 }
 
 export enum MiniPlaneEnemyType {
@@ -32,7 +41,7 @@ export type MyBulletConfig = {
 export enum IMiniPlaneEffectType {
   EXPLODE = 'explode',
   LIFE = 'life',
-  DAMAGE='damage'
+  DAMAGE = 'damage',
 }
 
 // 特效中 精灵图的配置
@@ -131,32 +140,71 @@ export type IBigEnemyConfig = {
 // boss 配置
 export type IBossConfig = {
   frame: number;
-  w:number;
-  h:number;
+  w: number;
+  h: number;
   targetHeight: number;
-  healthArr:number[]
-}
+  healthArr: number[];
+};
 
 // 编队配置
 export type ISquadronConfig = {
-  w:number;
-  h:number;
+  w: number;
+  h: number;
   count: number;
-  angle:number;
+  angle: number;
   startX: number;
   startY: number;
   gap: number;
   health: number;
-}
+};
 
 export type ISquadronEnemy = {
-  left:number;
-  top:number;
-  w:number;
-  h:number;
-  cx:number;
-  cy:number;
-  health:number;
-  dead:boolean;
+  left: number;
+  top: number;
+  w: number;
+  h: number;
+  cx: number;
+  cy: number;
+  health: number;
+  dead: boolean;
+};
+
+export type EnemyConfig = {
+  id:string,
+  // 波次名称
+  waveName: string,
+  // 敌机类型
+  enemyType: EnemyType,
+  // 持续时间
+  durTime: number,
+  // 当前波次的最大分数
+  maxScore: number,
+  // 屏幕最大存在数量
+  maxCount: number,
+  // 优先级
+  priority: number,
+  // 是否是boss
+  isBoss?: boolean,
+  // 是否无限生成
+  isInfinite?: boolean,
+  // 其他配置
+  otherConfig?:any
 }
 
+export type unLockedEnemy = {
+  type: EnemyType,
+  size:number
+}
+
+// 当前波次的详细信息 用于判断是否进入下一个波次
+export type waveInfo = {
+  startTime: number;
+  gameTime: number;
+  currentScore: number;
+};
+
+export type WaveEnemyConfig = {
+  type:EnemyType,
+  params:PlaneUnitParams,
+  config:any
+}
