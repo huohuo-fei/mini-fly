@@ -37,6 +37,14 @@ export class PlaneEnemy implements IMiniGam {
   // boss
   bossList: EnemyBoss[] = [];
 
+  // 缓存的需要删除的敌机索引
+  enemyDelMap: { [EnemyType: string]: number[] } = {
+    [EnemyType.JOKER]: [],
+    [EnemyType.SQUADRON]: [],
+    [EnemyType.BIG]: [],
+    [EnemyType.BOSS]: [],
+  };
+
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
     this.miniFly = miniFly;
     this.gameParams = params;
@@ -165,9 +173,17 @@ export class PlaneEnemy implements IMiniGam {
 
     for (const key in this.enemyMap) {
       const list = this.enemyMap[key];
-      // if (key === EnemyType.JOKER) {
-      //   console.log(list.length,'joker');
-      // }
+      const delList = this.enemyDelMap[key];
+      for (let i = delList.length - 1; i >= 0; i--) {
+        list.splice(delList[i], 1);
+      }
+      this.enemyDelMap[key] = [];
+
+      if (key === EnemyType.JOKER) {
+        // console.log(list.length,'joker');
+        // console.log(this.enemyDelMap[key].length);
+      }
+
       for (let i = 0; i < list.length; i++) {
         if (list[i]) {
           list[i].render(ctx);
@@ -230,7 +246,6 @@ export class PlaneEnemy implements IMiniGam {
 
   // 判断是否命中编队
   isHitSquadron(bullet: PlaneBullet) {
-    
     const squadronList = this.enemyMap[EnemyType.SQUADRON];
     // 判断是否命中编队
     for (let i = 0; i < squadronList.length; i++) {
@@ -355,11 +370,16 @@ export class PlaneEnemy implements IMiniGam {
 
   // 移除敌机 todo:现在同屏敌机少，后续优化
   removeJoker(unit: EnemyJoker) {
+    // console.log('removeJoker');
+
     const jokerList = this.enemyMap[EnemyType.JOKER];
     const ind = jokerList.indexOf(unit);
     if (ind > -1) {
-      jokerList.splice(ind, 1);
-      this.removeEnemyByType(EnemyType.JOKER);
+      const delArr = this.enemyDelMap[EnemyType.JOKER];
+      if (!delArr.length || !delArr.includes(ind) ) {
+        delArr.push(ind);
+        this.removeEnemyByType(EnemyType.JOKER);
+      }
     }
   }
 
@@ -368,19 +388,24 @@ export class PlaneEnemy implements IMiniGam {
     const squadronList = this.enemyMap[EnemyType.SQUADRON];
     const ind = squadronList.indexOf(squadron);
     if (ind > -1) {
-      squadronList.splice(ind, 1);
-      this.removeEnemyByType(EnemyType.SQUADRON);
-
+      const delArr = this.enemyDelMap[EnemyType.SQUADRON];
+      if (!delArr.length || !delArr.includes(ind) ) {
+        delArr.push(ind);
+        this.removeEnemyByType(EnemyType.SQUADRON);
+      }
     }
   }
 
   // 移除大头兵
   removeBigEnemy(bigEnemy: BigEnemyUnit) {
-    const ind = this.bigEnemyList.indexOf(bigEnemy);
+    const bigList = this.enemyMap[EnemyType.BIG];
+    const ind = bigList.indexOf(bigEnemy);
     if (ind > -1) {
-      this.bigEnemyList.splice(ind, 1);
-      this.removeEnemyByType(EnemyType.BIG);
-
+      const delArr = this.enemyDelMap[EnemyType.BIG];
+      if (!delArr.length || !delArr.includes(ind) ) {
+        delArr.push(ind);
+        this.removeEnemyByType(EnemyType.BIG);
+      }
     }
   }
 

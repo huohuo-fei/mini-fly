@@ -6,9 +6,10 @@ import { PlaneBase } from '../../base/planeBase';
 import type { PlaneWave } from '../../base/planeWave';
 import { EnemyType } from '../../type';
 import type { PlaneEnemy } from '../enemy/planeEnemy';
-import { WAVE_1_CONFIG, WAVE_2_CONFIG } from '../wave/config';
+import { WAVE_1_CONFIG, WAVE_2_CONFIG, WAVE_3_CONFIG } from '../wave/config';
 import { WaveStep1 } from '../wave/wave';
 import { WaveStep2 } from '../wave/waveStep2';
+import { WaveStep3 } from '../wave/waveStep3';
 
 export class PlaneControl extends PlaneBase {
   initFlag: boolean = false;
@@ -56,11 +57,15 @@ export class PlaneControl extends PlaneBase {
 
     const t2 = new WaveStep2(this.planeEnemy.gameParams, this, WAVE_2_CONFIG);
 
+    const t3 = new WaveStep3(this.planeEnemy.gameParams, this, WAVE_3_CONFIG);
+
     t1.appendNextWave(t2);
 
+    t2.appendNextWave(t3); 
+
     // todo : 后续追加波次结构
-    this.waveTree = t2;
-    this.activeWave = t2;
+    this.waveTree = t1;
+    this.activeWave = t1;
   }
 
   // 依据当前的波次 生成敌机

@@ -1,5 +1,6 @@
 import { PlaneBase } from "./planeBase";
-import type { PlaneBodyParams } from "./type";
+import type { PlaneBullet } from "./planeBullet";
+import type {PlaneBodyParams } from "./type";
 
 export class PlaneBody extends PlaneBase {
   bodyWidth: number = 0;
@@ -8,10 +9,12 @@ export class PlaneBody extends PlaneBase {
   bodyY: number = 0;
   speedX:number = 0;
   speedY: number = 0;
+  enable:boolean = false;
 
   constructor(bodyParams:PlaneBodyParams){
     super()
     this.parseParams(bodyParams)
+    this.enable = true;
   }
 
   parseParams(bodyParams:PlaneBodyParams){
@@ -22,5 +25,4 @@ export class PlaneBody extends PlaneBase {
     this.speedX = bodyParams.speedX;
     this.speedY = bodyParams.speedY;
   }
-
 }

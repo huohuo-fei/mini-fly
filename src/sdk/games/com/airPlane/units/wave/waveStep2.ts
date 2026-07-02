@@ -15,8 +15,7 @@ export class WaveStep2 extends PlaneWave {
     const { config } = this;
 
     // 时间判定
-    const subTime = info.gameTime - info.startTime;
-    const isTimeReady = this.config.durTime <= subTime;
+    const isTimeReady =this.config.durTime <= info.gameTime;
 
     // 2. 得分判定（弹性模式）
     let isScoreReady = false;
@@ -28,8 +27,10 @@ export class WaveStep2 extends PlaneWave {
       const progress = radio > 0 ? Math.min(radio, 1) : 0;
       const timeBonus = Math.min(progress * 0.3, 0.3);
       const adjustedTime = config.durTime * (1 - timeBonus);
-      isScoreReady = subTime >= adjustedTime;
+      isScoreReady = info.gameTime >= adjustedTime;
     }
+    // console.log(isScoreReady , isTimeReady);
+    
 
     // 时间 或者分数 达到解锁下一个波次
     if (isScoreReady || isTimeReady) {
@@ -50,8 +51,6 @@ export class WaveStep2 extends PlaneWave {
     }
 
     const nowTime = Date.now();
-    console.log(nowTime , this.lastTime , this.gapTime);
-    
     if (nowTime - this.lastTime < this.gapTime) {
       return null;
     }

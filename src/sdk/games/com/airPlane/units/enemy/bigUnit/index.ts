@@ -93,7 +93,8 @@ export class BigEnemyUnit extends PlaneUnit {
         this.missileList = [];
 
         // 销毁当前实例
-        this.destroy()
+        // this.destroy()
+        this.planeEnemy.removeBigEnemy(this);
       }
     );
     this.missileList.push(missile);
@@ -101,11 +102,8 @@ export class BigEnemyUnit extends PlaneUnit {
 
   render(ctx: CanvasRenderingContext2D) {
     this.aniMove();
-    ctx.save();
-    ctx.transform(...this.matrix.toCanvasTransform());
-    ctx.restore();
-    super.render(ctx);
 
+    super.render(ctx);
     for (const missile of this.missileList) {
       missile.render(ctx);
     }
@@ -139,7 +137,7 @@ export class BigEnemyUnit extends PlaneUnit {
 
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
 
-    if(!this.planeBody)return null
+    if(!this.planeBody || this.bulletBoxList.length === 0)return null
 
     const { bulletWidth, bulletX, bulletY, combat } = bullet.params;
     const { unitX, unitY } = this;
@@ -174,11 +172,7 @@ export class BigEnemyUnit extends PlaneUnit {
     return null;
   }
 
-  destroy(){
-    for (const bullet of this.bulletBoxList) {
-      bullet.stopBullet();
-    }
-    this.planeBody = null;
-    this.planeEnemy.removeBigEnemy(this);
+  removeUnit(): void {
+    // this.planeEnemy.removeBigEnemy(this);
   }
 }

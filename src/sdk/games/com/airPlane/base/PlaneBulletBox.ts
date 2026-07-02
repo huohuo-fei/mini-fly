@@ -1,11 +1,7 @@
-import type { Vector2 } from '../../../../utils/Matrix3';
 import { PlaneBase } from './planeBase';
 import { PlaneBullet } from './planeBullet';
 import type { PlaneUnit } from './planeUnit';
-import {
-  PlaneBulletType,
-  type PlaneBulletParams,
-} from './type';
+import { PlaneBulletType, type PlaneBulletParams } from './type';
 
 export class PlaneBulletBox extends PlaneBase {
   // 各种类型的子弹共有的参数
@@ -15,12 +11,15 @@ export class PlaneBulletBox extends PlaneBase {
   params: PlaneBulletParams;
   planeUnit: PlaneUnit;
 
+  enable: boolean = false;
+
   constructor(
     type: PlaneBulletType,
     params: PlaneBulletParams,
     planeUnit: PlaneUnit
   ) {
     super();
+    this.enable = true;
     this.type = type;
     this.params = JSON.parse(JSON.stringify(params)) as PlaneBulletParams;
     this.planeUnit = planeUnit;
@@ -85,11 +84,11 @@ export class PlaneBulletBox extends PlaneBase {
         ) as PlaneBulletParams;
 
         // 追踪子弹 需要更改子弹的发射角度
-        const endX = this.planeUnit.attackerX
-        const endY = this.planeUnit.attackerY
-        const startX = this.params.bulletX
-        const startY = this.params.bulletY
-        const angle = Math.atan2(endY - startY, endX - startX)
+        const endX = this.planeUnit.attackerX;
+        const endY = this.planeUnit.attackerY;
+        const startX = this.params.bulletX;
+        const startY = this.params.bulletY;
+        const angle = Math.atan2(endY - startY, endX - startX);
         const vx = Math.cos(angle);
         const vy = Math.sin(angle);
         config.direction = [vx, vy];
@@ -127,16 +126,21 @@ export class PlaneBulletBox extends PlaneBase {
     const ind = this.bullets.indexOf(bullet);
     if (ind > -1) {
       this.bullets.splice(ind, 1);
+
+      // 如果当前的子弹数量为零，则将子弹箱禁用
+      if(this.bullets.length === 0){
+        this.enable = false;
+      }
       return true;
     }
 
     return false;
   }
 
-  stopBullet(){
-    if(this.bulletTimer){
-      clearInterval(this.bulletTimer)
-      this.bulletTimer = null
+  stopBullet() {
+    if (this.bulletTimer) {
+      clearInterval(this.bulletTimer);
+      this.bulletTimer = null;
     }
   }
 
@@ -150,6 +154,4 @@ export class PlaneBulletBox extends PlaneBase {
     }
     ctx.restore();
   }
-
-
 }

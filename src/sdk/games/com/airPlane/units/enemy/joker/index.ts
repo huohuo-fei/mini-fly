@@ -97,9 +97,9 @@ export class EnemyJoker extends PlaneUnit {
     });
   }
 
-  render(ctx: CanvasRenderingContext2D): void {
-    super.render(ctx);
+   beforeRender(): void {
     this.updatePos();
+    
   }
 
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
@@ -110,8 +110,7 @@ export class EnemyJoker extends PlaneUnit {
     return res;
   }
 
-  destroy(): void {
-    super.destroy()
+  removeUnit(){
     this.planeEnemy.removeJoker(this);
   }
 }

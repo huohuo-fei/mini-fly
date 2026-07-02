@@ -143,34 +143,16 @@ export class PlaneEnemySquadron extends PlaneUnit {
     return null;
   }
 
-  render(ctx: CanvasRenderingContext2D) {
+  beforeRender(){
     const { speedX } = this;
     this.matrix.translate(speedX, 0);
     this.updateAttackerPos();
     this.updateEnemyPos();
-    super.render(ctx);
+  }
+
+  render(ctx: CanvasRenderingContext2D) {
     this.test(ctx);
-    this.removeInstance();
-  }
-
-  destroy() {
-    super.destroy();
-  }
-
-  // 在移除机体后，先不能移除整个实例，因为子弹还在运行
-  // todo:后续考虑是否需要把子弹和机体分离
-  removeInstance() {
-    if (!this.planeBody) {
-      for (let i = 0; i < this.bulletBoxList.length; i++) {
-        const bullet = this.bulletBoxList[i];
-        // console.log(bullet);
-        if (bullet.bullets.length !== 0) {
-          return;
-        }
-      }
-    this.planeEnemy.removeSquadron(this);
-
-    }
+    super.render(ctx);
   }
 
   test(ctx: CanvasRenderingContext2D) {
@@ -202,5 +184,9 @@ export class PlaneEnemySquadron extends PlaneUnit {
       this.destroy();
     } else {
     }
+  }
+
+  removeUnit(){
+    this.planeEnemy.removeSquadron(this);
   }
 }

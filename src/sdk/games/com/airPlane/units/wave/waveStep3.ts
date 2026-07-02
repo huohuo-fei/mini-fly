@@ -1,10 +1,12 @@
 import { PlaneWave } from '../../base/planeWave';
-import { MiniPlaneEnemyType, type waveInfo, EnemyType } from '../../type';
+import { bigEnemyConfig } from '../../config';
+import { type waveInfo, EnemyType } from '../../type';
 
 // 第一阶段
-export class WaveStep1 extends PlaneWave {
-  gapTime = 600;
+export class WaveStep3 extends PlaneWave {
+  gapTime = 100;
   lastTime = 0;
+  ind:number = 0
 
   updateWave(info: waveInfo) {
     // 没有配置 找子元素
@@ -12,7 +14,6 @@ export class WaveStep1 extends PlaneWave {
 
     const { config } = this;
 
-    // 时间判定
     const isTimeReady = this.config.durTime <= info.gameTime;
 
     // 2. 得分判定（弹性模式）
@@ -27,6 +28,7 @@ export class WaveStep1 extends PlaneWave {
       const adjustedTime = config.durTime * (1 - timeBonus);
       isScoreReady = info.gameTime >= adjustedTime;
     }
+
     // 时间 或者分数 达到解锁下一个波次
     if (isScoreReady || isTimeReady) {
       return this.nextWave;
@@ -40,7 +42,7 @@ export class WaveStep1 extends PlaneWave {
 
     // 对于普通的敌机 需要对生成的时间 以及屏幕最大敌机数量做限制
     const control = this.control;
-    const size = control.unLockedEnemy[EnemyType.JOKER];
+    const size = control.unLockedEnemy[EnemyType.BIG];
     if (size >= this.config?.maxCount) {
       return null;
     }
@@ -51,35 +53,36 @@ export class WaveStep1 extends PlaneWave {
     }
 
     this.lastTime = nowTime;
-    let type: any = Math.floor(Math.random() * 3);
-    if (type == 0) {
-      type = MiniPlaneEnemyType.LEVEL1;
-    } else if (type == 1) {
-      type = MiniPlaneEnemyType.LEVEL2;
-    } else if (type == 2) {
-      type = MiniPlaneEnemyType.LEVEL3;
+
+    const config = JSON.parse(JSON.stringify(bigEnemyConfig));
+
+    if(this.ind % 2 === 0){
+      config.x = 60;
+    }else{
+      config.x = 400;
     }
 
+    config.targetHeight = 100;
+    
     const unitParams = {
-      unitWidth: 80,
-      unitHeight: 60,
+      unitWidth: 0,
+      unitHeight: 0,
       unitX: 0,
       unitY: 0,
-      speedX: 0,
-      speedY: 0,
-      shootCooldown: 10,
+      speedX: 1,
+      speedY: 1,
+      shootCooldown: 600,
       canvasHeight: this.gameParams.canvasHeight,
       canvasWidth: this.gameParams.canvasWidth,
-      health: 1000,
-      score: 10,
-    };
+      health: 10,
+      score: 200,
+    }
+    this.ind++
 
     return {
-      type: EnemyType.JOKER,
+      type: EnemyType.BIG,
       params: unitParams,
-      config: {
-        type: type,
-      },
+      config: config,
     };
   }
 }

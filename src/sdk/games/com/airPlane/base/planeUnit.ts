@@ -47,16 +47,24 @@ export class PlaneUnit extends PlaneBase {
     this.score = params.score;
   }
 
+  beforeRender() {}
+
   render(ctx: CanvasRenderingContext2D) {
+    this.beforeRender();
     ctx.save();
     ctx.transform(...this.matrix.toCanvasTransform());
-    this.planeBody?.render(ctx);
-    // this.bullet?.render(ctx);
+
+    // 绘制机体
+    this.planeBody?.enable && this.planeBody.render(ctx);
+
+    // 绘制子弹
     for (let i = 0; i < this.bulletBoxList.length; i++) {
-      this.bulletBoxList[i].render(ctx);
+      const enableBox = this.bulletBoxList[i].enable;
+      enableBox && this.bulletBoxList[i].render(ctx);
     }
     ctx.restore();
-    this.invisible()
+    this.invisible();
+    this.checkState();
   }
 
   // 同步最新的战机位置
@@ -91,7 +99,9 @@ export class PlaneUnit extends PlaneBase {
   }
 
   // 判断子弹是否击中当前作战单元
+  // 需要判断当前机体是否处于激活状态
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
+    if (!this.planeBody?.enable) return null;
     const { bulletHeight, bulletWidth, bulletX, bulletY, combat } =
       bullet.params;
     const { unitHeight, unitWidth, unitX, unitY } = this;
@@ -103,6 +113,11 @@ export class PlaneUnit extends PlaneBase {
     ) {
       this.health -= combat;
       const dead = this.health <= 0;
+
+      if (dead && this.planeBody) {
+        // 机体死亡
+        this.planeBody.enable = false;
+      }
       return {
         x: unitX,
         y: unitY,
@@ -114,12 +129,11 @@ export class PlaneUnit extends PlaneBase {
   }
 
   destroy() {
-    this.planeBody = null;
+    this.planeBody?.enable && (this.planeBody.enable = false);
     for (let i = 0; i < this.bulletBoxList.length; i++) {
       this.bulletBoxList[i].stopBullet();
     }
   }
-
   // 判断是否需要销毁当前作战单元
   isDestroy() {
     return true;
@@ -137,9 +151,23 @@ export class PlaneUnit extends PlaneBase {
 
     if (t < 0 || l < 0 || b > canvasHeight || r > canvasWidth) {
       // 不可见的范围
-      this.destroy();
+      this.planeBody?.enable && (this.planeBody.enable = false);
     } else {
       // 可见范围
     }
+  }
+
+  checkState() {
+    const bodyEnable = this.planeBody?.enable;
+    const bulletEnable = this.bulletBoxList.some(
+      (bulletBox) => bulletBox.enable
+    );
+    if (!bodyEnable && !bulletEnable) {
+      this.removeUnit();
+    }
+  }
+
+  removeUnit() {
+    console.warn('需要上层实现');
   }
 }
