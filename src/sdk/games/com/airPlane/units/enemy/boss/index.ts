@@ -1,23 +1,19 @@
 import { EasedMove } from '../../../../../../utils/Animate';
-import {
-  EnemyType,
-  type IBossConfig,
-} from '../../../type';
-import {
-  planeBossDotBullet,
-} from '../../../config';
+import { EnemyType, type IBossConfig } from '../../../type';
+import { planeBossDotBullet } from '../../../config';
 import { PlaneUnit } from '../../../base/planeUnit';
 import {
   PlaneBulletType,
   type PlaneBulletParams,
   type PlaneUnitParams,
+  type HitInfo,
 } from '../../../base/type';
 import { BossBody } from './bossBody';
 import { BossBullet } from './bossBullet';
-
+import type { PlaneBullet } from '../../../base/planeBullet';
 
 export class EnemyBoss extends PlaneUnit {
-  type:EnemyType = EnemyType.BOSS
+  type: EnemyType = EnemyType.BOSS;
 
   config: IBossConfig;
   move: EasedMove | null = null;
@@ -103,24 +99,7 @@ export class EnemyBoss extends PlaneUnit {
     this.bulletBoxList.push(bullet5, bullet6);
   }
 
-  buildRotateBullet() {
-    if (this.rotateTimer) return;
-    this.rotateTimer = 1;
-    const { unitX, unitY } = this;
-
-    const bulletParams = JSON.parse(
-      JSON.stringify(planeBossDotBullet)
-    ) as PlaneBulletParams;
-    bulletParams.bulletX = unitX;
-    bulletParams.bulletY = unitY;
-    bulletParams.type = PlaneBulletType.Spiral;
-    bulletParams.shootCooldown = 100
-    const bullet = new BossBullet(PlaneBulletType.Spiral, bulletParams, this);
-
-    this.bulletBoxList.push(bullet);
-  }
-
-  render(ctx: CanvasRenderingContext2D) {
+  beforeRender(): void {
     const { unitX } = this;
     const { frame, targetHeight } = this.config;
     if (!this.move) {
@@ -133,21 +112,20 @@ export class EnemyBoss extends PlaneUnit {
     const moveUpdateIng = this.move.update();
 
     if (!moveUpdateIng) {
-      // this.buildDotBullet();
-      this.buildRotateBullet();
+      this.buildDotBullet();
     }
     const { x, y } = this.move.getCurrentPosition();
     this.matrix.makeTranslation(x, y);
     this.updatePos(x, y);
     this.angle += this.angleSpeed;
     this.angle = this.angle % (Math.PI * 2);
+  }
 
-    // for(let i = 0; i < this.bossBulletDotList.length; i++){
-    //   const bullet = this.bossBulletDotList[i]
-    //   bullet.updatePos(x, y);
-    //   bullet.render(ctx);
-    // }
-    // this.bullet?.updatePos(x, y);
+  render(ctx: CanvasRenderingContext2D) {
     super.render(ctx);
+  }
+
+  isHitUnit(bullet: PlaneBullet): HitInfo | null {
+    return super.isHitUnit(bullet);
   }
 }

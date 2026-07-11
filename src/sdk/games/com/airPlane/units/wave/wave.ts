@@ -36,18 +36,18 @@ export class WaveStep1 extends PlaneWave {
   }
 
   createEnemy() {
-    if (!this.config) return null;
+    if (!this.config) return [];
 
     // 对于普通的敌机 需要对生成的时间 以及屏幕最大敌机数量做限制
     const control = this.control;
     const size = control.unLockedEnemy[EnemyType.JOKER];
     if (size >= this.config?.maxCount) {
-      return null;
+      return [];
     }
 
     const nowTime = Date.now();
     if (nowTime - this.lastTime < this.gapTime) {
-      return null;
+      return [];
     }
 
     this.lastTime = nowTime;
@@ -74,12 +74,14 @@ export class WaveStep1 extends PlaneWave {
       score: 10,
     };
 
-    return {
+    const arr = [{
       type: EnemyType.JOKER,
       params: unitParams,
       config: {
         type: type,
       },
-    };
+    }]
+
+    return arr
   }
 }

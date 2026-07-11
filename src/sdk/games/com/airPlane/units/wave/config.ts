@@ -11,7 +11,7 @@ export const WAVE_1_CONFIG: EnemyConfig = {
 };
 
 export const WAVE_2_CONFIG:EnemyConfig = {
-  id: '1',
+  id: '2',
   waveName: '第二波敌机来袭',
   enemyType: EnemyType.SQUADRON,
   durTime: 1 * 60 * 1000,
@@ -21,11 +21,21 @@ export const WAVE_2_CONFIG:EnemyConfig = {
 };
 
 export const WAVE_3_CONFIG:EnemyConfig = {
-  id: '1',
+  id: '3',
   waveName: '第三波敌机来袭',
   enemyType: EnemyType.BIG,
-  durTime: 1.5 * 60 * 1000,
-  maxScore: 4000,
+  durTime: 1 * 60 * 1000,
+  maxScore: 1000,
   maxCount: 2, 
+  priority: 1,
+};
+
+export const WAVE_4_CONFIG:EnemyConfig = {
+  id: '4',
+  waveName: '第四波敌机来袭',
+  enemyType: EnemyType.BOSS,
+  durTime: 1 * 60 * 1000,
+  maxScore: 4000,
+  maxCount: 1, 
   priority: 1,
 };

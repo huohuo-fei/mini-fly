@@ -6,10 +6,17 @@ import { PlaneBase } from '../../base/planeBase';
 import type { PlaneWave } from '../../base/planeWave';
 import { EnemyType } from '../../type';
 import type { PlaneEnemy } from '../enemy/planeEnemy';
-import { WAVE_1_CONFIG, WAVE_2_CONFIG, WAVE_3_CONFIG } from '../wave/config';
+import {
+  WAVE_1_CONFIG,
+  WAVE_2_CONFIG,
+  WAVE_3_CONFIG,
+  WAVE_4_CONFIG,
+} from '../wave/config';
 import { WaveStep1 } from '../wave/wave';
+import { Wave_1 } from '../wave/wave1';
 import { WaveStep2 } from '../wave/waveStep2';
 import { WaveStep3 } from '../wave/waveStep3';
+import { WaveStep4 } from '../wave/waveStep4';
 
 export class PlaneControl extends PlaneBase {
   initFlag: boolean = false;
@@ -59,13 +66,20 @@ export class PlaneControl extends PlaneBase {
 
     const t3 = new WaveStep3(this.planeEnemy.gameParams, this, WAVE_3_CONFIG);
 
-    t1.appendNextWave(t2);
+    const t4 = new WaveStep4(this.planeEnemy.gameParams, this, WAVE_4_CONFIG);
 
-    t2.appendNextWave(t3); 
+    const wave1 = new Wave_1(this.planeEnemy.gameParams, this, WAVE_3_CONFIG)
+
+    // t1.appendNextWave(t2);
+
+    // t2.appendNextWave(t3);
+
+    // t3.appendNextWave(t4);
+
 
     // todo : 后续追加波次结构
-    this.waveTree = t1;
-    this.activeWave = t1;
+    this.waveTree = wave1;
+    this.activeWave = wave1;
   }
 
   // 依据当前的波次 生成敌机
@@ -73,19 +87,25 @@ export class PlaneControl extends PlaneBase {
     if (!this.activeWave) {
       return;
     }
-    const enemyConfig = this.activeWave.createEnemy();
-    if (enemyConfig) {
-      this.planeEnemy.buildEnemyByConfig(enemyConfig);
-      // console.log(enemyConfig.type,'type');
-      
-      const type = enemyConfig.type;
-      this.unLockedEnemy[type] += 1;
+    const enemyConfigArr = this.activeWave.createEnemy();
+
+    if (enemyConfigArr.length) {
+      for (const enemyConfig of enemyConfigArr) {
+        this.planeEnemy.buildEnemyByConfig(enemyConfig);
+        const type = enemyConfig.type;
+        this.unLockedEnemy[type] += 1;
+      }
     }
   }
 
   // 更新数量
   updateEnemyCountSub(type: EnemyType) {
     this.unLockedEnemy[type] -= 1;
+  }
+
+  // 更新分数
+  updateScore(score: number) {
+    this.currentScore = score
   }
 
   updateWave() {
@@ -98,10 +118,9 @@ export class PlaneControl extends PlaneBase {
       const newWave = this.activeWave.updateWave(info);
       if (newWave) {
         this.activeWave = newWave;
-      }else{
+      } else {
         // todo : 游戏结束
         // console.log('游戏结束');
-        
       }
       this.createEnemy();
     }

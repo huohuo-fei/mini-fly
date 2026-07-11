@@ -76,6 +76,7 @@ export class MiniFly implements IMiniGam {
   // 更新局内分数
   updateScore(score: number) {
     this.planeBar.addScore(score);
+    this.planeControl.updateScore(this.planeBar.scoreVal);
   }
 
   // 更新道具

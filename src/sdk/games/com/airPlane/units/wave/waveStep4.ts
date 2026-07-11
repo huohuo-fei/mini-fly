@@ -1,12 +1,12 @@
 import { PlaneWave } from '../../base/planeWave';
-import { bigEnemyConfig } from '../../config';
+import { bigEnemyConfig, bossConfig } from '../../config';
 import { type waveInfo, EnemyType } from '../../type';
 
 // 第一阶段
-export class WaveStep3 extends PlaneWave {
+export class WaveStep4 extends PlaneWave {
   gapTime = 100;
   lastTime = 0;
-  ind: number = 0;
+  ind:number = 0
 
   updateWave(info: waveInfo) {
     // 没有配置 找子元素
@@ -40,9 +40,8 @@ export class WaveStep3 extends PlaneWave {
   createEnemy() {
     if (!this.config) return [];
 
-    // 对于普通的敌机 需要对生成的时间 以及屏幕最大敌机数量做限制
     const control = this.control;
-    const size = control.unLockedEnemy[EnemyType.BIG];
+    const size = control.unLockedEnemy[EnemyType.BOSS];
     if (size >= this.config?.maxCount) {
       return [];
     }
@@ -54,37 +53,34 @@ export class WaveStep3 extends PlaneWave {
 
     this.lastTime = nowTime;
 
-    const config = JSON.parse(JSON.stringify(bigEnemyConfig));
+    const config = JSON.parse(JSON.stringify(bossConfig));
 
-    if (this.ind % 2 === 0) {
+    if(this.ind % 2 === 0){
       config.x = 60;
-    } else {
+    }else{
       config.x = 400;
     }
 
     config.targetHeight = 100;
-
+    
     const unitParams = {
-      unitWidth: 0,
-      unitHeight: 0,
-      unitX: 0,
+      unitWidth: 80,
+      unitHeight: 60,
+      unitX: 200,
       unitY: 0,
-      speedX: 1,
-      speedY: 1,
-      shootCooldown: 600,
+      speedX: 0,
+      speedY: 0,
+      shootCooldown: 10,
       canvasHeight: this.gameParams.canvasHeight,
       canvasWidth: this.gameParams.canvasWidth,
-      health: 10,
-      score: 200,
-    };
-    this.ind++;
+      health: 1000,
+      score: 2000,
+    }
 
-    return [
-      {
-        type: EnemyType.BIG,
-        params: unitParams,
-        config: config,
-      },
-    ];
+    return [{
+      type: EnemyType.BOSS,
+      params: unitParams,
+      config: config,
+    }];
   }
 }

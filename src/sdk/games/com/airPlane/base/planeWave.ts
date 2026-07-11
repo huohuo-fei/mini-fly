@@ -1,17 +1,32 @@
 import type { IMiniGameParams } from '../../../../type';
 import type { EnemyConfig, WaveEnemyConfig, waveInfo } from '../type';
 import type { PlaneControl } from '../units/control';
+import type { PlaneCreater } from './planeCreater';
 
 // 波次系统
 export class PlaneWave {
-  children: PlaneWave[] = [];
+  children: PlaneCreater[] = [];
   nextWave: PlaneWave | null = null;
+  enable: boolean = false
 
   control: PlaneControl;
   config: EnemyConfig | null = null;
   gameParams: IMiniGameParams;
 
-  // state:
+  //------ 外部参数 ------//
+
+  // 全局分数
+  totalScore: number = 0;
+  // 全局的游戏时间
+  totalTime:number = 0
+  // 当前波次获得的分数
+  waveScore: number = 0;
+  // 当前波次进行的时间
+  waveTime: number = 0;
+  perScore: number = 0;
+  perTime: number = 0;
+  
+
 
   constructor(
     gameParams: IMiniGameParams,
@@ -23,24 +38,27 @@ export class PlaneWave {
     if (config) {
       this.config = JSON.parse(JSON.stringify(config));
     }
+    this.loadCreater()
   }
+
+  loadCreater(){}
 
   loadConfig(config: EnemyConfig) {
     this.config = JSON.parse(JSON.stringify(config)); 
   }
 
-  // 校验波次
+  // 校验波次 依据条件返回最新的波次
   updateWave(info: waveInfo): PlaneWave | null {
     return null;
   }
 
   // 创建敌人
-  createEnemy(): WaveEnemyConfig | null {
+  createEnemy(): WaveEnemyConfig[] {
     console.warn('createEnemy 需要内部自己实现');
-    return null;
+    return [];
   }
 
-  appendChild(child: PlaneWave) {
+  appendChild(child: PlaneCreater) {
     this.children.push(child);
   }
 

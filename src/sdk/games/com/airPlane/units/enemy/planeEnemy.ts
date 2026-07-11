@@ -227,6 +227,7 @@ export class PlaneEnemy implements IMiniGam {
             hitInfo.x,
             hitInfo.y
           );
+          this.miniFly.updateScore(hitInfo.score);
         } else {
           // boss未死亡
           this.miniFly.createEffect(
@@ -235,8 +236,6 @@ export class PlaneEnemy implements IMiniGam {
             hitInfo.y
           );
         }
-
-        this.miniFly.updateScore(hitInfo.score);
         return true;
       }
     }
@@ -259,6 +258,7 @@ export class PlaneEnemy implements IMiniGam {
             hitInfo.x,
             hitInfo.y
           );
+        this.miniFly.updateScore(hitInfo.score);
         } else {
           // boss未死亡
           this.miniFly.createEffect(
@@ -268,7 +268,6 @@ export class PlaneEnemy implements IMiniGam {
           );
         }
 
-        this.miniFly.updateScore(hitInfo.score);
         return true;
       }
     }
@@ -289,6 +288,7 @@ export class PlaneEnemy implements IMiniGam {
             hitInfo.x,
             hitInfo.y
           );
+        this.miniFly.updateScore(hitInfo.score);
         } else {
           // boss未死亡
           this.miniFly.createEffect(
@@ -298,7 +298,6 @@ export class PlaneEnemy implements IMiniGam {
           );
         }
 
-        this.miniFly.updateScore(hitInfo.score);
         return true;
       }
     }
@@ -376,7 +375,7 @@ export class PlaneEnemy implements IMiniGam {
     const ind = jokerList.indexOf(unit);
     if (ind > -1) {
       const delArr = this.enemyDelMap[EnemyType.JOKER];
-      if (!delArr.length || !delArr.includes(ind) ) {
+      if (!delArr.length || !delArr.includes(ind)) {
         delArr.push(ind);
         this.removeEnemyByType(EnemyType.JOKER);
       }
@@ -389,7 +388,7 @@ export class PlaneEnemy implements IMiniGam {
     const ind = squadronList.indexOf(squadron);
     if (ind > -1) {
       const delArr = this.enemyDelMap[EnemyType.SQUADRON];
-      if (!delArr.length || !delArr.includes(ind) ) {
+      if (!delArr.length || !delArr.includes(ind)) {
         delArr.push(ind);
         this.removeEnemyByType(EnemyType.SQUADRON);
       }
@@ -402,7 +401,7 @@ export class PlaneEnemy implements IMiniGam {
     const ind = bigList.indexOf(bigEnemy);
     if (ind > -1) {
       const delArr = this.enemyDelMap[EnemyType.BIG];
-      if (!delArr.length || !delArr.includes(ind) ) {
+      if (!delArr.length || !delArr.includes(ind)) {
         delArr.push(ind);
         this.removeEnemyByType(EnemyType.BIG);
       }

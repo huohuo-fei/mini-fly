@@ -208,3 +208,10 @@ export type WaveEnemyConfig = {
   params:PlaneUnitParams,
   config:any
 }
+
+// 敌机构造器的状态
+export enum EnemyCreaterStatus {
+  PEDDING = 'pedding',
+  ACTIVE = 'ACTIVE',
+  END = 'end'
+}
