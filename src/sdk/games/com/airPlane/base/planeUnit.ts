@@ -73,11 +73,15 @@ export class PlaneUnit extends PlaneBase {
     this.attackerY = y;
   }
 
-  // 遍历子弹
+  // 遍历当前所属作战单元下的子弹
+  // 由主战机使用
   traverseBullet(callback: (bullet: PlaneBullet) => boolean) {
     for (let i = 0; i < this.bulletBoxList.length; i++) {
       const bulletBox = this.bulletBoxList[i];
       for (let i = 0; i < bulletBox.bullets.length; i++) {
+        // 此时拿到了子弹
+        // 将当前子弹信息返回出去，
+        // 由外层具体的逻辑判断当前子弹是否发生碰撞
         const bullet = bulletBox.bullets[i];
         const flag = callback(bullet);
         if (flag) {

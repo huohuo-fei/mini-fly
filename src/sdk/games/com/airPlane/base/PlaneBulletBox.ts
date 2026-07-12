@@ -122,12 +122,24 @@ export class PlaneBulletBox extends PlaneBase {
     this.params.bulletAngle = angle;
   }
 
+  // 在执行移除子弹的操作之前，做些什么 
+  // 主要针对的是编队类型的子弹
+  // 编队类型是从屏幕外向屏幕内移动
+  // 所以最开始的编队内的飞机会触发移除子弹的操作
+  beforeRemoveBullet(){
+    return true
+  }
+
   removeBullet(bullet: PlaneBullet) {
+    // console.log('removeBullet');
+    const res = this.beforeRemoveBullet()
+    if(!res)return
     const ind = this.bullets.indexOf(bullet);
     if (ind > -1) {
       this.bullets.splice(ind, 1);
 
-      // 如果当前的子弹数量为零，则将子弹箱禁用
+      // 如果当前的子弹数量为零，则将子弹箱禁用,
+      // 不在生成新的子弹 , 并为后续的机体回收做判断条件
       if(this.bullets.length === 0){
         this.enable = false;
       }
@@ -148,6 +160,8 @@ export class PlaneBulletBox extends PlaneBase {
     ctx.save();
     // 将画布复原为初始状态
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+    console.log(this.bullets.length);
+    
     for (let i = 0; i < this.bullets.length; i++) {
       const b = this.bullets[i];
       b.render(ctx);
