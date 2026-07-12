@@ -143,7 +143,6 @@ export type IBossConfig = {
   w: number;
   h: number;
   targetHeight: number;
-  healthArr: number[];
 };
 
 // 编队配置

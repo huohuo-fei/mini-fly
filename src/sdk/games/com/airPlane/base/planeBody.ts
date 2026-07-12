@@ -1,5 +1,4 @@
 import { PlaneBase } from "./planeBase";
-import type { PlaneBullet } from "./planeBullet";
 import type {PlaneBodyParams } from "./type";
 
 export class PlaneBody extends PlaneBase {

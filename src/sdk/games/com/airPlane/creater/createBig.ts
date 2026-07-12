@@ -20,7 +20,7 @@ export class BigCreater extends PlaneCreater {
   config: IBigEnemyConfig = {
     x: 100,
     speed: 1,
-    targetHeight: 100,
+    targetHeight: 100, 
     shootCooldown: 600,
     radius: 20,
     angleSpeed: 0.01,

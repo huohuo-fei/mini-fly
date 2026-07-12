@@ -160,8 +160,6 @@ export class PlaneBulletBox extends PlaneBase {
     ctx.save();
     // 将画布复原为初始状态
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    console.log(this.bullets.length);
-    
     for (let i = 0; i < this.bullets.length; i++) {
       const b = this.bullets[i];
       b.render(ctx);

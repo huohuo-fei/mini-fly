@@ -174,7 +174,6 @@ export const bossConfig: IBossConfig = {
   w: 80,
   h: 60,
   targetHeight: 100,
-  healthArr: [1000, 1000, 1000],
 };
 
 // planeMain

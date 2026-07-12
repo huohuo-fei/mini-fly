@@ -9,14 +9,9 @@ import type { PlaneEnemy } from '../enemy/planeEnemy';
 import {
   WAVE_1_CONFIG,
   WAVE_2_CONFIG,
-  WAVE_3_CONFIG,
-  WAVE_4_CONFIG,
 } from '../wave/config';
-import { WaveStep1 } from '../wave/wave';
 import { Wave_1 } from '../wave/wave1';
-import { WaveStep2 } from '../wave/waveStep2';
-import { WaveStep3 } from '../wave/waveStep3';
-import { WaveStep4 } from '../wave/waveStep4';
+import { Wave_2 } from '../wave/wave2';
 
 export class PlaneControl extends PlaneBase {
   initFlag: boolean = false;
@@ -60,22 +55,10 @@ export class PlaneControl extends PlaneBase {
 
   // 初始化波次
   initWave() {
-    const t1 = new WaveStep1(this.planeEnemy.gameParams, this, WAVE_1_CONFIG);
+    const wave1 = new Wave_1(this.planeEnemy.gameParams, this, WAVE_1_CONFIG)
+    const wave2 = new Wave_2(this.planeEnemy.gameParams, this, WAVE_2_CONFIG)
 
-    const t2 = new WaveStep2(this.planeEnemy.gameParams, this, WAVE_2_CONFIG);
-
-    const t3 = new WaveStep3(this.planeEnemy.gameParams, this, WAVE_3_CONFIG);
-
-    const t4 = new WaveStep4(this.planeEnemy.gameParams, this, WAVE_4_CONFIG);
-
-    const wave1 = new Wave_1(this.planeEnemy.gameParams, this, WAVE_3_CONFIG)
-
-    // t1.appendNextWave(t2);
-
-    // t2.appendNextWave(t3);
-
-    // t3.appendNextWave(t4);
-
+    wave1.appendNextWave(wave2);
 
     // todo : 后续追加波次结构
     this.waveTree = wave1;
