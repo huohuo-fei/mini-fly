@@ -56,7 +56,7 @@ export class PlaneAttacker extends PlaneBase {
     const { PLAYER_WIDTH, attackerX, gameParams } = this;
     let targetX = x;
     targetX = Math.min(
-      Math.max(targetX, 5),
+      Math.max(targetX, PLAYER_WIDTH  + 5),
       gameParams.canvasWidth - PLAYER_WIDTH - 5
     );
     let resX = attackerX * 0.85 + targetX * 0.15;
