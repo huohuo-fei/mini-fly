@@ -20,8 +20,8 @@ import {
 } from './type';
 // 三种普通敌机的配置信息
 // 速度慢 体型大 生命值大 冷却时间长
-// 速度快 体型小 生命值小 冷却时间短
 // 速度快 体型大 生命值小 冷却时间短
+// 速度快 体型小 生命值小 冷却时间短
 export const enemyConfig1: IMiniPlaneEnemy = {
   x: 0,
   y: -25,
@@ -43,13 +43,13 @@ export const enemyConfig2: IMiniPlaneEnemy = {
   y: -15,
   w: 30,
   h: 30,
-  speedY: 2,
+  speedY: 1.5,
   speedX: 0,
-  health: 5,
+  health: 8,
   maxHealth: 5,
   type: MiniPlaneEnemyType.LEVEL2,
   color: 'yellow',
-  shootCooldown: 600,
+  shootCooldown: 900,
   score: 10,
   deadScore: 20,
 };
@@ -59,13 +59,13 @@ export const enemyConfig3: IMiniPlaneEnemy = {
   y: -10,
   w: 20,
   h: 20,
-  speedY: 3,
+  speedY: 2,
   speedX: 0,
-  health: 3,
+  health: 5,
   maxHealth: 3,
   type: MiniPlaneEnemyType.LEVEL3,
   color: 'pink',
-  shootCooldown: 400,
+  shootCooldown: 800,
   score: 10,
   deadScore: 20,
 };
