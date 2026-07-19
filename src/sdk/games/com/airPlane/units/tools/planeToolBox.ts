@@ -9,7 +9,7 @@ import doubleSvg from '@/assets/game/plane/double.svg';
 import lifeSvg from '@/assets/game/plane/life.svg';
 import shieldSvg from '@/assets/game/plane/shield.svg';
 import { MiniUtils } from '../../../../../utils/MiniUtils';
-import type { PlaneEnemyUnit } from '../enemy/planeEnemyUnit';
+import type { PlaneUnit } from '../../base/planeUnit';
 export class PlaneToolBox implements IMiniGam {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
@@ -22,16 +22,16 @@ export class PlaneToolBox implements IMiniGam {
 
 
 
-  buildTool(enemyUnit: PlaneEnemyUnit) {
+  buildTool(enemyUnit: PlaneUnit) {
     // todo:抽取资源加载逻辑，或者加缓存队列
     // 生成工具，有两个前置条件：
     // 1. 当前工具数量小于5
     // 2.每个旗子死亡后 有 1/4 的概率生成工具
 
     if (this.toolList.length < 5 && Math.random() < 0.25) {
-      const x = enemyUnit.cx;
-      const y = enemyUnit.cy;
-      const speedY = enemyUnit.enemyUnit.speedY;
+      const x = enemyUnit.unitX;
+      const y = enemyUnit.unitY;
+      const speedY = enemyUnit.speedY;
 
       // 随机生成工具类型
       const typeNum = Math.floor(Math.random() * 4);
@@ -40,10 +40,10 @@ export class PlaneToolBox implements IMiniGam {
     }
   }
 
-  buildToolTest(enemyUnit: PlaneEnemyUnit, type: MiniPlaneToolType) {
-    const x = enemyUnit.cx;
-    const y = enemyUnit.cy;
-    const speedY = enemyUnit.enemyUnit.speedY;
+  buildToolTest(enemyUnit: PlaneUnit, type: MiniPlaneToolType) {
+    const x = enemyUnit.unitX;
+    const y = enemyUnit.unitY;
+    const speedY = enemyUnit.speedY;
     this.addTool(x, y, type, speedY);
   }
 

@@ -44,6 +44,8 @@ export class PlaneAttacker extends PlaneBase {
       health:1,
       score:1
     });
+
+    this.updatePos(playerX, playerY) 
   }
 
   updatePos(x: number, y: number) {
@@ -87,7 +89,7 @@ export class PlaneAttacker extends PlaneBase {
   // 生成双倍子弹
   createDoubleBullet() {
     // this.planeBulletDouble.startAni(this.attackerX)
-    // this.planeBulletBox.addBulletSize()
+    this.planeMain.addBullet()
   }
 
   getPos() {

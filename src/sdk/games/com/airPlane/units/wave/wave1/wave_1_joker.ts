@@ -34,7 +34,7 @@ export class Wave_1_Joker extends JokerCreater {
       type = MiniPlaneEnemyType.LEVEL3;
     }
 
-    this.config.type = type;
+    this.config.type = MiniPlaneEnemyType.LEVEL3;
     return super.builder();
   }
 }

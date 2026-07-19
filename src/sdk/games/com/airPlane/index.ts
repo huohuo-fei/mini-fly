@@ -5,11 +5,12 @@ import { PlaneAttacker } from './units/attacker/planeAttacker';
 import { PlaneBg } from './units/background/planeBg';
 import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
-import { EnemyType, type IMiniPlaneEffectType } from './type';
+import { EnemyType, MiniPlaneToolType, type IMiniPlaneEffectType } from './type';
 import { PlaneBar } from './units/bar/planeBar';
 import { PlaneToolBox } from './units/tools/planeToolBox';
 
 import { PlaneControl } from './units/control';
+import type { PlaneUnit } from './base/planeUnit';
 
 export class MiniFly implements IMiniGam {
   planeBackground: PlaneBg;
@@ -80,10 +81,10 @@ export class MiniFly implements IMiniGam {
   }
 
   // 更新道具
-  // updateToolBox(enemy: PlaneEnemyUnit) {
+  updateToolBox(enemy: PlaneUnit) {
   // this.planeToolBox.buildTool(enemy);
-  // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.BOMB)
-  // }
+  this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.DOUBLE)
+  }
 
   removeControlEnemyByType(type: EnemyType) {
     this.planeControl.updateEnemyCountSub(type);

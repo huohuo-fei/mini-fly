@@ -113,4 +113,8 @@ export class EnemyJoker extends PlaneUnit {
   removeUnit(){
     this.planeEnemy.removeJoker(this);
   }
+
+  bodyDead(){
+    this.planeEnemy.generateTool(this)
+  }
 }

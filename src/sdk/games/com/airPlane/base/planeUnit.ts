@@ -121,6 +121,7 @@ export class PlaneUnit extends PlaneBase {
       if (dead && this.planeBody) {
         // 机体死亡
         this.planeBody.enable = false;
+        this.bodyDead()
       }
       return {
         x: unitX,
@@ -174,4 +175,9 @@ export class PlaneUnit extends PlaneBase {
   removeUnit() {
     console.warn('需要上层实现');
   }
+
+  bodyDead(){
+    // console.log('需要上层实现');
+  }
+
 }

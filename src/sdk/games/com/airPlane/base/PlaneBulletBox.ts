@@ -156,6 +156,13 @@ export class PlaneBulletBox extends PlaneBase {
     }
   }
 
+  // 恢复计时器
+  refreshTimer() {
+    // this.buildBullet()
+    this.stopBullet()
+    this.buildBullet()
+  }
+
   render(ctx: CanvasRenderingContext2D) {
     ctx.save();
     // 将画布复原为初始状态

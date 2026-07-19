@@ -192,7 +192,7 @@ export const planeMainBulletConfig: PlaneBulletParams = {
   bodyY: 0,
   size: 1,
   speedX: 0,
-  speedY: 4,
+  speedY: 6,
   combat: 2,
   shootCooldown: 200,
   direction: [0, -1],

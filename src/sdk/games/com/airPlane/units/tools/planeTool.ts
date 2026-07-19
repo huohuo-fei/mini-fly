@@ -30,9 +30,8 @@ export class PlaneTool implements IMiniGam {
 
   updatePos() {
     const temp = Date.now();
-    const diff = temp - this.lastTime;
     this.lastTime = temp;
-    this.toolInfo.y += (this.toolInfo.speedY * diff) / 100;
+    this.toolInfo.y += this.toolInfo.speedY
     this.matrix.makeTranslation(this.toolInfo.x, this.toolInfo.y);
   }
 
@@ -45,13 +44,21 @@ export class PlaneTool implements IMiniGam {
 
   // 碰撞检测
   isHit(ax: number, ay: number, aw: number, ah: number) {
-    const { x, y, w, h } = this.toolInfo;
-    if (x < ax + aw && x + w > ax && y < ay + ah && y + h > ay) {
-      // 碰撞
+    const { x, y} = this.toolInfo;
+
+    const delatY = Math.abs(ay - y);
+    const delatX = Math.abs(ax - x);
+    
+    if (delatY < ah / 2 && delatX < aw / 2) {
       return true;
-    } else {
-      return false;
     }
+    return false
+    // if (x < ax + aw && x + w > ax && y < ay + ah && y + h > ay) {
+    //   // 碰撞
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
 
   render(ctx: CanvasRenderingContext2D) {

@@ -32,8 +32,8 @@ export class Wave_1 extends PlaneWave {
       
     });
 
-    this.children.push(c1,c2,c3);
-    // this.children.push(c2);
+    // this.children.push(c1,c2,c3);
+    this.children.push(c1);
   }
 
   updateWave(info: waveInfo) {

@@ -258,7 +258,7 @@ export class PlaneEnemy implements IMiniGam {
             hitInfo.x,
             hitInfo.y
           );
-        this.miniFly.updateScore(hitInfo.score);
+          this.miniFly.updateScore(hitInfo.score);
         } else {
           // boss未死亡
           this.miniFly.createEffect(
@@ -288,7 +288,7 @@ export class PlaneEnemy implements IMiniGam {
             hitInfo.x,
             hitInfo.y
           );
-        this.miniFly.updateScore(hitInfo.score);
+          this.miniFly.updateScore(hitInfo.score);
         } else {
           // boss未死亡
           this.miniFly.createEffect(
@@ -369,8 +369,6 @@ export class PlaneEnemy implements IMiniGam {
 
   // 移除敌机 todo:现在同屏敌机少，后续优化
   removeJoker(unit: EnemyJoker) {
-    // console.log('removeJoker');
-
     const jokerList = this.enemyMap[EnemyType.JOKER];
     const ind = jokerList.indexOf(unit);
     if (ind > -1) {
@@ -410,6 +408,11 @@ export class PlaneEnemy implements IMiniGam {
 
   removeEnemyByType(type: EnemyType) {
     this.miniFly.removeControlEnemyByType(type);
+  }
+
+  // 击杀普通的敌机后 概率生成工具
+  generateTool(enemy: PlaneUnit) {
+    this.miniFly.updateToolBox(enemy);
   }
 
   requestEffect(effectType: IMiniPlaneEffectType, x: number, y: number) {
