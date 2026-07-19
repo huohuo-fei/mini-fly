@@ -53,12 +53,6 @@ export class PlaneTool implements IMiniGam {
       return true;
     }
     return false
-    // if (x < ax + aw && x + w > ax && y < ay + ah && y + h > ay) {
-    //   // 碰撞
-    //   return true;
-    // } else {
-    //   return false;
-    // }
   }
 
   render(ctx: CanvasRenderingContext2D) {
@@ -81,13 +75,6 @@ export class PlaneTool implements IMiniGam {
       ctx.drawImage(this.resource, x, y, w, h);
     }
   }
-
-  drawShield(ctx: CanvasRenderingContext2D) {}
-
-  drawBomb(ctx: CanvasRenderingContext2D) {}
-
-  drawDouble(ctx: CanvasRenderingContext2D) {}
-
   actionStart = () => {};
   actionEnd = () => {};
   actionDoing = () => {};

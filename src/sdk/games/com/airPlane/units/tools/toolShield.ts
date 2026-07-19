@@ -1,19 +1,11 @@
-import type { IMiniActParams, IMiniGam } from '../../../../../type';
-import { Matrix3 } from '../../../../../utils/Matrix3';
-import { type IMiniPlaneMainParams } from '../../type';
+import type { IMiniActParams } from '../../../../../type';
 import { EasedMove } from '../../../../../utils/Animate';
 import { SHIELD_FRAME_NUM } from '../../config';
+import { PlaneToolBase } from '../../base/planeToolBase';
+import type { ToolShieldConfig } from './type';
+import type { PlaneUnit } from '../../base/planeUnit';
 
-export class PlaneShield implements IMiniGam {
-  planeWidth: number = 0;
-  planeHeight: number = 0;
-  attackerX: number = 0;
-  attackerY: number = 0;
-  cx: number = 0;
-  cy: number = 0;
-
-  matrix: Matrix3 = new Matrix3();
-
+export class ToolPlaneShield extends PlaneToolBase {
   // 离屏canvas todo:后续由外部统一管理
   offScreenCanvas: HTMLCanvasElement | null = null;
   enable: boolean = false;
@@ -31,35 +23,24 @@ export class PlaneShield implements IMiniGam {
 
   move: EasedMove | null = null;
 
-  constructor(params: IMiniPlaneMainParams) {
+  constructor(params: ToolShieldConfig, mainUnit: PlaneUnit) {
+    super();
+    this.mainUnit = mainUnit;
     const playerX = params.x;
     const playerY = params.y;
-    this.planeWidth = params.w;
-    this.planeHeight = params.h;
+    this.mainWidth = params.w;
+    this.mainHeight = params.h;
     this.updatePos(playerX, playerY);
+    this.initTool();
   }
 
-  updatePos(x: number, y: number) {
-    this.attackerX = x;
-    this.attackerY = y;
-    this.cx = x + this.planeWidth / 2;
-    this.cy = y + this.planeHeight / 2;
-    this.matrix.makeTranslation(this.attackerX, this.attackerY);
-  }
-
-  updatePosX(x: number) {
-    this.attackerX = x;
-    this.cx = this.attackerX + this.planeWidth / 2;
-    this.matrix.makeTranslation(this.attackerX, this.attackerY);
-  }
-
-  changeState(state: boolean) {
-    if (this.enable) return;
-    this.enable = state;
+  initTool() {
+    this.enable = true;
     this.curTime = Date.now();
     setTimeout(() => {
       this.enable = false;
       this.move = null;
+      this.destroyTool()
     }, this.time);
   }
 
@@ -67,8 +48,8 @@ export class PlaneShield implements IMiniGam {
     if (!this.enable) return;
     if (this.aniBlink()) return;
 
-    const { planeWidth } = this;
-    const shieldRadius = planeWidth;
+    const { mainWidth } = this;
+    const shieldRadius = mainWidth;
     if (!this.offScreenCanvas) {
       this.offScreenCanvas = document.createElement('canvas');
     }
@@ -133,7 +114,7 @@ export class PlaneShield implements IMiniGam {
   }
 
   aniBlink(): boolean {
-    const { blinkFrame, blinkFrameCount,curTime, blinkTime} = this;
+    const { blinkFrame, blinkFrameCount, curTime, blinkTime } = this;
     // 是否开启闪烁
     if (Date.now() - curTime < blinkTime) return false;
 
@@ -146,7 +127,7 @@ export class PlaneShield implements IMiniGam {
       }
 
       // 护盾闪烁结束，恢复显示
-      this.blinkFrame = SHIELD_FRAME_NUM
+      this.blinkFrame = SHIELD_FRAME_NUM;
       this.blinkFrameCount = 0;
       return true;
     }
@@ -160,4 +141,10 @@ export class PlaneShield implements IMiniGam {
     const { x } = p;
     this.updatePosX(x);
   };
+
+  destroyTool() {
+    if(this.mainUnit){
+      this.mainUnit.removeTool(this);
+    }
+  }
 }

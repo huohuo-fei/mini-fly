@@ -5,6 +5,7 @@ import type {
 import { PlaneMain } from './planeMain';
 import { PlaneBase } from '../../base/planeBase';
 import type { PlaneBullet } from '../../base/planeBullet';
+import { MiniPlaneToolType } from '../../type';
 
 export class PlaneAttacker extends PlaneBase {
   // 战机的配置参数
@@ -84,11 +85,11 @@ export class PlaneAttacker extends PlaneBase {
   // 生成光罩
   createShield() {
     // this.planeShield.changeState(true);
+  this.planeMain.addTool(MiniPlaneToolType.SHIELD)
   }
 
   // 生成双倍子弹
   createDoubleBullet() {
-    // this.planeBulletDouble.startAni(this.attackerX)
     this.planeMain.addBullet()
   }
 

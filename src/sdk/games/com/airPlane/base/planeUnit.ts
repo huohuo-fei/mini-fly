@@ -2,6 +2,7 @@ import { PlaneBase } from './planeBase';
 import type { PlaneBody } from './planeBody';
 import type { PlaneBullet } from './planeBullet';
 import type { PlaneBulletBox } from './PlaneBulletBox';
+import type { PlaneToolBase } from './planeToolBase';
 import type { HitInfo, PlaneUnitParams } from './type';
 import { nanoid } from 'nanoid';
 
@@ -19,6 +20,8 @@ export class PlaneUnit extends PlaneBase {
 
   planeBody: PlaneBody | null = null;
   bulletBoxList: PlaneBulletBox[] = [];
+
+  tools:PlaneToolBase[] = []
 
   // 外层战机的位置
   attackerX: number = 0;
@@ -99,6 +102,14 @@ export class PlaneUnit extends PlaneBase {
     for (let i = 0; i < this.bulletBoxList.length; i++) {
       const res = this.bulletBoxList[i].removeBullet(bullet);
       if (res) break;
+    }
+  }
+
+  // 移除工具
+  removeTool(tool: PlaneToolBase) {
+    const ind = this.tools.findIndex((item) => item === tool)
+    if (ind !== -1) {
+      this.tools.splice(ind, 1)
     }
   }
 
