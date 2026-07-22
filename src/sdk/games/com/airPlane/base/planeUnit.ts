@@ -1,3 +1,4 @@
+import { AttackerType, EnemyType } from '../type';
 import { PlaneBase } from './planeBase';
 import type { PlaneBody } from './planeBody';
 import type { PlaneBullet } from './planeBullet';
@@ -17,7 +18,7 @@ export class PlaneUnit extends PlaneBase {
   speedY: number = 0;
   shootCooldown: number = 0;
   health: number = 0;
-  type: string = '';
+  type:EnemyType | AttackerType = EnemyType.BOSS;
 
   planeBody: PlaneBody | null = null;
   bulletBoxList: PlaneBulletBox[] = [];
@@ -49,7 +50,9 @@ export class PlaneUnit extends PlaneBase {
     this.shootCooldown = params.shootCooldown;
     this.health = params.health;
     this.score = params.score;
-    this.type = params.type || 'test'
+    // this.type = params.type || 'test'
+    // console.log(params.type, 'type');
+    
   }
 
   beforeRender() {}

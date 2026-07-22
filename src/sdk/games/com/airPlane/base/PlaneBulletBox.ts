@@ -1,3 +1,4 @@
+import { AttackerType } from '../type';
 import { PlaneBase } from './planeBase';
 import { PlaneBullet } from './planeBullet';
 import type { PlaneUnit } from './planeUnit';
@@ -142,7 +143,8 @@ export class PlaneBulletBox extends PlaneBase {
       // 不在生成新的子弹 , 并为后续的机体回收做判断条件
       // 此种情况 需要过滤掉主战机的情况
       if (this.bullets.length === 0) {
-        if(this.planeUnit.type !== 'main'){
+        
+        if(this.planeUnit.type !== AttackerType.MAIN){
           this.enable = false;
         }
       }

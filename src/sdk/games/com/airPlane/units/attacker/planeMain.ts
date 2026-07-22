@@ -8,14 +8,14 @@ import {
 import { PlaneMainBody } from './planeMainBody';
 import { PlaneMainBullet } from './planeMainBullet';
 import { planeMainBulletConfig } from '../../config';
-import type { PlaneToolBase } from '../../base/planeToolBase';
-import type { MiniPlaneToolType } from '../../type';
+import { AttackerType, type MiniPlaneToolType } from '../../type';
 import type { ToolShieldConfig } from '../tools/type';
 import { ToolPlaneShield } from '../tools/toolShield';
 
 export class PlaneMain extends PlaneUnit {
   bulletGap: number = 8;
   isSub: boolean = false;
+  type: AttackerType = AttackerType.MAIN;
   constructor(params: PlaneUnitParams) {
     super(params);
     this.updatePosX(this.unitX);

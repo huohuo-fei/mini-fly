@@ -58,7 +58,7 @@ export class PlaneControl extends PlaneBase {
     const wave1 = new Wave_1(this.planeEnemy.gameParams, this, WAVE_1_CONFIG)
     const wave2 = new Wave_2(this.planeEnemy.gameParams, this, WAVE_2_CONFIG)
 
-    // wave1.appendNextWave(wave2);
+    wave1.appendNextWave(wave2);
 
     // todo : 后续追加波次结构
     const target = wave1
