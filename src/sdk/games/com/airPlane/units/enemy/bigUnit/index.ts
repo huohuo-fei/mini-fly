@@ -122,7 +122,7 @@ export class BigEnemyUnit extends PlaneUnit {
     const { x, y } = this.move.getCurrentPosition();
     this.updatePos(x, y);
 
-    if (!moveUpdate) {
+    if (!moveUpdate && this.planeBody?.enable) {
       this.buildBullet();
       this.matrix.rotate(this.angle);
       this.angle += angleSpeed;
@@ -137,7 +137,7 @@ export class BigEnemyUnit extends PlaneUnit {
 
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
 
-    if(!this.planeBody || this.bulletBoxList.length === 0)return null
+    if(!this.planeBody?.enable || this.bulletBoxList.length === 0)return null
 
     const { bulletWidth, bulletX, bulletY, combat } = bullet.params;
     const { unitX, unitY } = this;
@@ -156,7 +156,8 @@ export class BigEnemyUnit extends PlaneUnit {
           new Vector2(attackerPos.x, attackerPos.y)
         );
 
-        this.planeBody = null
+        this.planeBody.enable = false;
+
         for(const bullet of this.bulletBoxList){
           bullet.stopBullet()
         }
@@ -174,5 +175,29 @@ export class BigEnemyUnit extends PlaneUnit {
 
   removeUnit(): void {
     // this.planeEnemy.removeBigEnemy(this);
+  }
+
+  damageWithScore(damageNum: number) {
+    // return
+    // 如果机体已经消亡  todo:处理子弹
+    if (!this.planeBody?.enable) return null;
+
+    // 机体生命值减小
+    this.health -= damageNum;
+    const dead = this.health <= 0;
+    if (dead) {
+      const attackerPos = this.planeEnemy.getPlanePos();
+      this.buildMissile(
+        new Vector2(this.unitX, this.unitY),
+        new Vector2(attackerPos.x, attackerPos.y)
+      );
+
+      this.planeBody.enable = false
+      for(const bullet of this.bulletBoxList){
+        bullet.stopBullet()
+      }
+    }
+
+    return this.score
   }
 }

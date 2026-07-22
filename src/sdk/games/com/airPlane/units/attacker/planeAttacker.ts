@@ -43,7 +43,8 @@ export class PlaneAttacker extends PlaneBase {
       canvasHeight: this.gameParams.canvasHeight,
       canvasWidth: this.gameParams.canvasWidth,
       health:1,
-      score:1
+      score:1,
+      type:'main'
     });
 
     this.updatePos(playerX, playerY) 

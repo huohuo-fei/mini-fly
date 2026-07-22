@@ -122,26 +122,29 @@ export class PlaneBulletBox extends PlaneBase {
     this.params.bulletAngle = angle;
   }
 
-  // 在执行移除子弹的操作之前，做些什么 
+  // 在执行移除子弹的操作之前，做些什么
   // 主要针对的是编队类型的子弹
   // 编队类型是从屏幕外向屏幕内移动
   // 所以最开始的编队内的飞机会触发移除子弹的操作
-  beforeRemoveBullet(){
-    return true
+  beforeRemoveBullet() {
+    return true;
   }
 
   removeBullet(bullet: PlaneBullet) {
     // console.log('removeBullet');
-    const res = this.beforeRemoveBullet()
-    if(!res)return
+    const res = this.beforeRemoveBullet();
+    if (!res) return;
     const ind = this.bullets.indexOf(bullet);
     if (ind > -1) {
       this.bullets.splice(ind, 1);
 
       // 如果当前的子弹数量为零，则将子弹箱禁用,
       // 不在生成新的子弹 , 并为后续的机体回收做判断条件
-      if(this.bullets.length === 0){
-        this.enable = false;
+      // 此种情况 需要过滤掉主战机的情况
+      if (this.bullets.length === 0) {
+        if(this.planeUnit.type !== 'main'){
+          this.enable = false;
+        }
       }
       return true;
     }
@@ -159,8 +162,16 @@ export class PlaneBulletBox extends PlaneBase {
   // 恢复计时器
   refreshTimer() {
     // this.buildBullet()
-    this.stopBullet()
-    this.buildBullet()
+    this.stopBullet();
+    this.buildBullet();
+  }
+
+  // 移除所有在屏子弹
+  clearBullet() {
+    this.bullets = [];
+    if (!this.bulletTimer) {
+      this.enable = false;
+    }
   }
 
   render(ctx: CanvasRenderingContext2D) {
@@ -172,5 +183,10 @@ export class PlaneBulletBox extends PlaneBase {
       b.render(ctx);
     }
     ctx.restore();
+
+    // 补丁：如果没有子弹，则将子弹箱禁用
+    if (this.bullets.length === 0 && this.bulletTimer == null ) {
+      this.enable = false;
+    }
   }
 }

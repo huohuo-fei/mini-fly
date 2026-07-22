@@ -17,6 +17,7 @@ export class PlaneUnit extends PlaneBase {
   speedY: number = 0;
   shootCooldown: number = 0;
   health: number = 0;
+  type: string = '';
 
   planeBody: PlaneBody | null = null;
   bulletBoxList: PlaneBulletBox[] = [];
@@ -48,6 +49,7 @@ export class PlaneUnit extends PlaneBase {
     this.shootCooldown = params.shootCooldown;
     this.health = params.health;
     this.score = params.score;
+    this.type = params.type || 'test'
   }
 
   beforeRender() {}
@@ -173,6 +175,7 @@ export class PlaneUnit extends PlaneBase {
     }
   }
 
+  // 依据机体 和 子弹弹道的状态，判断是否需要销毁当前作战单元 从画布移除
   checkState() {
     const bodyEnable = this.planeBody?.enable;
     const bulletEnable = this.bulletBoxList.some(
@@ -181,6 +184,26 @@ export class PlaneUnit extends PlaneBase {
     if (!bodyEnable && !bulletEnable) {
       this.removeUnit();
     }
+  }
+
+  // 直接扣除生命值
+  damageWithScore(damageNum: number) {
+    // return
+    // 如果机体已经消亡  todo:处理子弹
+    if (!this.planeBody?.enable) return null;
+
+    // 机体生命值减小
+    this.health -= damageNum;
+    const dead = this.health <= 0;
+    if (dead && this.planeBody) {
+      // 机体死亡
+      this.planeBody.enable = false;
+      this.bodyDead()
+      // 机体死亡后 需要执行销毁
+      this.destroy()
+    }
+
+    return this.score
   }
 
   removeUnit() {

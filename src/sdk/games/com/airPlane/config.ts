@@ -175,12 +175,6 @@ export const bossConfig: IBossConfig = {
   h: 60,
   targetHeight: 100,
 };
-
-// planeMain
-// export const planeMainConfig:PlaneUnitParams = {
-
-// }
-
 export const planeMainBulletConfig: PlaneBulletParams = {
   type: PlaneBulletType.Normal,
   shape: PlaneBulletShape.Rect,
@@ -271,3 +265,6 @@ export const planeBigBullet: PlaneBulletParams = {
   bulletAngle:0,
   bulletAngleSpeed:0.01
 };
+
+// 爆炸损伤的生命值
+export const DamageValueNumber = 1

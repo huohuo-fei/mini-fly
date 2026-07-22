@@ -82,8 +82,8 @@ export class MiniFly implements IMiniGam {
 
   // 更新道具
   updateToolBox(enemy: PlaneUnit) {
-  // this.planeToolBox.buildTool(enemy);
-  this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.SHIELD)
+  this.planeToolBox.buildTool(enemy);
+  // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.BOMB)
   }
 
   removeControlEnemyByType(type: EnemyType) {

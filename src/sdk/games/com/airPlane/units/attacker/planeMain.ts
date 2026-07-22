@@ -191,6 +191,9 @@ export class PlaneMain extends PlaneUnit {
       const tool = this.tools[i];
       tool.render(ctx);
     }
+
+    // console.log(this.bulletBoxList);
+    
   }
 
   actionDoing = (p: IMiniActParams) => {

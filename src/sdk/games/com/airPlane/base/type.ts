@@ -11,6 +11,7 @@ export type PlaneUnitParams = {
   shootCooldown:number
   health:number;
   score:number
+  type?:string;
 }
 
 export type PlaneBodyParams = {

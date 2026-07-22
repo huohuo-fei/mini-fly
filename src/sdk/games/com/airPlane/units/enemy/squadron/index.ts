@@ -89,6 +89,7 @@ export class PlaneEnemySquadron extends PlaneUnit {
     this.attackerY = planePos.y;
   }
 
+  // 更新编队中的敌人位置
   updateEnemyPos() {
     if (!this.planeBody) return;
     for (let i = 0; i < this.planeBody.enemyList.length; i++) {
@@ -100,8 +101,14 @@ export class PlaneEnemySquadron extends PlaneUnit {
     }
   }
 
+  // 更新编队 世界坐标
+  updateWorldPos() {
+    this.unitX = this.matrix.elements[6];
+    this.unitY = this.matrix.elements[7];
+  }
+
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
-    if (!this.planeBody) return null;
+    if (!this.planeBody || !this.planeBody.enable) return null;
     const {
       bulletX: bx,
       bulletY: by,
@@ -151,18 +158,8 @@ export class PlaneEnemySquadron extends PlaneUnit {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    this.test(ctx);
     super.render(ctx);
-  }
-
-  test(ctx: CanvasRenderingContext2D) {
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    const posX = this.matrix.elements[6];
-    const posY = this.matrix.elements[7];
-    ctx.strokeStyle = 'red';
-    ctx.strokeRect(posX, posY, 10, 10);
-    ctx.restore();
+    this.updateWorldPos()
   }
 
   invisible() {

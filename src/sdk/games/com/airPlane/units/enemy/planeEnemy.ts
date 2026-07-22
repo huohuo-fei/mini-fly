@@ -13,13 +13,13 @@ import {
   type IMiniPlaneEnemy,
 } from '../../type';
 import { PlaneEnemySquadron } from './squadron';
-import { bigEnemyConfig, bossConfig } from '../../config';
 import { BigEnemyUnit } from './bigUnit';
 import { EnemyBoss } from './boss';
 import type { PlaneBullet } from '../../base/planeBullet';
 import { EnemyJoker } from './joker';
 import type { PlaneUnitParams } from '../../base/type';
 import type { PlaneUnit } from '../../base/planeUnit';
+import { DamageValueNumber } from '../../config';
 export class PlaneEnemy implements IMiniGam {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
@@ -88,52 +88,7 @@ export class PlaneEnemy implements IMiniGam {
     const config = info.config as IBigEnemyConfig;
 
     const bigEnemy = new BigEnemyUnit(unitParams, config, this);
-    this.bigEnemyList.push(bigEnemy);
     this.enemyMap[EnemyType.BIG].push(bigEnemy);
-
-    return;
-
-    const bc = JSON.parse(JSON.stringify(bigEnemyConfig)) as IBigEnemyConfig;
-    bc.x = 60;
-    bc.targetHeight = 100;
-    const b1 = new BigEnemyUnit(
-      {
-        unitWidth: 0,
-        unitHeight: 0,
-        unitX: 0,
-        unitY: 0,
-        speedX: 1,
-        speedY: 1,
-        shootCooldown: 600,
-        canvasHeight: this.gameParams.canvasHeight,
-        canvasWidth: this.gameParams.canvasWidth,
-        health: 10,
-        score: 200,
-      },
-      bc,
-      this
-    );
-    this.bigEnemyList.push(b1);
-
-    bc.x = 400;
-    const b2 = new BigEnemyUnit(
-      {
-        unitWidth: 0,
-        unitHeight: 0,
-        unitX: 0,
-        unitY: 0,
-        speedX: 1,
-        speedY: 1,
-        shootCooldown: 600,
-        canvasHeight: this.gameParams.canvasHeight,
-        canvasWidth: this.gameParams.canvasWidth,
-        health: 100,
-        score: 200,
-      },
-      bc,
-      this
-    );
-    this.bigEnemyList.push(b2);
   }
 
   buildBoss(info: any) {
@@ -141,31 +96,7 @@ export class PlaneEnemy implements IMiniGam {
     const config = info.config as IBossConfig;
 
     const b = new EnemyBoss(unitParams, config);
-    this.bossList.push(b);
     this.enemyMap[EnemyType.BOSS].push(b);
-
-    return;
-
-    const b1 = JSON.parse(JSON.stringify(bossConfig)) as IBossConfig;
-
-    const cx = this.gameParams.canvasWidth / 2;
-    const boss = new EnemyBoss(
-      {
-        unitWidth: 80,
-        unitHeight: 60,
-        unitX: cx,
-        unitY: 0,
-        speedX: 0,
-        speedY: 0,
-        shootCooldown: 10,
-        canvasHeight: this.gameParams.canvasHeight,
-        canvasWidth: this.gameParams.canvasWidth,
-        health: 1000,
-        score: 2000,
-      },
-      b1
-    );
-    this.bossList.push(boss);
   }
 
   render(ctx: CanvasRenderingContext2D) {
@@ -177,13 +108,10 @@ export class PlaneEnemy implements IMiniGam {
       for (let i = delList.length - 1; i >= 0; i--) {
         list.splice(delList[i], 1);
       }
+
+      // if (key === EnemyType.BIG) {
+      // }
       this.enemyDelMap[key] = [];
-
-      if (key === EnemyType.JOKER) {
-        // console.log(list.length,'joker');
-        // console.log(this.enemyDelMap[key].length);
-      }
-
       for (let i = 0; i < list.length; i++) {
         if (list[i]) {
           list[i].render(ctx);
@@ -277,8 +205,10 @@ export class PlaneEnemy implements IMiniGam {
 
   // 判断是否命中大头兵
   isHitBigEnemy(bullet: PlaneBullet) {
-    for (let i = 0; i < this.bigEnemyList.length; i++) {
-      const hitInfo = this.bigEnemyList[i].isHitUnit(bullet);
+    const bigEnemyList = this.enemyMap[EnemyType.BIG];
+
+    for (let i = 0; i < bigEnemyList.length; i++) {
+      const hitInfo = bigEnemyList[i].isHitUnit(bullet);
       if (hitInfo) {
         // 命中
         if (hitInfo.dead) {
@@ -307,8 +237,9 @@ export class PlaneEnemy implements IMiniGam {
 
   // 判断是否命中boss
   isHitBoss(bullet: PlaneBullet) {
-    for (let i = 0; i < this.bossList.length; i++) {
-      const hitInfo = this.bossList[i].isHitUnit(bullet);
+    const bossList = this.enemyMap[EnemyType.BOSS];
+    for (let i = 0; i < bossList.length; i++) {
+      const hitInfo = bossList[i].isHitUnit(bullet);
       if (hitInfo) {
         // 命中
         if (hitInfo.dead) {
@@ -337,29 +268,23 @@ export class PlaneEnemy implements IMiniGam {
 
   // 将屏幕中所有的敌机扣一条血，并移除所有子弹
   clearEnemy() {
-    // for (let i = 0; i < this.enemyList.length; i++) {
-    //   if (this.enemyList[i]) {
-    //     this.enemyList[i].updateHpByNum(1);
-    //     const dead = this.enemyList[i].isDead();
-    //     let score = 0;
-    //     const enemyCenterArr = this.enemyList[i].getPos();
-    //     this.miniFly.createEffect(
-    //       IMiniPlaneEffectType.EXPLODE,
-    //       enemyCenterArr[0],
-    //       enemyCenterArr[1]
-    //     );
-    //     if (dead) {
-    //       // 敌机死亡
-    //       score = this.enemyList[i].enemyUnit.deadScore;
-    //       this.removeUnit(this.enemyList[i]);
-    //     } else {
-    //       // 敌机未死亡
-    //       score = this.enemyList[i].enemyUnit.score;
-    //     }
-    //     this.miniFly.updateScore(score);
-    //   }
-    // }
-    // this.bulletList = [];
+    for (const key in this.enemyMap) {
+      const enemyList = this.enemyMap[key];
+
+      for (const enemy of enemyList) {
+        if (enemy.planeBody?.enable) {
+          this.miniFly.createEffect(
+            IMiniPlaneEffectType.EXPLODE,
+            enemy.unitX,
+            enemy.unitY
+          );
+          const score = enemy.damageWithScore(DamageValueNumber);
+          if (score) {
+            this.miniFly.updateScore(score);
+          }
+        }
+      }
+    }
   }
 
   // 获取战机的位置
