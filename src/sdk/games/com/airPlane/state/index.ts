@@ -7,6 +7,7 @@ export class FlyState implements IMiniBus {
   private _lifeVal: number = 0;
   private _duration: number = 0;
   private _perTime: number = 0;
+  private _pauseTemp: number = 0
 
   events: Map<string, Set<Function>> = new Map();
   miniFly: MiniFly;
@@ -38,9 +39,25 @@ export class FlyState implements IMiniBus {
   }
 
   set duration(val: number) {
+    // 考虑时间暂停的情况
+    if(this.pauseTemp !== 0){
+      const curTime = new Date().getTime()
+      const time = curTime - this.pauseTemp
+      this._perTime = this._perTime + time
+      this.pauseTemp = 0
+    }
+    this._perTime = this._perTime - this.pauseTemp
+    this.pauseTemp = 0
     this._duration = val - this._perTime
-    // this._perTime = val
     this.emit(UPDATE_TIME, this._duration);
+  }
+
+  get pauseTemp() {
+    return this._pauseTemp;
+  }
+
+  set pauseTemp(val: number) {
+    this._pauseTemp = val;
   }
 
   reset() {

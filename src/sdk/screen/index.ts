@@ -19,6 +19,7 @@ export class MiniScreen implements IMiniScreen {
   activeGam: IMiniGam | null = null;
   ctx: CanvasRenderingContext2D | null;
   aniTime: number | null = null;
+  aniId:number | null = null
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -34,6 +35,7 @@ export class MiniScreen implements IMiniScreen {
   }
 
   initAni() {
+    // if(this.aniId !== null) return
     if (!this.activeGam) {
       this.activeGam = this.gamManager.getActiveGam();
     }
@@ -41,14 +43,16 @@ export class MiniScreen implements IMiniScreen {
       this.draw();
     // }, 22);
 
-    requestAnimationFrame(() => {
+   this.aniId =  requestAnimationFrame(() => {
       this.initAni();
     })
   }
 
   pauseAni() {
-    if (this.aniTime) {
-      clearInterval(this.aniTime);
+    if (this.aniId !== null) {
+      // clearInterval(this.aniTime);
+      cancelAnimationFrame(this.aniId);
+      this.activeGam?.pauseRender && this.activeGam.pauseRender();
       this.aniTime = null;
       console.log('渲染终止');
     }

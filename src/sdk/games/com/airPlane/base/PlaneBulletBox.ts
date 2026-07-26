@@ -63,16 +63,12 @@ export class PlaneBulletBox extends PlaneBase {
 
         // 螺旋子弹 需要更改子弹的发射角度
         const angle = this.params.bulletAngle || 0;
-        const angleSpeed = this.params.bulletAngleSpeed || 0;
         const vx = Math.cos(angle);
         const vy = Math.sin(angle);
         config.direction = [vx, vy];
         const bullet = new PlaneBullet(this.type, this, config);
         this.bullets.push(bullet);
 
-        // const nextAngle = angle + angleSpeed;
-
-        // this.params.bulletAngle = nextAngle % (Math.PI * 2);
       }, this.params.shootCooldown);
     }
   }
@@ -180,6 +176,8 @@ export class PlaneBulletBox extends PlaneBase {
     ctx.save();
     // 将画布复原为初始状态
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+    console.log(this.bullets.length);
+    
     for (let i = 0; i < this.bullets.length; i++) {
       const b = this.bullets[i];
       b.render(ctx);

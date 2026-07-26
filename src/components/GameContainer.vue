@@ -33,11 +33,26 @@ onMounted(() => {
   }
   console.log(canvasElement);
 });
+
+
+// 游戏暂停
+function pauseGame() {
+  miniGameInstance?.pauseAni();
+}
+
+// 游戏开始
+function startGame() {
+  miniGameInstance?.initAni();
+}
 </script>
 
 <template>
   <div class="canvas-container">
     <canvas id="mini-game-canvas"></canvas>
+  </div>
+  <div class="opt-box">
+    <button @click="startGame">开始</button>
+    <button @click="pauseGame">暂停</button>
   </div>
 </template>
 
@@ -55,4 +70,19 @@ onMounted(() => {
   background-color: gray;
   touch-action: none;
 }
+
+.opt-box{
+  position: absolute;
+  right: 0;
+  width:100px;
+  background-color: antiquewhite;
+  padding:0 4px;
+  padding-bottom: 4px;
+}
+
+.opt-box button{
+  width:100%;
+  margin-top: 4px;
+}
+
 </style>

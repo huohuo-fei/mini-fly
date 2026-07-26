@@ -1,9 +1,6 @@
 import { PlaneBulletBox } from '../../base/PlaneBulletBox';
 import type { PlaneUnit } from '../../base/planeUnit';
-import type {
-  PlaneBulletParams,
-  PlaneBulletType,
-} from '../../base/type';
+import type { PlaneBulletParams, PlaneBulletType } from '../../base/type';
 
 export class PlaneMainBullet extends PlaneBulletBox {
   constructor(
@@ -12,5 +9,9 @@ export class PlaneMainBullet extends PlaneBulletBox {
     planeUnit: PlaneUnit
   ) {
     super(type, params, planeUnit);
+  }
+
+  render(ctx: CanvasRenderingContext2D): void {
+    super.render(ctx);
   }
 }

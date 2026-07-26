@@ -30,6 +30,7 @@ export interface IMiniGam {
   actionStart: (p: IMiniActParams) => void;
   actionEnd: (p: IMiniActParams) => void;
   actionDoing: (p: IMiniActParams) => void;
+  pauseRender?: () => void;
 }
 
 export interface IMiniG extends IMiniBus {
