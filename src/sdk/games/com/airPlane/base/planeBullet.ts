@@ -74,12 +74,6 @@ export class PlaneBullet extends PlaneBase {
       bulletWidth,
       bulletHeight
     );
-    ctx.fillRect(
-      -bulletWidth / 2,
-      -bulletHeight / 2,
-      bulletWidth,
-      bulletHeight
-    );
   }
 
   isDraw(){

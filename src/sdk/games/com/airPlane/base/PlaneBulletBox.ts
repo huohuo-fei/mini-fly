@@ -13,6 +13,8 @@ export class PlaneBulletBox extends PlaneBase {
   planeUnit: PlaneUnit;
 
   enable: boolean = false;
+  // 子弹发射器上一次生成子弹的时间
+  lastTime: number = 0;
 
   constructor(
     type: PlaneBulletType,
@@ -43,56 +45,41 @@ export class PlaneBulletBox extends PlaneBase {
   }
 
   buildNormalBullet() {
-    if (!this.bulletTimer) {
-      this.bulletTimer = setInterval(() => {
-        const config = JSON.parse(
-          JSON.stringify(this.params)
-        ) as PlaneBulletParams;
-        const bullet = new PlaneBullet(this.type, this, config);
-        this.bullets.push(bullet);
-      }, this.params.shootCooldown);
-    }
+    const config = JSON.parse(JSON.stringify(this.params)) as PlaneBulletParams;
+    const bullet = new PlaneBullet(this.type, this, config);
+    this.bullets.push(bullet);
+    this.bulletTimer = 1
+
   }
 
   buildSpiralBullet() {
-    if (!this.bulletTimer) {
-      this.bulletTimer = setInterval(() => {
-        const config = JSON.parse(
-          JSON.stringify(this.params)
-        ) as PlaneBulletParams;
+    const config = JSON.parse(JSON.stringify(this.params)) as PlaneBulletParams;
 
-        // 螺旋子弹 需要更改子弹的发射角度
-        const angle = this.params.bulletAngle || 0;
-        const vx = Math.cos(angle);
-        const vy = Math.sin(angle);
-        config.direction = [vx, vy];
-        const bullet = new PlaneBullet(this.type, this, config);
-        this.bullets.push(bullet);
-
-      }, this.params.shootCooldown);
-    }
+    // 螺旋子弹 需要更改子弹的发射角度
+    const angle = this.params.bulletAngle || 0;
+    const vx = Math.cos(angle);
+    const vy = Math.sin(angle);
+    config.direction = [vx, vy];
+    const bullet = new PlaneBullet(this.type, this, config);
+    this.bullets.push(bullet);
+    this.bulletTimer = 1
   }
 
   buildTraceBullet() {
-    if (!this.bulletTimer) {
-      this.bulletTimer = setInterval(() => {
-        const config = JSON.parse(
-          JSON.stringify(this.params)
-        ) as PlaneBulletParams;
+    const config = JSON.parse(JSON.stringify(this.params)) as PlaneBulletParams;
 
-        // 追踪子弹 需要更改子弹的发射角度
-        const endX = this.planeUnit.attackerX;
-        const endY = this.planeUnit.attackerY;
-        const startX = this.params.bulletX;
-        const startY = this.params.bulletY;
-        const angle = Math.atan2(endY - startY, endX - startX);
-        const vx = Math.cos(angle);
-        const vy = Math.sin(angle);
-        config.direction = [vx, vy];
-        const bullet = new PlaneBullet(this.type, this, config);
-        this.bullets.push(bullet);
-      }, this.params.shootCooldown);
-    }
+    // 追踪子弹 需要更改子弹的发射角度
+    const endX = this.planeUnit.attackerX;
+    const endY = this.planeUnit.attackerY;
+    const startX = this.params.bulletX;
+    const startY = this.params.bulletY;
+    const angle = Math.atan2(endY - startY, endX - startX);
+    const vx = Math.cos(angle);
+    const vy = Math.sin(angle);
+    config.direction = [vx, vy];
+    const bullet = new PlaneBullet(this.type, this, config);
+    this.bullets.push(bullet);
+    this.bulletTimer = 1
   }
 
   updatePosX(x: number) {
@@ -139,8 +126,7 @@ export class PlaneBulletBox extends PlaneBase {
       // 不在生成新的子弹 , 并为后续的机体回收做判断条件
       // 此种情况 需要过滤掉主战机的情况
       if (this.bullets.length === 0) {
-        
-        if(this.planeUnit.type !== AttackerType.MAIN){
+        if (this.planeUnit.type !== AttackerType.MAIN) {
           this.enable = false;
         }
       }
@@ -172,12 +158,22 @@ export class PlaneBulletBox extends PlaneBase {
     }
   }
 
+  // 替换 setinterval 的方法
+  // bulletTimer 依然作为 不创建新的子弹 但需要渲染旧子弹的标识 
+  loopBuildBullet() {
+    const time = new Date().getTime();
+    if (time - this.lastTime > this.params.shootCooldown && this.bulletTimer !== null) {
+      // 此时要生成新的子弹
+      this.buildBullet();
+      this.lastTime = time;
+    }
+  }
+
   render(ctx: CanvasRenderingContext2D) {
+    this.loopBuildBullet();
     ctx.save();
     // 将画布复原为初始状态
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    console.log(this.bullets.length);
-    
     for (let i = 0; i < this.bullets.length; i++) {
       const b = this.bullets[i];
       b.render(ctx);
@@ -185,7 +181,7 @@ export class PlaneBulletBox extends PlaneBase {
     ctx.restore();
 
     // 补丁：如果没有子弹，则将子弹箱禁用
-    if (this.bullets.length === 0 && this.bulletTimer == null ) {
+    if (this.bullets.length === 0 && this.bulletTimer == null) {
       this.enable = false;
     }
   }
