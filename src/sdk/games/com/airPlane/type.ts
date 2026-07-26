@@ -201,7 +201,7 @@ export type unLockedEnemy = {
 
 // 当前波次的详细信息 用于判断是否进入下一个波次
 export type waveInfo = {
-  startTime: number;
+  // startTime: number;
   gameTime: number;
   currentScore: number;
 };

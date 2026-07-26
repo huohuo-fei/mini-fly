@@ -98,7 +98,7 @@ export class PlaneToolBox implements IMiniGam {
             this.miniFly.planeAttacker.createDoubleBullet()
             break;
           case MiniPlaneToolType.LIFE:
-            this.miniFly.planeBar.addLife();
+            this.miniFly.updateLife(1);
             break;
           case MiniPlaneToolType.SHIELD:
             this.miniFly.planeAttacker.createShield();

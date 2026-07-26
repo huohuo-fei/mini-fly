@@ -1,15 +1,13 @@
 import type { IMiniActParams, IMiniAction, IMiniScreen } from '../type';
-import { MiniBus } from '../bus';
 import type { MiniActionType } from '../utils/common';
 
-export class MiniAction extends MiniBus implements IMiniAction {
+export class MiniAction  implements IMiniAction {
   canvas: HTMLCanvasElement;
   pointerDownFn = this.pointerDown.bind(this);
   pointerUpFn = this.pointerUp.bind(this);
   pointerMoveFn = this.pointerMove.bind(this);
   screen: IMiniScreen;
   constructor(canvas: HTMLCanvasElement, screen: IMiniScreen) {
-    super();
     this.canvas = canvas;
     this.screen = screen;
     this.addEventListener();

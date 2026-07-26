@@ -4,6 +4,7 @@
 import type { MiniFly } from '../..';
 import { PlaneBase } from '../../base/planeBase';
 import type { PlaneWave } from '../../base/planeWave';
+import { UPDATE_SCORE, UPDATE_TIME } from '../../state/eventName';
 import { EnemyType } from '../../type';
 import type { PlaneEnemy } from '../enemy/planeEnemy';
 import {
@@ -16,11 +17,10 @@ import { Wave_2 } from '../wave/wave2';
 export class PlaneControl extends PlaneBase {
   initFlag: boolean = false;
 
-  minifly: MiniFly;
+  miniFly: MiniFly;
   planeEnemy: PlaneEnemy;
 
   // 游戏时间
-  startTime: number = 0;
   gamingTime: number = 0;
 
   // 游戏分数
@@ -40,17 +40,23 @@ export class PlaneControl extends PlaneBase {
   // 当前激活的波次
   activeWave: PlaneWave | null = null;
 
-  constructor(minifly: MiniFly, planeEnemy: PlaneEnemy) {
+  updateScoreFn:Function = this.updateScore.bind(this);
+  updateTimeFn:Function = this.updateGameTime.bind(this);
+
+  constructor(miniFly: MiniFly, planeEnemy: PlaneEnemy) {
     super();
-    this.minifly = minifly;
+    this.miniFly = miniFly;
     this.planeEnemy = planeEnemy;
 
-    this.init();
+    this.initWave();
+
+    this.registerEvent()
   }
 
-  init() {
-    this.startTime = Date.now();
-    this.initWave();
+  registerEvent() {
+    this.miniFly.flyState.on(UPDATE_SCORE,this.updateScoreFn)
+    this.miniFly.flyState.on(UPDATE_TIME,this.updateTimeFn)
+
   }
 
   // 初始化波次
@@ -92,10 +98,14 @@ export class PlaneControl extends PlaneBase {
     this.currentScore = score
   }
 
+  // 更新游戏时间
+  updateGameTime(val:number) {
+    this.gamingTime = val
+  }
+
   updateWave() {
     if (this.activeWave) {
       const info = {
-        startTime: this.startTime,
         gameTime: this.gamingTime,
         currentScore: this.currentScore,
       };
@@ -111,8 +121,7 @@ export class PlaneControl extends PlaneBase {
   }
 
   render(): void {
-    const now = Date.now();
-    this.gamingTime = now - this.startTime;
+
     this.updateWave();
   }
 }
