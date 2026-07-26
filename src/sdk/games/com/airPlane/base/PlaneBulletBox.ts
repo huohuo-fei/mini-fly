@@ -13,8 +13,10 @@ export class PlaneBulletBox extends PlaneBase {
   planeUnit: PlaneUnit;
 
   enable: boolean = false;
-  // 子弹发射器上一次生成子弹的时间
-  lastTime: number = 0;
+
+  // 监听系统
+  listenTimer: number | null = null;
+  listenPause: boolean = false;
 
   constructor(
     type: PlaneBulletType,
@@ -45,41 +47,55 @@ export class PlaneBulletBox extends PlaneBase {
   }
 
   buildNormalBullet() {
-    const config = JSON.parse(JSON.stringify(this.params)) as PlaneBulletParams;
-    const bullet = new PlaneBullet(this.type, this, config);
-    this.bullets.push(bullet);
-    this.bulletTimer = 1
-
+    if (!this.bulletTimer) {
+      this.bulletTimer = setInterval(() => {
+        const config = JSON.parse(
+          JSON.stringify(this.params)
+        ) as PlaneBulletParams;
+        const bullet = new PlaneBullet(this.type, this, config);
+        this.bullets.push(bullet);
+      }, this.params.shootCooldown);
+    }
   }
 
   buildSpiralBullet() {
-    const config = JSON.parse(JSON.stringify(this.params)) as PlaneBulletParams;
+    if (!this.bulletTimer) {
+      this.bulletTimer = setInterval(() => {
+        const config = JSON.parse(
+          JSON.stringify(this.params)
+        ) as PlaneBulletParams;
 
-    // 螺旋子弹 需要更改子弹的发射角度
-    const angle = this.params.bulletAngle || 0;
-    const vx = Math.cos(angle);
-    const vy = Math.sin(angle);
-    config.direction = [vx, vy];
-    const bullet = new PlaneBullet(this.type, this, config);
-    this.bullets.push(bullet);
-    this.bulletTimer = 1
+        // 螺旋子弹 需要更改子弹的发射角度
+        const angle = this.params.bulletAngle || 0;
+        const vx = Math.cos(angle);
+        const vy = Math.sin(angle);
+        config.direction = [vx, vy];
+        const bullet = new PlaneBullet(this.type, this, config);
+        this.bullets.push(bullet);
+      }, this.params.shootCooldown);
+    }
   }
 
   buildTraceBullet() {
-    const config = JSON.parse(JSON.stringify(this.params)) as PlaneBulletParams;
+    if (!this.bulletTimer) {
+      this.bulletTimer = setInterval(() => {
+        const config = JSON.parse(
+          JSON.stringify(this.params)
+        ) as PlaneBulletParams;
 
-    // 追踪子弹 需要更改子弹的发射角度
-    const endX = this.planeUnit.attackerX;
-    const endY = this.planeUnit.attackerY;
-    const startX = this.params.bulletX;
-    const startY = this.params.bulletY;
-    const angle = Math.atan2(endY - startY, endX - startX);
-    const vx = Math.cos(angle);
-    const vy = Math.sin(angle);
-    config.direction = [vx, vy];
-    const bullet = new PlaneBullet(this.type, this, config);
-    this.bullets.push(bullet);
-    this.bulletTimer = 1
+        // 追踪子弹 需要更改子弹的发射角度
+        const endX = this.planeUnit.attackerX;
+        const endY = this.planeUnit.attackerY;
+        const startX = this.params.bulletX;
+        const startY = this.params.bulletY;
+        const angle = Math.atan2(endY - startY, endX - startX);
+        const vx = Math.cos(angle);
+        const vy = Math.sin(angle);
+        config.direction = [vx, vy];
+        const bullet = new PlaneBullet(this.type, this, config);
+        this.bullets.push(bullet);
+      }, this.params.shootCooldown);
+    }
   }
 
   updatePosX(x: number) {
@@ -126,6 +142,8 @@ export class PlaneBulletBox extends PlaneBase {
       // 不在生成新的子弹 , 并为后续的机体回收做判断条件
       // 此种情况 需要过滤掉主战机的情况
       if (this.bullets.length === 0) {
+        // 子弹空了 清楚监听render的定时器
+        this.clearListenTimer();
         if (this.planeUnit.type !== AttackerType.MAIN) {
           this.enable = false;
         }
@@ -141,6 +159,7 @@ export class PlaneBulletBox extends PlaneBase {
       clearInterval(this.bulletTimer);
       this.bulletTimer = null;
     }
+    this.clearListenTimer();
   }
 
   // 恢复计时器
@@ -158,19 +177,38 @@ export class PlaneBulletBox extends PlaneBase {
     }
   }
 
-  // 替换 setinterval 的方法
-  // bulletTimer 依然作为 不创建新的子弹 但需要渲染旧子弹的标识 
-  loopBuildBullet() {
-    const time = new Date().getTime();
-    if (time - this.lastTime > this.params.shootCooldown && this.bulletTimer !== null) {
-      // 此时要生成新的子弹
-      this.buildBullet();
-      this.lastTime = time;
+  // 自测系统
+  // 在不执行render的情况下 不生成新的子弹
+  // 在敌机未生成子弹之前被击中 监听器没有被取消
+  listenRender() {
+    // 之前被停止过，现在需要重新启动
+    if (this.listenPause) {
+      this.refreshTimer();
+      this.listenPause = false;
+    }
+    
+    // 移除上一个监听
+    if (this.listenTimer) {
+      clearTimeout(this.listenTimer);
+    }
+
+    // 如果子弹已近停止 则不需要监听
+    if (!this.bulletTimer) return;
+    this.listenTimer = setTimeout(() => {
+      this.stopBullet();
+      this.listenPause = true;
+    }, 200);
+  }
+
+  clearListenTimer() {
+    if (this.listenTimer) {
+      clearTimeout(this.listenTimer);
+      console.log('clear');
     }
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    this.loopBuildBullet();
+    this.listenRender();
     ctx.save();
     // 将画布复原为初始状态
     ctx.setTransform(1, 0, 0, 1, 0, 0);
