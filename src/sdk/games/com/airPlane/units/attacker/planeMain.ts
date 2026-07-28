@@ -4,6 +4,7 @@ import {
   PlaneBulletType,
   type PlaneBulletParams,
   type PlaneUnitParams,
+  type HitInfo,
 } from '../../base/type';
 import { PlaneMainBody } from './planeMainBody';
 import { PlaneMainBullet } from './planeMainBullet';
@@ -11,22 +12,36 @@ import { planeMainBulletConfig } from '../../config';
 import { AttackerType, type MiniPlaneToolType } from '../../type';
 import type { ToolShieldConfig } from '../tools/type';
 import { ToolPlaneShield } from '../tools/toolShield';
+import type { PlaneBullet } from '../../base/planeBullet';
+import type { PlaneAttacker } from './planeAttacker';
 
 export class PlaneMain extends PlaneUnit {
+  planeAtt: PlaneAttacker;
+
+  // 每列子弹的横向间隔
   bulletGap: number = 8;
+
+  // 测试功能
   isSub: boolean = false;
   type: AttackerType = AttackerType.MAIN;
-  constructor(params: PlaneUnitParams) {
+
+  noHitStartDur: number = 0;
+  noHitTime: number = 3 * 1000;
+  constructor(params: PlaneUnitParams, planeAtt: PlaneAttacker) {
     super(params);
+    this.planeAtt = planeAtt;
     this.updatePosX(this.unitX);
-    this.planeBody = new PlaneMainBody({
-      bodyWidth: this.unitWidth,
-      bodyHeight: this.unitHeight,
-      bodyX: this.unitX,
-      bodyY: this.unitY,
-      speedX: this.speedX,
-      speedY: this.speedY,
-    });
+    this.planeBody = new PlaneMainBody(
+      {
+        bodyWidth: this.unitWidth,
+        bodyHeight: this.unitHeight,
+        bodyX: this.unitX,
+        bodyY: this.unitY,
+        speedX: this.speedX,
+        speedY: this.speedY,
+      },
+      this
+    );
 
     const bulletParams = JSON.parse(
       JSON.stringify(planeMainBulletConfig)
@@ -127,9 +142,9 @@ export class PlaneMain extends PlaneUnit {
 
   // 添加工具
   addTool(type: MiniPlaneToolType) {
-    if(this.tools.length > 0) return
+    if (this.tools.length > 0) return;
     console.log('create tool');
-    
+
     const shieldConfig: ToolShieldConfig = {
       w: this.unitWidth,
       h: this.unitHeight,
@@ -137,7 +152,7 @@ export class PlaneMain extends PlaneUnit {
       y: this.unitY,
     };
 
-    const tool = new ToolPlaneShield(shieldConfig,this);
+    const tool = new ToolPlaneShield(shieldConfig, this);
     this.tools.push(tool);
   }
 
@@ -181,7 +196,19 @@ export class PlaneMain extends PlaneUnit {
     // 更新工具坐标
     for (let i = 0; i < this.tools.length; i++) {
       const tool = this.tools[i];
-      tool.updatePos(this.unitX,this.unitY);
+      tool.updatePos(this.unitX, this.unitY);
+    }
+  }
+
+  beforeRender() {
+    // 更新无敌状态
+    if (this.noHit) {
+      // this.noHitTimer--;
+      const newDur = this.planeAtt.miniFly.flyState.duration;
+      if (newDur - this.noHitStartDur > this.noHitTime) {
+        this.noHit = false;
+        this.planeAtt.closeInvincibleText()
+      }
     }
   }
 
@@ -191,9 +218,32 @@ export class PlaneMain extends PlaneUnit {
       const tool = this.tools[i];
       tool.render(ctx);
     }
+  }
 
-    // console.log(this.bulletBoxList);
-    
+  isHitUnit(bullet: PlaneBullet): HitInfo | null {
+    if (!this.planeBody?.enable || this.noHit) return null;
+    const { bulletHeight, bulletWidth, bulletX, bulletY } = bullet.params;
+    const { unitHeight, unitWidth, unitX, unitY } = this;
+    const disX = Math.abs(bulletX - unitX);
+    const disY = Math.abs(bulletY - unitY);
+    if (
+      disX < unitWidth / 2 + bulletWidth / 2 &&
+      disY < unitHeight / 2 + bulletHeight / 2
+    ) {
+      const dead = false;
+
+      // 修改无敌状态 并记录时刻
+      this.noHit = true;
+      this.noHitStartDur = this.planeAtt.miniFly.flyState.duration;
+
+      return {
+        x: unitX,
+        y: unitY,
+        score: this.score,
+        dead: dead,
+      };
+    }
+    return null;
   }
 
   actionDoing = (p: IMiniActParams) => {

@@ -1,11 +1,10 @@
-import type {
-  IMiniActParams,
-  IMiniGameParams,
-} from '../../../../../type';
+import type { IMiniActParams, IMiniGameParams } from '../../../../../type';
 import { PlaneMain } from './planeMain';
 import { PlaneBase } from '../../base/planeBase';
 import type { PlaneBullet } from '../../base/planeBullet';
-import { MiniPlaneToolType } from '../../type';
+import { IMiniPlaneEffectType, MiniPlaneToolType } from '../../type';
+import type { MiniFly } from '../..';
+import type { TextUnit } from '../textTip/textUnit';
 
 export class PlaneAttacker extends PlaneBase {
   // 战机的配置参数
@@ -23,31 +22,38 @@ export class PlaneAttacker extends PlaneBase {
   // 游戏参数，
   gameParams: IMiniGameParams;
 
+  miniFly: MiniFly;
+
   // 主战机实例
   planeMain: PlaneMain;
+  noHitText: TextUnit | null = null;
 
-  constructor(params: IMiniGameParams) {
+  constructor(params: IMiniGameParams, miniFly: MiniFly) {
     super();
     const { PLAYER_HEIGHT, PLAYER_WIDTH, shootCooldown, offsetY } = this;
     const playerX = params.canvasWidth / 2;
     const playerY = params.canvasHeight - offsetY;
     this.gameParams = params;
-    this.planeMain = new PlaneMain({
-      unitWidth: PLAYER_WIDTH,
-      unitHeight: PLAYER_HEIGHT,
-      unitX: playerX,
-      unitY: playerY,
-      speedX: 0,
-      speedY: 0,
-      shootCooldown,
-      canvasHeight: this.gameParams.canvasHeight,
-      canvasWidth: this.gameParams.canvasWidth,
-      health:1,
-      score:1,
-      type:'main'
-    });
+    this.miniFly = miniFly;
+    this.planeMain = new PlaneMain(
+      {
+        unitWidth: PLAYER_WIDTH,
+        unitHeight: PLAYER_HEIGHT,
+        unitX: playerX,
+        unitY: playerY,
+        speedX: 0,
+        speedY: 0,
+        shootCooldown,
+        canvasHeight: this.gameParams.canvasHeight,
+        canvasWidth: this.gameParams.canvasWidth,
+        health: 1,
+        score: 1,
+        type: 'main',
+      },
+      this
+    );
 
-    this.updatePos(playerX, playerY) 
+    this.updatePos(playerX, playerY);
   }
 
   updatePos(x: number, y: number) {
@@ -60,7 +66,7 @@ export class PlaneAttacker extends PlaneBase {
     const { PLAYER_WIDTH, attackerX, gameParams } = this;
     let targetX = x;
     targetX = Math.min(
-      Math.max(targetX, PLAYER_WIDTH  + 5),
+      Math.max(targetX, PLAYER_WIDTH + 5),
       gameParams.canvasWidth - PLAYER_WIDTH - 5
     );
     let resX = attackerX * 0.85 + targetX * 0.15;
@@ -79,19 +85,76 @@ export class PlaneAttacker extends PlaneBase {
   }
 
   // 遍历主战机的子弹 判断是否击中敌机
-  checkHitEnemy(cb:(bullet:PlaneBullet) => boolean) {
-  this.planeMain.traverseBullet(cb)
+  checkHitEnemy(cb: (bullet: PlaneBullet) => boolean) {
+    this.planeMain.traverseBullet(cb);
+  }
+
+  // 判断当前主战机是否被击中
+  checkHitByEnemy(bullet: PlaneBullet) {
+    const hitInfo = this.planeMain.isHitUnit(bullet);
+    if (hitInfo) {
+      // 此时战机被命中
+      const lifeVal = this.miniFly.flyState.life;
+      if (lifeVal > 1) {
+        this.miniFly.createEffect(
+          IMiniPlaneEffectType.DAMAGE,
+          hitInfo.x,
+          hitInfo.y
+        );
+
+        // 战机被击中后 有一段无敌时间
+      } else {
+        this.miniFly.createEffect(
+          IMiniPlaneEffectType.EXPLODE,
+          hitInfo.x,
+          hitInfo.y
+        );
+      }
+      this.miniFly.flyState.life -= 1;
+      this.showInvincibleText();
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // 无敌提示文字
+  showInvincibleText() {
+    // 追加一个提示文字
+    const canvasWidth = this.gameParams.canvasWidth;
+    const cx = canvasWidth / 2;
+    const h = 50;
+    const t1 = {
+      text: '✦✦ 无敌 ✦✦',
+      x: cx,
+      y: h,
+      color: '#00ff66',
+      fontSize: 14,
+    };
+
+    this.noHitText = this.miniFly.planeText.addText(t1);
+  }
+
+  closeInvincibleText() {
+    if (this.noHitText) {
+      this.miniFly.planeText.removeText(this.noHitText);
+    }
   }
 
   // 生成光罩
   createShield() {
     // this.planeShield.changeState(true);
-  this.planeMain.addTool(MiniPlaneToolType.SHIELD)
+    this.planeMain.addTool(MiniPlaneToolType.SHIELD);
   }
 
   // 生成双倍子弹
   createDoubleBullet() {
-    this.planeMain.addBullet()
+    this.planeMain.addBullet();
+  }
+
+  requestEffect(effectType: IMiniPlaneEffectType, x: number, y: number) {
+    this.miniFly.createEffect(effectType, x, y);
   }
 
   getPos() {

@@ -3,7 +3,7 @@ import { JokerCreater } from '../../../creater/createJoker';
 import { MiniPlaneEnemyType, type WaveEnemyConfig } from '../../../type';
 
 export class Wave_1_Joker extends JokerCreater {
-  gapTime = 600;
+  gapTime = 1000;
   lastTime = 0;
 
   // 配置的规则

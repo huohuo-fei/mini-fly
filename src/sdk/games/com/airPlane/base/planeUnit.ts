@@ -20,6 +20,8 @@ export class PlaneUnit extends PlaneBase {
   health: number = 0;
   type:EnemyType | AttackerType = EnemyType.BOSS;
 
+  // 是否无敌
+  noHit: boolean = false;
   planeBody: PlaneBody | null = null;
   bulletBoxList: PlaneBulletBox[] = [];
 
@@ -55,7 +57,9 @@ export class PlaneUnit extends PlaneBase {
     
   }
 
-  beforeRender() {}
+  beforeRender() {
+    // updatePos。。。。
+  }
 
   render(ctx: CanvasRenderingContext2D) {
     this.beforeRender();
@@ -100,6 +104,25 @@ export class PlaneUnit extends PlaneBase {
     }
 
     return false;
+  }
+// todo:后续整合
+  traverseEnemyBullet(callback: (bullet: PlaneBullet) => boolean) {
+    for (let i = 0; i < this.bulletBoxList.length; i++) {
+      const bulletBox = this.bulletBoxList[i];
+      for (let i = 0; i < bulletBox.bullets.length; i++) {
+        // 此时拿到了子弹
+        // 将当前子弹信息返回出去，
+        // 由外层具体的逻辑判断当前子弹是否发生碰撞
+        const bullet = bulletBox.bullets[i];
+        const flag = callback(bullet);
+
+        // 同一敌机 同时只能命中一次
+        if(flag){
+          this.removeBullet(bullet);
+          break
+        }
+      }
+    }
   }
 
   // 移除子弹

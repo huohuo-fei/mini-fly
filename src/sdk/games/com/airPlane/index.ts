@@ -17,6 +17,8 @@ import { PlaneToolBox } from './units/tools/planeToolBox';
 import { PlaneControl } from './units/control';
 import type { PlaneUnit } from './base/planeUnit';
 import { FlyState } from './state';
+import type { PlaneBullet } from './base/planeBullet';
+import { PlaneText } from './units/textTip/textTip';
 
 export class MiniFly implements IMiniGam {
   planeBackground: PlaneBg;
@@ -26,6 +28,7 @@ export class MiniFly implements IMiniGam {
   planeBar: PlaneBar;
   planeToolBox: PlaneToolBox;
   planeControl: PlaneControl;
+  planeText:PlaneText
 
   flyState: FlyState;
   constructor(gameParams: IMiniGameParams) {
@@ -34,12 +37,13 @@ export class MiniFly implements IMiniGam {
 
     // 加载各个模块
     this.planeBackground = new PlaneBg();
-    this.planeAttacker = new PlaneAttacker(gameParams);
+    this.planeAttacker = new PlaneAttacker(gameParams,this);
     this.planeEnemy = new PlaneEnemy(gameParams, this);
     this.planeEffect = new PlaneEffect();
     this.planeBar = new PlaneBar(this);
     this.planeToolBox = new PlaneToolBox(gameParams, this);
     this.planeControl = new PlaneControl(this, this.planeEnemy);
+    this.planeText = new PlaneText(gameParams,this)
   }
 
   // render 方法
@@ -51,6 +55,7 @@ export class MiniFly implements IMiniGam {
     this.planeEffect.render(ctx);
     this.planeBar.render(ctx);
     this.planeToolBox.render(ctx);
+    this.planeText.render(ctx);
     this.bulletHitEnemy();
     this.catchTool();
     this.updateTime();
@@ -66,6 +71,17 @@ export class MiniFly implements IMiniGam {
     this.planeAttacker.checkHitEnemy((bullet) => {
       return this.planeEnemy.isHitEnemy(bullet);
     });
+  }
+
+  // 敌机击中战机
+  enemyHitAttacker(bullet:PlaneBullet) {
+    const res = this.planeAttacker.checkHitByEnemy(bullet)
+    // const res2 = this.planeAttacker.planeMain.isHitUnit(bullet)
+    if(res){
+      return true
+    }else{
+      return false
+    }
   }
 
   // 战机捕获工具

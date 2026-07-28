@@ -108,13 +108,19 @@ export class PlaneEnemy implements IMiniGam {
       for (let i = delList.length - 1; i >= 0; i--) {
         list.splice(delList[i], 1);
       }
-
-      // if (key === EnemyType.BIG) {
-      // }
       this.enemyDelMap[key] = [];
       for (let i = 0; i < list.length; i++) {
-        if (list[i]) {
-          list[i].render(ctx);
+        const enemy = list[i];
+        if (enemy) {
+          // 渲染敌机
+          enemy.render(ctx);
+
+          // 检测是否击中战机
+          // todo:后续添加无敌时间 可跳过这一步骤
+          enemy.traverseEnemyBullet((bullet) => {
+            const flag = this.miniFly.enemyHitAttacker(bullet);
+            return flag;
+          });
         }
       }
     }

@@ -203,7 +203,6 @@ export class PlaneBulletBox extends PlaneBase {
   clearListenTimer() {
     if (this.listenTimer) {
       clearTimeout(this.listenTimer);
-      console.log('clear');
     }
   }
 

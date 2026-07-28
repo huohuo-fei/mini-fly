@@ -15,6 +15,12 @@ export class PlaneBar implements IMiniGam {
   updateLifeFn: Function = this.updateLife.bind(this);
   updateTimeFn: Function = this.updateTime.bind(this);
 
+  textMap:Map<string,string> = new Map<string,string>(
+    [
+      ['1','✦✦ 无敌 ✦✦'],
+    ]
+  );
+
   constructor(miniFly: MiniFly) {
     this.miniFly = miniFly;
     this.registerEvent();
@@ -47,11 +53,33 @@ export class PlaneBar implements IMiniGam {
     ctx.restore();
   }
 
+  drawCenterText(ctx: CanvasRenderingContext2D){
+    const text = '✦✦ 无敌状态 ✦✦' 
+    const canvasWidth = ctx.canvas.width;
+    ctx.save();
+    ctx.beginPath();
+    ctx.fillStyle = '#00ff66';
+    ctx.font = `14px Arial`;
+    const width = ctx.measureText(text).width;
+    ctx.fillText(text, canvasWidth / 2 - width / 2, 50);
+    ctx.restore();
+
+  }
+
   updateScore(val: number) {
     this.scoreVal = val;
   }
 
   updateLife(val: number) {
+    // 更新生命值 需要判断时变大还是减小
+    if (val > this.lifeVal) {
+      this.addLife(val);
+    } else {
+      this.removeLife(val);
+    }
+  }
+
+  addLife(val: number) {
     if (this.lifeVal < this.maxLife || true) {
       const x = this.miniFly.planeAttacker.attackerX;
       const y = this.miniFly.planeAttacker.attackerY;
@@ -70,12 +98,24 @@ export class PlaneBar implements IMiniGam {
     }
   }
 
+  removeLife(val: number) {
+    if(val<0)return
+
+    // if(val>0){
+
+    // }else{
+    //   // 游戏结束 
+    // }
+    this.lifeVal = val;
+  }
+
   updateTime(val: number) {
     this.timeVal = val;
   }
   render(ctx: CanvasRenderingContext2D) {
     this.drawScoreIcon(ctx);
     this.drawTime(ctx);
+    // this.drawCenterText(ctx)
   }
   actionStart = () => {};
   actionEnd = () => {};
