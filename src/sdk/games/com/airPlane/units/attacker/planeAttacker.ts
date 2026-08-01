@@ -5,6 +5,7 @@ import type { PlaneBullet } from '../../base/planeBullet';
 import { IMiniPlaneEffectType, MiniPlaneToolType } from '../../type';
 import type { MiniFly } from '../..';
 import type { TextUnit } from '../textTip/textUnit';
+import { MiniFlyState } from '../../state/flyState';
 
 export class PlaneAttacker extends PlaneBase {
   // 战机的配置参数
@@ -93,26 +94,6 @@ export class PlaneAttacker extends PlaneBase {
   checkHitByEnemy(bullet: PlaneBullet) {
     const hitInfo = this.planeMain.isHitUnit(bullet);
     if (hitInfo) {
-      // 此时战机被命中
-      const lifeVal = this.miniFly.flyState.life;
-      if (lifeVal > 1) {
-        this.miniFly.createEffect(
-          IMiniPlaneEffectType.DAMAGE,
-          hitInfo.x,
-          hitInfo.y
-        );
-
-        // 战机被击中后 有一段无敌时间
-      } else {
-        this.miniFly.createEffect(
-          IMiniPlaneEffectType.EXPLODE,
-          hitInfo.x,
-          hitInfo.y
-        );
-      }
-      this.miniFly.flyState.life -= 1;
-      this.showInvincibleText();
-
       return true;
     } else {
       return false;

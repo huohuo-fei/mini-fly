@@ -9,11 +9,17 @@ import {
 import { PlaneMainBody } from './planeMainBody';
 import { PlaneMainBullet } from './planeMainBullet';
 import { planeMainBulletConfig } from '../../config';
-import { AttackerType, type MiniPlaneToolType } from '../../type';
+import {
+  AttackerType,
+  IMiniPlaneEffectType,
+  MiniPlaneToolType,
+} from '../../type';
 import type { ToolShieldConfig } from '../tools/type';
 import { ToolPlaneShield } from '../tools/toolShield';
 import type { PlaneBullet } from '../../base/planeBullet';
 import type { PlaneAttacker } from './planeAttacker';
+import { MiniFlyState } from '../../state/flyState';
+import type { TextUnit } from '../textTip/textUnit';
 
 export class PlaneMain extends PlaneUnit {
   planeAtt: PlaneAttacker;
@@ -21,12 +27,14 @@ export class PlaneMain extends PlaneUnit {
   // 每列子弹的横向间隔
   bulletGap: number = 8;
 
-  // 测试功能
-  isSub: boolean = false;
   type: AttackerType = AttackerType.MAIN;
 
+  // 无敌状态已经持续的时间
   noHitStartDur: number = 0;
+  // 每次进入无敌状态的总时间
   noHitTime: number = 3 * 1000;
+  noHitText: TextUnit | null = null;
+
   constructor(params: PlaneUnitParams, planeAtt: PlaneAttacker) {
     super(params);
     this.planeAtt = planeAtt;
@@ -59,14 +67,8 @@ export class PlaneMain extends PlaneUnit {
 
   // 增加子弹列数
   addBullet() {
-    if (this.isSub) {
-      this.reduceBullet();
-      return;
-    }
     const len = this.bulletBoxList.length;
     if (len >= 3) {
-      this.isSub = true;
-      this.reduceBullet();
       return;
     }
 
@@ -106,54 +108,39 @@ export class PlaneMain extends PlaneUnit {
     }
   }
 
-  // 减少子弹数
-  reduceBullet() {
-    const len = this.bulletBoxList.length;
-    if (len <= 1) {
-      this.isSub = false;
-      this.addBullet();
-      return;
-    }
-
-    if (len === 3) {
-      // this.bulletBoxList.pop()
-      for (let i = 0; i < this.bulletBoxList.length; i++) {
-        // this.bulletBoxList[i].stopBullet()
-        const bullet = this.bulletBoxList[i];
-        if (i === 0) {
-          bullet.updatePos(this.unitX - this.bulletGap, this.unitY);
-          bullet.refreshTimer();
-        } else if (i === 1) {
-          bullet.updatePos(this.unitX + this.bulletGap, this.unitY);
-          bullet.refreshTimer();
-        } else {
-          bullet.stopBullet();
-        }
+  // 击中后 重新设置子弹数量
+  resetBullet() {
+    for (let i = 0; i < this.bulletBoxList.length; i++) {
+      const bullet = this.bulletBoxList[i];
+      if (i === 0) {
+        bullet.updatePos(this.unitX, this.unitY);
+        bullet.refreshTimer();
+      } else {
+        bullet.stopBullet();
       }
-    } else if (len === 2) {
-      // this.bulletBoxList.pop();
-      const one = this.bulletBoxList[0];
-      one.updatePos(this.unitX, this.unitY);
-      one.refreshTimer();
-      const two = this.bulletBoxList[1];
-      two.stopBullet();
     }
   }
 
   // 添加工具
   addTool(type: MiniPlaneToolType) {
-    if (this.tools.length > 0) return;
-    console.log('create tool');
+    // if (this.tools.length > 0) return;
+    // console.log('create tool');
 
-    const shieldConfig: ToolShieldConfig = {
-      w: this.unitWidth,
-      h: this.unitHeight,
-      x: this.unitX,
-      y: this.unitY,
-    };
+    const toolInd = this.tools.findIndex((tool) => tool.type === type);
 
-    const tool = new ToolPlaneShield(shieldConfig, this);
-    this.tools.push(tool);
+    if (toolInd > -1) {
+      // todo:相同的工具是否可以叠加使用
+      // const tool = this.tools[toolInd];
+    } else {
+      const shieldConfig: ToolShieldConfig = {
+        w: this.unitWidth,
+        h: this.unitHeight,
+        x: this.unitX,
+        y: this.unitY,
+      };
+      const tool = new ToolPlaneShield(shieldConfig, this);
+      this.tools.push(tool);
+    }
   }
 
   updatePosX(x: number) {
@@ -203,11 +190,10 @@ export class PlaneMain extends PlaneUnit {
   beforeRender() {
     // 更新无敌状态
     if (this.noHit) {
-      // this.noHitTimer--;
-      const newDur = this.planeAtt.miniFly.flyState.duration;
+      const newDur = MiniFlyState.duration;
       if (newDur - this.noHitStartDur > this.noHitTime) {
         this.noHit = false;
-        this.planeAtt.closeInvincibleText()
+        this.closeInvincibleText();
       }
     }
   }
@@ -220,6 +206,8 @@ export class PlaneMain extends PlaneUnit {
     }
   }
 
+  // 判断是否被敌机的子弹击中
+  // 战机处于无敌状态时，不能被选中
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
     if (!this.planeBody?.enable || this.noHit) return null;
     const { bulletHeight, bulletWidth, bulletX, bulletY } = bullet.params;
@@ -230,11 +218,41 @@ export class PlaneMain extends PlaneUnit {
       disX < unitWidth / 2 + bulletWidth / 2 &&
       disY < unitHeight / 2 + bulletHeight / 2
     ) {
-      const dead = false;
+      // 被子弹击中后，需要执行的逻辑：
+      let dead = false;
 
-      // 修改无敌状态 并记录时刻
-      this.noHit = true;
-      this.noHitStartDur = this.planeAtt.miniFly.flyState.duration;
+      // 1.重置子弹列数
+      this.resetBullet();
+      // 2.护盾情况
+      const ind = this.tools.findIndex(
+        (tool) => tool.type === MiniPlaneToolType.SHIELD
+      );
+      if (ind > -1 && !(this.tools[ind] as ToolPlaneShield).blinkState) {
+        // 此时有护盾,并且护盾还未击碎
+        (this.tools[ind] as ToolPlaneShield).forceBlink();
+      } else {
+        // 此时没有护盾，或者护盾已经处于击碎状态，则执行正常的战损逻辑
+        this.noHit = true;
+        this.noHitStartDur = MiniFlyState.duration;
+        const lifeVal = MiniFlyState.life;
+        if (lifeVal > 1) {
+          this.planeAtt.miniFly.createEffect(
+            IMiniPlaneEffectType.DAMAGE,
+            unitX,
+            unitY
+          );
+        } else {
+          this.planeAtt.miniFly.createEffect(
+            IMiniPlaneEffectType.EXPLODE,
+            unitX,
+            unitY
+          );
+          dead = true;
+          console.log('战机阵亡，游戏结束');
+        }
+        MiniFlyState.life -= 1;
+        this.showInvincibleText();
+      }
 
       return {
         x: unitX,
@@ -244,6 +262,30 @@ export class PlaneMain extends PlaneUnit {
       };
     }
     return null;
+  }
+
+  // 无敌提示文字
+  showInvincibleText() {
+    // 追加一个提示文字
+    const canvasWidth = this.canvasWidth;
+    const cx = canvasWidth / 2;
+    const h = 50;
+    const t1 = {
+      text: '✦✦ 无敌 ✦✦',
+      x: cx,
+      y: h,
+      color: '#00ff66',
+      fontSize: 14,
+    };
+
+    this.noHitText = this.planeAtt.miniFly.planeText.addText(t1);
+  }
+
+  // 关闭文字
+  closeInvincibleText() {
+    if (this.noHitText) {
+      this.planeAtt.miniFly.planeText.removeText(this.noHitText);
+    }
   }
 
   actionDoing = (p: IMiniActParams) => {

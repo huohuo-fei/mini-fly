@@ -2,6 +2,7 @@ import type { MiniFly } from '..';
 import type { IMiniBus } from '../../../../type';
 import { UPDATE_LIFE, UPDATE_SCORE, UPDATE_TIME } from './eventName';
 
+// 弃用
 export class FlyState implements IMiniBus {
   private _scoreVal: number = 0;
   private _lifeVal: number = 0;

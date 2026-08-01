@@ -10,7 +10,7 @@ import { PlaneAttacker } from './units/attacker/planeAttacker';
 import { PlaneBg } from './units/background/planeBg';
 import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
-import { EnemyType, type IMiniPlaneEffectType } from './type';
+import { EnemyType, MiniPlaneToolType, type IMiniPlaneEffectType } from './type';
 import { PlaneBar } from './units/bar/planeBar';
 import { PlaneToolBox } from './units/tools/planeToolBox';
 
@@ -19,6 +19,7 @@ import type { PlaneUnit } from './base/planeUnit';
 import { FlyState } from './state';
 import type { PlaneBullet } from './base/planeBullet';
 import { PlaneText } from './units/textTip/textTip';
+import { MiniFlyState } from './state/flyState';
 
 export class MiniFly implements IMiniGam {
   planeBackground: PlaneBg;
@@ -30,10 +31,11 @@ export class MiniFly implements IMiniGam {
   planeControl: PlaneControl;
   planeText:PlaneText
 
-  flyState: FlyState;
+  // flyState: FlyState;
+  // miniFlyState:MiniFlyState = MiniFlyState
   constructor(gameParams: IMiniGameParams) {
     // 初始化内部状态
-    this.flyState = new FlyState(this);
+    MiniFlyState.reset()
 
     // 加载各个模块
     this.planeBackground = new PlaneBg();
@@ -63,7 +65,8 @@ export class MiniFly implements IMiniGam {
 
   // 渲染暂停，主要是控制内部的时间系统
   pauseRender() {
-    this.flyState.pauseTemp = new Date().getTime();
+    MiniFlyState.pauseTemp = new Date().getTime();
+    
   }
 
   // 子弹击中敌机
@@ -109,23 +112,23 @@ export class MiniFly implements IMiniGam {
 
   // 更新局内分数
   updateScore(score: number) {
-    this.flyState.score = this.flyState.score + score;
+    MiniFlyState.score = MiniFlyState.score + score;
   }
 
   // 更新生命值
   updateLife(val: number) {
-    this.flyState.life = this.flyState.life + val;
+    MiniFlyState.life = MiniFlyState.life + val;
   }
 
   // 更新时间
   updateTime() {
-    this.flyState.duration = new Date().getTime();
+    MiniFlyState.duration = new Date().getTime();
   }
 
   // 更新道具
   updateToolBox(enemy: PlaneUnit) {
-    this.planeToolBox.buildTool(enemy);
-    // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.LIFE)
+    // this.planeToolBox.buildTool(enemy);
+    this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.SHIELD)
   }
 
   removeControlEnemyByType(type: EnemyType) {

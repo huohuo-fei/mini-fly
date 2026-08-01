@@ -1,8 +1,10 @@
+import { MiniPlaneToolType } from "../type";
 import { PlaneBase } from "./planeBase";
 import type { PlaneUnit } from "./planeUnit";
 
 export class PlaneToolBase extends PlaneBase {
 
+  type:MiniPlaneToolType = MiniPlaneToolType.SHIELD
   // 主机体的尺寸 位置信息
   mainUnit:PlaneUnit|null = null
   mainWidth:number = 0

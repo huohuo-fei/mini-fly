@@ -13,6 +13,7 @@ import {
 } from '../wave/config';
 import { Wave_1 } from '../wave/wave1';
 import { Wave_2 } from '../wave/wave2';
+import { MiniFlyState } from '../../state/flyState';
 
 export class PlaneControl extends PlaneBase {
   initFlag: boolean = false;
@@ -54,8 +55,8 @@ export class PlaneControl extends PlaneBase {
   }
 
   registerEvent() {
-    this.miniFly.flyState.on(UPDATE_SCORE,this.updateScoreFn)
-    this.miniFly.flyState.on(UPDATE_TIME,this.updateTimeFn)
+    MiniFlyState.addEvent(UPDATE_SCORE,this.updateScoreFn)
+    MiniFlyState.addEvent(UPDATE_TIME,this.updateTimeFn)
 
   }
 

@@ -3,6 +3,7 @@ import { MiniUtils } from '../../../../..';
 import type { IMiniGam } from '../../../../../type';
 import { UPDATE_LIFE, UPDATE_SCORE, UPDATE_TIME } from '../../state/eventName';
 import { IMiniPlaneEffectType } from '../../type';
+import { MiniFlyState } from '../../state/flyState';
 export class PlaneBar implements IMiniGam {
   fontSize = 18;
   scoreVal: number = 0;
@@ -27,9 +28,9 @@ export class PlaneBar implements IMiniGam {
   }
 
   registerEvent() {
-    this.miniFly.flyState.on(UPDATE_SCORE, this.updateScoreFn);
-    this.miniFly.flyState.on(UPDATE_LIFE, this.updateLifeFn);
-    this.miniFly.flyState.on(UPDATE_TIME, this.updateTimeFn);
+    MiniFlyState.addEvent(UPDATE_SCORE, this.updateScoreFn);
+    MiniFlyState.addEvent(UPDATE_LIFE, this.updateLifeFn);
+    MiniFlyState.addEvent(UPDATE_TIME, this.updateTimeFn);
   }
   drawScoreIcon(ctx: CanvasRenderingContext2D) {
     ctx.save();
