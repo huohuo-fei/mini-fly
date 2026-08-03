@@ -20,6 +20,7 @@ import type { PlaneBullet } from '../../base/planeBullet';
 import type { PlaneAttacker } from './planeAttacker';
 import { MiniFlyState } from '../../state/flyState';
 import type { TextUnit } from '../textTip/textUnit';
+import { MINI_GAME_OVER } from '../../../../..';
 
 export class PlaneMain extends PlaneUnit {
   planeAtt: PlaneAttacker;
@@ -206,6 +207,13 @@ export class PlaneMain extends PlaneUnit {
     }
   }
 
+  testPause() {
+    setTimeout(() => {
+      this.planeAtt.miniFly.emit(MINI_GAME_OVER, 1);
+      // 先跑功能 需要优化 buttleBox 逻辑
+    }, 100);
+  }
+
   // 判断是否被敌机的子弹击中
   // 战机处于无敌状态时，不能被选中
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
@@ -249,6 +257,7 @@ export class PlaneMain extends PlaneUnit {
           );
           dead = true;
           console.log('战机阵亡，游戏结束');
+          this.testPause();
         }
         MiniFlyState.life -= 1;
         this.showInvincibleText();

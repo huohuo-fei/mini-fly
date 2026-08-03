@@ -1,3 +1,5 @@
+import { UPDATE_TIME } from '../state/eventName';
+import { MiniFlyState } from '../state/flyState';
 import { AttackerType } from '../type';
 import { PlaneBase } from './planeBase';
 import { PlaneBullet } from './planeBullet';
@@ -18,6 +20,11 @@ export class PlaneBulletBox extends PlaneBase {
   listenTimer: number | null = null;
   listenPause: boolean = false;
 
+  // 最新的子弹发射逻辑
+  lastTime: number = 0;
+  curTemp: number = 0;
+
+  updateTimeFn: Function = this.updateTime.bind(this);
   constructor(
     type: PlaneBulletType,
     params: PlaneBulletParams,
@@ -29,6 +36,14 @@ export class PlaneBulletBox extends PlaneBase {
     this.params = JSON.parse(JSON.stringify(params)) as PlaneBulletParams;
     this.planeUnit = planeUnit;
     this.buildBullet();
+  }
+
+  registerEvent() {
+    MiniFlyState.addEvent(UPDATE_TIME, this.updateTimeFn);
+  }
+
+  removeEvent() {
+    MiniFlyState.removeEvent(UPDATE_TIME, this.updateTimeFn);
   }
 
   // 可以提到实现层
@@ -169,14 +184,6 @@ export class PlaneBulletBox extends PlaneBase {
     this.buildBullet();
   }
 
-  // 移除所有在屏子弹
-  clearBullet() {
-    this.bullets = [];
-    if (!this.bulletTimer) {
-      this.enable = false;
-    }
-  }
-
   // 自测系统
   // 在不执行render的情况下 不生成新的子弹
   // 在敌机未生成子弹之前被击中 监听器没有被取消
@@ -186,7 +193,7 @@ export class PlaneBulletBox extends PlaneBase {
       this.refreshTimer();
       this.listenPause = false;
     }
-    
+
     // 移除上一个监听
     if (this.listenTimer) {
       clearTimeout(this.listenTimer);
@@ -221,5 +228,12 @@ export class PlaneBulletBox extends PlaneBase {
     if (this.bullets.length === 0 && this.bulletTimer == null) {
       this.enable = false;
     }
+  }
+
+  // 更新游戏内的时间，控制每个子弹的发射
+  updateTime(val: number) {
+    // console.log(val,'val');
+    this.curTemp = val;
+    this.buildBullet()
   }
 }

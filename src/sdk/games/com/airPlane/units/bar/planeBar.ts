@@ -121,4 +121,7 @@ export class PlaneBar implements IMiniGam {
   actionStart = () => {};
   actionEnd = () => {};
   actionDoing = () => {};
+  events=new Map()
+  on(eventName: string, callback: Function) {};
+  emit (eventName: string, ...args: any[]){};
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 
-import { MiniScreen } from '../sdk';
+import { MINI_GAME_OVER, MiniScreen } from '../sdk';
 
 import { MiniUtils } from '../sdk/utils/MiniUtils';
 
@@ -12,9 +12,13 @@ onMounted(() => {
   console.log('这里初始化游戏场景');
 
   // 批量增加图片资源
-  const planeImageModules = import.meta.glob('@/assets/game/plane/*.svg', { eager: true });
-  const imageList = Object.values(planeImageModules).map((module:any) => module.default);
-  
+  const planeImageModules = import.meta.glob('@/assets/game/plane/*.svg', {
+    eager: true,
+  });
+  const imageList = Object.values(planeImageModules).map(
+    (module: any) => module.default
+  );
+
   const canvas = document.getElementById(
     'mini-game-canvas'
   ) as HTMLCanvasElement;
@@ -24,16 +28,15 @@ onMounted(() => {
     canvas.height = height;
     canvasElement = canvas;
     miniGameInstance = new MiniScreen(canvas);
-    MiniUtils.loadImageListProg(imageList,() => {
-    }).then(() =>{
-    miniGameInstance?.initAni()
-  })
+    MiniUtils.loadImageListProg(imageList, () => {}).then(() => {
+      miniGameInstance?.startAni();
+      registerEvent();
+    });
   } else {
     canvasElement = null;
   }
   console.log(canvasElement);
 });
-
 
 // 游戏暂停
 function pauseGame() {
@@ -42,7 +45,21 @@ function pauseGame() {
 
 // 游戏开始
 function startGame() {
-  miniGameInstance?.initAni();
+  miniGameInstance?.startAni();
+}
+
+// 注册监听事件
+function registerEvent() {
+  // miniGameInstance?.actionTransferif
+  if (!miniGameInstance) return;
+  miniGameInstance.activeGam?.on(MINI_GAME_OVER, gameoverCallback);
+}
+
+// 游戏结束的回调
+function gameoverCallback() {
+  setTimeout(() => {
+    miniGameInstance?.pauseAni();
+  });
 }
 </script>
 
@@ -71,18 +88,17 @@ function startGame() {
   touch-action: none;
 }
 
-.opt-box{
+.opt-box {
   position: absolute;
   right: 0;
-  width:100px;
+  width: 100px;
   background-color: antiquewhite;
-  padding:0 4px;
+  padding: 0 4px;
   padding-bottom: 4px;
 }
 
-.opt-box button{
-  width:100%;
+.opt-box button {
+  width: 100%;
   margin-top: 4px;
 }
-
 </style>

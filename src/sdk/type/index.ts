@@ -1,9 +1,9 @@
 import type { MiniActionType, MiniGameType } from '../utils/common';
 export interface IMiniBus {
-  events: Map<string, Set<Function>>;
+  events?: Map<string, Set<Function>>;
   // 事件总线
-  on: (eventName: string, callback: Function) => void;
-  emit: (eventName: string, ...args: any[]) => void;
+  on?: (eventName: string, callback: Function) => void;
+  emit?: (eventName: string, ...args: any[]) => void;
 }
 
 export interface IMiniGamManager {
@@ -25,7 +25,7 @@ export interface IMiniAction {
   removeEventListener: () => void;
 }
 
-export interface IMiniGam {
+export interface IMiniGam extends IMiniBus{
   render: (ctx: CanvasRenderingContext2D) => void;
   actionStart: (p: IMiniActParams) => void;
   actionEnd: (p: IMiniActParams) => void;
@@ -51,7 +51,7 @@ export interface IMiniScreen {
   ctx: CanvasRenderingContext2D | null;
 
   aniTime: number | null;
-  initAni: () => void;
+  initAni: (timestamp:number) => void;
   pauseAni: () => void;
   setActiveGam: (gam: IMiniGam) => void;
   actionTransfer: (p: IMiniActParams) => void;

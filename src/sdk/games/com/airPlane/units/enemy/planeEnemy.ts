@@ -101,7 +101,6 @@ export class PlaneEnemy implements IMiniGam {
 
   render(ctx: CanvasRenderingContext2D) {
     // 绘制逻辑待优化:相同敌机 或者相同的子弹可否一笔绘制
-
     for (const key in this.enemyMap) {
       const list = this.enemyMap[key];
       const delList = this.enemyDelMap[key];
@@ -353,4 +352,7 @@ export class PlaneEnemy implements IMiniGam {
   actionStart = (p: IMiniActParams) => {};
   actionEnd = (p: IMiniActParams) => {};
   actionDoing = (p: IMiniActParams) => {};
+  events: Map<string, Set<Function>> = new Map();
+  on(eventName: string, callback: Function) {};
+  emit(eventName: string, ...args: any[]){};
 }

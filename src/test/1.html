@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+
+<script>
+  let id = null
+  let ind = 0
+  function loop() {
+    if (ind === 100) {
+      setTimeout(() => {
+        console.log('执行宏任务');
+        cancelAnimationFrame(id)
+      })
+
+      Promise.resolve().then(() => {
+        console.log('执行微任务');
+      })
+    }
+    id = requestAnimationFrame(loop)
+    console.log(ind++);
+
+  }
+
+  // loop()
+
+  // 用这段代码验证你的理解
+  console.log('① 同步代码开始');
+
+  setTimeout(() => {
+    console.log('⑤ 宏任务1');
+    Promise.resolve().then(() => {
+      console.log('宏任务中的微任务');
+    });
+  }, 0);
+
+  Promise.resolve().then(() => {
+    console.log('③ 微任务1');
+  });
+
+  setTimeout(() => {
+    console.log('⑥ 宏任务2');
+  }, 0);
+
+  Promise.resolve().then(() => {
+    console.log('④ 微任务2');
+  });
+
+  console.log('② 同步代码结束');
+</script>
+
+</html>

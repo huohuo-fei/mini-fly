@@ -19,7 +19,11 @@ export class MiniScreen implements IMiniScreen {
   activeGam: IMiniGam | null = null;
   ctx: CanvasRenderingContext2D | null;
   aniTime: number | null = null;
-  aniId:number | null = null
+  aniId: number | null = null;
+  stopFlag: boolean = false;
+
+  lastTime: number = 0;
+  FRAME_INTERVAL = 1000 / 66;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -34,28 +38,40 @@ export class MiniScreen implements IMiniScreen {
     this.gamAcion = new MiniAction(canvas, this);
   }
 
-  initAni() {
-    // if(this.aniId !== null) return
-    if (!this.activeGam) {
-      this.activeGam = this.gamManager.getActiveGam();
-    }
-    // this.aniTime = setInterval(() => {
-      this.draw();
-    // }, 22);
-
-   this.aniId =  requestAnimationFrame(() => {
-      this.initAni();
-    })
+  initAni(timestamp: number | undefined) {
   }
 
   pauseAni() {
     if (this.aniId !== null) {
-      // clearInterval(this.aniTime);
+      this.stopFlag = true;
       cancelAnimationFrame(this.aniId);
       this.activeGam?.pauseRender && this.activeGam.pauseRender();
       this.aniTime = null;
       console.log('渲染终止');
     }
+  }
+  aniLoop(timestamp: number) {
+    const deltaTime = timestamp - this.lastTime;
+    if (deltaTime > this.FRAME_INTERVAL) {
+      // console.log(deltaTime, 'deltaTime');
+
+      // 超过了帧间隔时间，执行动画
+      this.draw();
+      this.lastTime = timestamp;
+    }
+
+    this.aniId = requestAnimationFrame((timestamp) => {
+      this.aniLoop(timestamp);
+    });
+  }
+
+  startAni() {
+    if (!this.activeGam) {
+      this.activeGam = this.gamManager.getActiveGam();
+    }
+    this.aniId = requestAnimationFrame((timestamp) => {
+      this.aniLoop(timestamp);
+    });
   }
 
   setActiveGam(gam: IMiniGam) {
@@ -68,7 +84,7 @@ export class MiniScreen implements IMiniScreen {
 
   draw() {
     this.ctx?.clearRect(0, 0, this.width, this.height);
-    this.ctx?.beginPath()
+    this.ctx?.beginPath();
     if (this.activeGam) {
       if (this.ctx) {
         this.activeGam.render(this.ctx);

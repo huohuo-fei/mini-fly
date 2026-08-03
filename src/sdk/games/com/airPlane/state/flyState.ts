@@ -62,9 +62,12 @@ export class MiniFlyState {
   }
 
   static addEvent(eventName: string, callback: Function) {
-    const set = MiniFlyState.events.get(eventName) || new Set();
+    let set = MiniFlyState.events.get(eventName);
+    if (!set) {
+      set = new Set();
+      MiniFlyState.events.set(eventName, set);
+    }
     set.add(callback);
-    MiniFlyState.events.set(eventName, set);
   }
 
   static removeEvent(eventName: string, callback: Function) {

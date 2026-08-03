@@ -1,7 +1,6 @@
 // 飞机大战
 import type {
   IMiniActParams,
-  IMiniG,
   IMiniGam,
   IMiniGameParams,
 } from '../../../type';
@@ -20,8 +19,10 @@ import { FlyState } from './state';
 import type { PlaneBullet } from './base/planeBullet';
 import { PlaneText } from './units/textTip/textTip';
 import { MiniFlyState } from './state/flyState';
+import { PlaneBullets } from './bullet';
 
 export class MiniFly implements IMiniGam {
+  events: Map<string, Set<Function>> = new Map();
   planeBackground: PlaneBg;
   planeAttacker: PlaneAttacker;
   planeEnemy: PlaneEnemy;
@@ -30,6 +31,7 @@ export class MiniFly implements IMiniGam {
   planeToolBox: PlaneToolBox;
   planeControl: PlaneControl;
   planeText:PlaneText
+  planeBullets:PlaneBullets
 
   // flyState: FlyState;
   // miniFlyState:MiniFlyState = MiniFlyState
@@ -46,12 +48,14 @@ export class MiniFly implements IMiniGam {
     this.planeToolBox = new PlaneToolBox(gameParams, this);
     this.planeControl = new PlaneControl(this, this.planeEnemy);
     this.planeText = new PlaneText(gameParams,this)
+    this.planeBullets = new PlaneBullets(gameParams,this)
   }
 
   // render 方法
   render(ctx: CanvasRenderingContext2D) {
     this.planeControl.updateWave();
     this.planeBackground.render(ctx);
+    this.planeBullets.render(ctx);
     this.planeAttacker.render(ctx);
     this.planeEnemy.render(ctx);
     this.planeEffect.render(ctx);
@@ -144,5 +148,20 @@ export class MiniFly implements IMiniGam {
   }
   actionDoing(p: IMiniActParams) {
     this.planeAttacker.actionDoing(p);
+  }
+
+  on(eventName: string, callback: Function) {
+    const set = this.events.get(eventName) || new Set();
+    set.add(callback);
+    this.events.set(eventName, set);
+  }
+
+  emit(eventName: string, ...args: any[]) {
+    const set = this.events.get(eventName);
+    if (set) {
+      set.forEach((callback) => {
+        callback(...args);
+      });
+    }
   }
 }
