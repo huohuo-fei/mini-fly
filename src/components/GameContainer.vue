@@ -51,12 +51,14 @@ function startGame() {
 // 注册监听事件
 function registerEvent() {
   // miniGameInstance?.actionTransferif
-  if (!miniGameInstance) return;
-  miniGameInstance.activeGam?.on(MINI_GAME_OVER, gameoverCallback);
+  if (miniGameInstance?.activeGam && miniGameInstance?.activeGam.on) {
+    miniGameInstance.activeGam?.on(MINI_GAME_OVER, gameoverCallback);
+  }
 }
 
 // 游戏结束的回调
 function gameoverCallback() {
+  // 需要在下一个渲染帧之前取消动画帧
   setTimeout(() => {
     miniGameInstance?.pauseAni();
   });

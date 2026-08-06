@@ -7,17 +7,22 @@ import {
   type PlaneBulletParams,
   type PlaneUnitParams,
   type HitInfo,
+  BulletCamp,
 } from '../../../base/type';
 import { SquadronBody } from './squadronBody';
 import { planeSquadronBullet } from '../../../config';
-import { SquadronBullet } from './squadronBullet';
 import type { PlaneBullet } from '../../../base/planeBullet';
+import { MiniFlyState } from '../../../state/flyState';
 
 export class PlaneEnemySquadron extends PlaneUnit {
   config: ISquadronConfig;
   planeEnemy: PlaneEnemy;
   planeBody: SquadronBody | null = null;
   type: EnemyType = EnemyType.SQUADRON;
+
+  // 子弹生成逻辑
+  bulletLastTime: number = 0;
+  bulletConfig: PlaneBulletParams = planeSquadronBullet;
   constructor(
     params: PlaneUnitParams,
     config: ISquadronConfig,
@@ -40,8 +45,6 @@ export class PlaneEnemySquadron extends PlaneUnit {
       },
       this
     );
-
-    this.buildBullet();
   }
 
   updateParams() {
@@ -55,50 +58,11 @@ export class PlaneEnemySquadron extends PlaneUnit {
     this.matrix.translate(ox, oy).rotate(angle);
   }
 
-  buildBullet() {
-    if (!this.planeBody) return;
-    const bulletParams = JSON.parse(
-      JSON.stringify(planeSquadronBullet)
-    ) as PlaneBulletParams;
-
-    for (const enemy of this.planeBody.enemyList) {
-      const cx = enemy.cx;
-      const cy = enemy.cy;
-
-      const vec = new Vector2(cx, cy);
-      vec.applyMatrix3(this.matrix);
-      bulletParams.bulletX = vec.x;
-      bulletParams.bulletY = vec.y;
-      const angle1 = Math.PI / 3;
-      const x1 = Math.cos(angle1);
-      const y1 = Math.sin(angle1);
-      bulletParams.direction = [x1, y1];
-      const bullet1 = new SquadronBullet(
-        PlaneBulletType.Trace,
-        bulletParams,
-        this
-      );
-
-      this.bulletBoxList.push(bullet1);
-    }
-  }
 
   updateAttackerPos() {
     const planePos = this.planeEnemy.getPlanePos();
     this.attackerX = planePos.x;
     this.attackerY = planePos.y;
-  }
-
-  // 更新编队中的敌人位置
-  updateEnemyPos() {
-    if (!this.planeBody) return;
-    for (let i = 0; i < this.planeBody.enemyList.length; i++) {
-      const enemy = this.planeBody.enemyList[i];
-      const vec = new Vector2(enemy.cx, enemy.cy);
-      vec.applyMatrix3(this.matrix);
-      const bullet = this.bulletBoxList[i];
-      bullet.updatePos(vec.x, vec.y);
-    }
   }
 
   // 更新编队 世界坐标
@@ -135,8 +99,6 @@ export class PlaneEnemySquadron extends PlaneUnit {
         enemy.health = newHealth;
         if (newHealth <= 0) {
           enemy.dead = true;
-          const bullet = this.bulletBoxList[i];
-          bullet.stopBullet();
         }
         return {
           x: vec2.x,
@@ -150,16 +112,48 @@ export class PlaneEnemySquadron extends PlaneUnit {
     return null;
   }
 
-  beforeRender(){
+  createBullet() {
+    if (!this.planeBody) return;
+    // 获取游戏时间
+    const time = MiniFlyState.duration;
+    const deltaTime = time - this.bulletLastTime;
+
+    if (deltaTime >= this.bulletConfig.shootCooldown) {
+      const bulletParams = JSON.parse(
+        JSON.stringify(this.bulletConfig)
+      ) as PlaneBulletParams;
+      this.bulletLastTime = time;
+
+      for (const enemy of this.planeBody.enemyList) {
+        const cx = enemy.cx;
+        const cy = enemy.cy;
+
+        const vec = new Vector2(cx, cy);
+        vec.applyMatrix3(this.matrix);
+        bulletParams.bulletX = vec.x;
+        bulletParams.bulletY = vec.y;
+        const vec2 = new Vector2(this.attackerX-vec.x, this.attackerY - vec.y);
+        const newV = vec2.normalize();
+        bulletParams.direction = [newV.x, newV.y];
+        this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+          PlaneBulletType.Normal,
+          BulletCamp.Enemy,
+          bulletParams
+        );
+      }
+    }
+  }
+
+  beforeRender() {
     const { speedX } = this;
     this.matrix.translate(speedX, 0);
     this.updateAttackerPos();
-    this.updateEnemyPos();
+    this.createBullet();
   }
 
   render(ctx: CanvasRenderingContext2D) {
     super.render(ctx);
-    this.updateWorldPos()
+    this.updateWorldPos();
   }
 
   invisible() {
@@ -178,12 +172,12 @@ export class PlaneEnemySquadron extends PlaneUnit {
       posY < -h ||
       posY > canvasHeight + h
     ) {
-      this.destroy();
+      this.planeBody?.enable && (this.planeBody.enable = false);
     } else {
     }
   }
 
-  removeUnit(){
+  removeUnit() {
     this.planeEnemy.removeSquadron(this);
   }
 }

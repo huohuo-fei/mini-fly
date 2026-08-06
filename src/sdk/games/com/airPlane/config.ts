@@ -163,7 +163,7 @@ export const bigEnemyConfig: IBigEnemyConfig = {
   x: 100,
   speed: 1,
   targetHeight: 100,
-  shootCooldown: 600,
+  shootCooldown: 300,
   radius: 20,
   angleSpeed: 0.01,
 };
@@ -258,7 +258,7 @@ export const planeBigBullet: PlaneBulletParams = {
   speedX: 4,
   speedY: 4,
   combat: 2,
-  shootCooldown: 200,
+  shootCooldown: 100,
   direction: [0, 1],
   canvasHeight: 0,
   canvasWidth: 0,

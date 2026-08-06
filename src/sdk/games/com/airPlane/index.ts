@@ -15,8 +15,6 @@ import { PlaneToolBox } from './units/tools/planeToolBox';
 
 import { PlaneControl } from './units/control';
 import type { PlaneUnit } from './base/planeUnit';
-import { FlyState } from './state';
-import type { PlaneBullet } from './base/planeBullet';
 import { PlaneText } from './units/textTip/textTip';
 import { MiniFlyState } from './state/flyState';
 import { PlaneBullets } from './bullet';
@@ -40,6 +38,7 @@ export class MiniFly implements IMiniGam {
     MiniFlyState.reset()
 
     // 加载各个模块
+    this.planeBullets = new PlaneBullets(gameParams,this)
     this.planeBackground = new PlaneBg();
     this.planeAttacker = new PlaneAttacker(gameParams,this);
     this.planeEnemy = new PlaneEnemy(gameParams, this);
@@ -48,7 +47,6 @@ export class MiniFly implements IMiniGam {
     this.planeToolBox = new PlaneToolBox(gameParams, this);
     this.planeControl = new PlaneControl(this, this.planeEnemy);
     this.planeText = new PlaneText(gameParams,this)
-    this.planeBullets = new PlaneBullets(gameParams,this)
   }
 
   // render 方法
@@ -63,6 +61,7 @@ export class MiniFly implements IMiniGam {
     this.planeToolBox.render(ctx);
     this.planeText.render(ctx);
     this.bulletHitEnemy();
+    this.enemyHitAttacker()
     this.catchTool();
     this.updateTime();
   }
@@ -75,20 +74,16 @@ export class MiniFly implements IMiniGam {
 
   // 子弹击中敌机
   bulletHitEnemy() {
-    this.planeAttacker.checkHitEnemy((bullet) => {
+    this.planeBullets.checkHitEnemy((bullet) => {
       return this.planeEnemy.isHitEnemy(bullet);
     });
   }
 
   // 敌机击中战机
-  enemyHitAttacker(bullet:PlaneBullet) {
-    const res = this.planeAttacker.checkHitByEnemy(bullet)
-    // const res2 = this.planeAttacker.planeMain.isHitUnit(bullet)
-    if(res){
-      return true
-    }else{
-      return false
-    }
+  enemyHitAttacker() {
+    this.planeBullets.checkHitPlayer((bullet) => {
+      return this.planeAttacker.checkHitByEnemy(bullet);
+    });
   }
 
   // 战机捕获工具
@@ -131,8 +126,8 @@ export class MiniFly implements IMiniGam {
 
   // 更新道具
   updateToolBox(enemy: PlaneUnit) {
-    // this.planeToolBox.buildTool(enemy);
-    this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.SHIELD)
+    this.planeToolBox.buildTool(enemy);
+    // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.BOMB)
   }
 
   removeControlEnemyByType(type: EnemyType) {

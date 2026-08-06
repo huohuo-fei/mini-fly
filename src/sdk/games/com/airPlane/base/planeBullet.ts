@@ -1,28 +1,34 @@
 import { Matrix3, Vector2 } from '../../../../utils/Matrix3';
-import type { PlaneBulletBox } from './PlaneBulletBox';
+import type { PlaneBullets } from '../bullet';
 import { PlaneBase } from './planeBase';
 import {
   PlaneBulletType,
   type PlaneBulletParams,
   PlaneBulletShape,
+  BulletCamp,
 } from './type';
 
 export class PlaneBullet extends PlaneBase {
   type: PlaneBulletType = PlaneBulletType.Normal;
   params: PlaneBulletParams;
-  bulletBox: PlaneBulletBox;
+  bulletBox: PlaneBullets;
   matrix: Matrix3 = new Matrix3();
   dirVec: Vector2 = new Vector2();
   theat: number = 0;
+  camp:BulletCamp = BulletCamp.Player
+  // 移除的tag 当子弹击中敌人时，会标记为true 表示当前子弹已近被消耗
+  removeTag: boolean = false;
   constructor(
     type: PlaneBulletType,
-    bulletBox: PlaneBulletBox,
+    camp:BulletCamp,
+    bulletBox: PlaneBullets,
     params: PlaneBulletParams,
   ) {
     super();
     this.params = JSON.parse(JSON.stringify(params));
     this.bulletBox = bulletBox;
     this.type = type;
+    this.camp = camp
     this.matrix.makeTranslation(this.params.bulletX, this.params.bulletY);
     this.dirVec.set(...this.params.direction).normalize();
     this.theat = Math.atan2(this.dirVec.y, this.dirVec.x);
@@ -37,10 +43,6 @@ export class PlaneBullet extends PlaneBase {
     this.matrix.makeTranslation(this.params.bulletX, this.params.bulletY);
   }
   render(ctx: CanvasRenderingContext2D) {
-    if(!this.isDraw()){
-      this.bulletBox.removeBullet(this)
-      return
-    }
     ctx.save();
     ctx.translate(this.matrix.elements[6], this.matrix.elements[7]);
     ctx.beginPath();
@@ -53,8 +55,8 @@ export class PlaneBullet extends PlaneBase {
 
     ctx.restore();
     this.updatePos();
-    this.destroy();
   }
+  
 
   drawCircle(ctx: CanvasRenderingContext2D) {
     const { bulletWidth } = this.params;
@@ -74,47 +76,5 @@ export class PlaneBullet extends PlaneBase {
       bulletWidth,
       bulletHeight
     );
-  }
-
-  isDraw(){
-    const x = this.matrix.elements[6];
-    const y = this.matrix.elements[7];
-
-    const {bulletHeight,bulletWidth} = this.params
-    const {canvasHeight,canvasWidth} = this.bulletBox.planeUnit
-
-    const radio = 2
-
-    const l = 0 - bulletWidth * radio
-    const r = canvasWidth + bulletWidth
-
-    const t = 0 - bulletHeight * radio
-    const b = canvasHeight + bulletHeight
-
-    if(x < l || x > r || y < t || y > b){
-      return false
-    }else{
-      return true
-    }
-  }
-
-  destroy(){
-    const x = this.matrix.elements[6];
-    const y = this.matrix.elements[7];
-
-    const {bulletHeight,bulletWidth} = this.params
-    const {canvasHeight,canvasWidth} = this.bulletBox.planeUnit
-
-    const radio = 2
-
-    const l = 0 - bulletWidth * radio
-    const r = canvasWidth + bulletWidth
-
-    const t = 0 - bulletHeight * radio
-    const b = canvasHeight + bulletHeight
-
-    if(x < l || x > r || y < t || y > b){
-      this.bulletBox.removeBullet(this)
-    }
   }
 }

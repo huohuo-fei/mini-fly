@@ -5,7 +5,6 @@ import type { PlaneBullet } from '../../base/planeBullet';
 import { IMiniPlaneEffectType, MiniPlaneToolType } from '../../type';
 import type { MiniFly } from '../..';
 import type { TextUnit } from '../textTip/textUnit';
-import { MiniFlyState } from '../../state/flyState';
 
 export class PlaneAttacker extends PlaneBase {
   // 战机的配置参数
@@ -83,11 +82,6 @@ export class PlaneAttacker extends PlaneBase {
 
   render(ctx: CanvasRenderingContext2D) {
     this.planeMain.render(ctx);
-  }
-
-  // 遍历主战机的子弹 判断是否击中敌机
-  checkHitEnemy(cb: (bullet: PlaneBullet) => boolean) {
-    this.planeMain.traverseBullet(cb);
   }
 
   // 判断当前主战机是否被击中

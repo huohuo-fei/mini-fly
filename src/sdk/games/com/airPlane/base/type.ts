@@ -68,3 +68,8 @@ export type HitInfo = {
   x:number;
   y:number;
 }
+
+export enum BulletCamp {
+  Player = 'player',
+  Enemy = 'enemy'
+}

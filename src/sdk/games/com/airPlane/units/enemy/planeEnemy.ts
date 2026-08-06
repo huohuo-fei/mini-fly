@@ -95,7 +95,7 @@ export class PlaneEnemy implements IMiniGam {
     const unitParams = info.params as PlaneUnitParams;
     const config = info.config as IBossConfig;
 
-    const b = new EnemyBoss(unitParams, config);
+    const b = new EnemyBoss(unitParams, config,this);
     this.enemyMap[EnemyType.BOSS].push(b);
   }
 
@@ -108,18 +108,15 @@ export class PlaneEnemy implements IMiniGam {
         list.splice(delList[i], 1);
       }
       this.enemyDelMap[key] = [];
+
+      // if(key === EnemyType.SQUADRON){
+      //   console.log('enemy list',list.length);
+      // }
       for (let i = 0; i < list.length; i++) {
         const enemy = list[i];
         if (enemy) {
           // 渲染敌机
           enemy.render(ctx);
-
-          // 检测是否击中战机
-          // todo:后续添加无敌时间 可跳过这一步骤
-          enemy.traverseEnemyBullet((bullet) => {
-            const flag = this.miniFly.enemyHitAttacker(bullet);
-            return flag;
-          });
         }
       }
     }
@@ -353,6 +350,6 @@ export class PlaneEnemy implements IMiniGam {
   actionEnd = (p: IMiniActParams) => {};
   actionDoing = (p: IMiniActParams) => {};
   events: Map<string, Set<Function>> = new Map();
-  on(eventName: string, callback: Function) {};
-  emit(eventName: string, ...args: any[]){};
+  on(eventName: string, callback: Function) {}
+  emit(eventName: string, ...args: any[]) {}
 }

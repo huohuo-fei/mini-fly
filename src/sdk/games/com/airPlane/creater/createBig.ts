@@ -21,7 +21,7 @@ export class BigCreater extends PlaneCreater {
     x: 100,
     speed: 1,
     targetHeight: 100, 
-    shootCooldown: 600,
+    shootCooldown: 300,
     radius: 20,
     angleSpeed: 0.01,
   };

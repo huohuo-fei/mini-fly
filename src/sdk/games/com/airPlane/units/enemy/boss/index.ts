@@ -7,13 +7,16 @@ import {
   type PlaneBulletParams,
   type PlaneUnitParams,
   type HitInfo,
+  BulletCamp,
 } from '../../../base/type';
 import { BossBody } from './bossBody';
-import { BossBullet } from './bossBullet';
 import type { PlaneBullet } from '../../../base/planeBullet';
+import { MiniFlyState } from '../../../state/flyState';
+import type { PlaneEnemy } from '../planeEnemy';
 
 export class EnemyBoss extends PlaneUnit {
   type: EnemyType = EnemyType.BOSS;
+  planeEnemy: PlaneEnemy;
 
   config: IBossConfig;
   move: EasedMove | null = null;
@@ -25,11 +28,20 @@ export class EnemyBoss extends PlaneUnit {
   angleSpeed: number = 0.042;
   bulletSpeed: number = 1;
 
+  // 子弹生成逻辑
+  bulletLastTime: number = 0;
+  bulletConfig: PlaneBulletParams = planeBossDotBullet;
+
   // 编队子弹配置  todo:抽取编队 可以使之任意嵌套
-  constructor(params: PlaneUnitParams, config: IBossConfig) {
+
+  constructor(
+    params: PlaneUnitParams,
+    config: IBossConfig,
+    planeEnemy: PlaneEnemy
+  ) {
     super(params);
     this.config = JSON.parse(JSON.stringify(config)) as IBossConfig;
-
+    this.planeEnemy = planeEnemy;
     this.planeBody = new BossBody({
       bodyWidth: this.unitWidth,
       bodyHeight: this.unitHeight,
@@ -48,25 +60,35 @@ export class EnemyBoss extends PlaneUnit {
     this.matrix.makeTranslation(x, y);
   }
 
-  buildDotBullet() {
-    if (this.bulletBoxList.length) return;
-    const bulletParams = JSON.parse(
-      JSON.stringify(planeBossDotBullet)
-    ) as PlaneBulletParams;
+  createBullet() {
+    // 获取游戏时间
+    const time = MiniFlyState.duration;
+    const deltaTime = time - this.bulletLastTime;
 
-    const disHalf = 10;
+    if (deltaTime >= this.bulletConfig.shootCooldown) {
+      const bulletParams = JSON.parse(
+        JSON.stringify(planeBossDotBullet)
+      ) as PlaneBulletParams;
+      this.bulletLastTime = time;
+      const disHalf = 10;
+      // 竖直两列
+      bulletParams.bulletX = this.unitX - disHalf;
+      bulletParams.bulletY = this.unitY;
+      this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+        PlaneBulletType.Normal,
+        BulletCamp.Enemy,
+        bulletParams
+      );
 
-    // 竖直两列
-    bulletParams.bulletX = this.unitX - disHalf;
-    bulletParams.bulletY = this.unitY;
-    const bullet1 = new BossBullet(PlaneBulletType.Normal, bulletParams, this);
+      bulletParams.bulletX = this.unitX + disHalf;
+      bulletParams.bulletY = this.unitY;
+      this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+        PlaneBulletType.Normal,
+        BulletCamp.Enemy,
+        bulletParams
+      );
 
-    bulletParams.bulletX = this.unitX + disHalf;
-    bulletParams.bulletY = this.unitY;
-    const bullet2 = new BossBullet(PlaneBulletType.Normal, bulletParams, this);
-    this.bulletBoxList.push(bullet1, bullet2);
-
-    // 斜着两列
+          // 斜着两列
     const angle1 = Math.PI / 3;
     const x1 = Math.cos(angle1);
     const y1 = Math.sin(angle1);
@@ -76,13 +98,18 @@ export class EnemyBoss extends PlaneUnit {
     bulletParams.bulletX = this.unitX + p1x;
     bulletParams.bulletY = this.unitY + p1y;
     bulletParams.direction = [x1, y1];
-    const bullet3 = new BossBullet(PlaneBulletType.Normal, bulletParams, this);
-
+    this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+      PlaneBulletType.Normal,
+      BulletCamp.Enemy,
+      bulletParams
+    );
     bulletParams.bulletX = this.unitX - 2 * p1x;
     bulletParams.bulletY = this.unitY - p1y;
-
-    const bullet4 = new BossBullet(PlaneBulletType.Normal, bulletParams, this);
-    this.bulletBoxList.push(bullet3, bullet4);
+    this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+      PlaneBulletType.Normal,
+      BulletCamp.Enemy,
+      bulletParams
+    );
 
     const angle2 = Math.PI - angle1;
     const x2 = Math.cos(angle2);
@@ -91,12 +118,20 @@ export class EnemyBoss extends PlaneUnit {
     bulletParams.bulletX = this.unitX + 2 * p1x;
     bulletParams.bulletY = this.unitY - p1y;
     bulletParams.direction = [x2, y2];
-    const bullet5 = new BossBullet(PlaneBulletType.Normal, bulletParams, this);
+    this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+      PlaneBulletType.Normal,
+      BulletCamp.Enemy,
+      bulletParams
+    );
 
     bulletParams.bulletX = this.unitX - p1x;
     bulletParams.bulletY = this.unitY + p1y;
-    const bullet6 = new BossBullet(PlaneBulletType.Normal, bulletParams, this);
-    this.bulletBoxList.push(bullet5, bullet6);
+    this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+      PlaneBulletType.Normal,
+      BulletCamp.Enemy,
+      bulletParams
+    );
+    }
   }
 
   beforeRender(): void {
@@ -112,7 +147,7 @@ export class EnemyBoss extends PlaneUnit {
     const moveUpdateIng = this.move.update();
 
     if (!moveUpdateIng) {
-      this.buildDotBullet();
+      this.createBullet();
     }
     const { x, y } = this.move.getCurrentPosition();
     this.matrix.makeTranslation(x, y);

@@ -1,22 +1,27 @@
 import { Vector2 } from '../../../../../../utils/Matrix3';
 import type { PlaneEnemy } from '../planeEnemy';
 import { EasedMove } from '../../../../../../utils/Animate';
-import { IMiniPlaneEffectType, type IBigEnemyConfig, EnemyType } from '../../../type';
+import {
+  IMiniPlaneEffectType,
+  type IBigEnemyConfig,
+  EnemyType,
+} from '../../../type';
 import { PlaneUnit } from '../../../base/planeUnit';
 import {
   PlaneBulletType,
   type PlaneBulletParams,
   type PlaneUnitParams,
   type HitInfo,
+  BulletCamp,
 } from '../../../base/type';
 import { BigBody } from './bigBody';
 import { planeBigBullet } from '../../../config';
-import { BigBullet } from './bigBullet';
 import type { PlaneBullet } from '../../../base/planeBullet';
 import { PlaneMissile } from '../../../base/planeMissile';
+import { MiniFlyState } from '../../../state/flyState';
 
 export class BigEnemyUnit extends PlaneUnit {
-  type:EnemyType = EnemyType.BIG
+  type: EnemyType = EnemyType.BIG;
   config: IBigEnemyConfig;
   move: EasedMove | null = null;
   angle: number = 0;
@@ -26,6 +31,10 @@ export class BigEnemyUnit extends PlaneUnit {
   missileList: PlaneMissile[] = [];
   missileHeight: number = 200;
   missileStep: number = 0.003;
+
+  // 子弹生成逻辑
+  bulletLastTime: number = 0;
+  bulletConfig: PlaneBulletParams = planeBigBullet;
 
   constructor(
     params: PlaneUnitParams,
@@ -55,20 +64,31 @@ export class BigEnemyUnit extends PlaneUnit {
     this.matrix.makeTranslation(x, y);
   }
 
-  buildBullet() {
-    if (this.rotateBullet) return;
-    this.rotateBullet = true;
-    const { unitX, unitY } = this;
-    const bulletParams = JSON.parse(
-      JSON.stringify(planeBigBullet)
-    ) as PlaneBulletParams;
-    bulletParams.bulletX = unitX;
-    bulletParams.bulletY = unitY;
-    bulletParams.type = PlaneBulletType.Spiral;
-    // 四个方向
-    for (let i = 0; i < 4; i++) {
-      const bullet = new BigBullet(PlaneBulletType.Spiral, bulletParams, this);
-      this.bulletBoxList.push(bullet);
+  createBullet() {
+    // 获取游戏时间
+    const time = MiniFlyState.duration;
+    const deltaTime = time - this.bulletLastTime;
+    const size = 4;
+
+    if (deltaTime >= this.config.shootCooldown) {
+      const bulletParams = JSON.parse(
+        JSON.stringify(this.bulletConfig)
+      ) as PlaneBulletParams;
+      this.bulletLastTime = time;
+      bulletParams.bulletX = this.unitX;
+      bulletParams.bulletY = this.unitY;
+      const angle = this.angle;
+
+      for (let i = 0; i < size; i++) {
+        const vx = Math.cos(angle + (Math.PI / 2) * i);
+        const vy = Math.sin(angle + (Math.PI / 2) * i);
+        bulletParams.direction = [vx, vy];
+        this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+          PlaneBulletType.Normal,
+          BulletCamp.Enemy,
+          bulletParams
+        );
+      }
     }
   }
 
@@ -93,16 +113,20 @@ export class BigEnemyUnit extends PlaneUnit {
         this.missileList = [];
 
         // 销毁当前实例
-        // this.destroy()
         this.planeEnemy.removeBigEnemy(this);
       }
     );
     this.missileList.push(missile);
   }
 
-  render(ctx: CanvasRenderingContext2D) {
+  beforeRender(): void {
     this.aniMove();
+    if (this.rotateBullet && this.planeBody?.enable) {
+      this.createBullet();
+    }
+  }
 
+  render(ctx: CanvasRenderingContext2D) {
     super.render(ctx);
     for (const missile of this.missileList) {
       missile.render(ctx);
@@ -119,25 +143,22 @@ export class BigEnemyUnit extends PlaneUnit {
       );
     }
     const moveUpdate = this.move.update();
+
+    // tip:这里在动画结束之后依然需要调用
+    // 是由于 下面的旋转矩阵是全量旋转，每次都需要一个新的位移矩阵，所以需要每次都更新
     const { x, y } = this.move.getCurrentPosition();
     this.updatePos(x, y);
 
     if (!moveUpdate && this.planeBody?.enable) {
-      this.buildBullet();
+      this.rotateBullet = true;
       this.matrix.rotate(this.angle);
       this.angle += angleSpeed;
       this.angle = this.angle % (Math.PI * 2);
-
-      for (let i = 0; i < this.bulletBoxList.length; i++) {
-        const bullet = this.bulletBoxList[i];
-        bullet.updateAngle(this.angle + (Math.PI / 2) * i);
-      }
     }
   }
 
   isHitUnit(bullet: PlaneBullet): HitInfo | null {
-
-    if(!this.planeBody?.enable || this.bulletBoxList.length === 0)return null
+    if (!this.planeBody?.enable) return null;
 
     const { bulletWidth, bulletX, bulletY, combat } = bullet.params;
     const { unitX, unitY } = this;
@@ -157,10 +178,6 @@ export class BigEnemyUnit extends PlaneUnit {
         );
 
         this.planeBody.enable = false;
-
-        for(const bullet of this.bulletBoxList){
-          bullet.stopBullet()
-        }
       }
       return {
         x: unitX,
@@ -169,17 +186,13 @@ export class BigEnemyUnit extends PlaneUnit {
         dead,
       };
     }
-    
-    return null;
-  }
 
-  removeUnit(): void {
-    // this.planeEnemy.removeBigEnemy(this);
+    return null;
   }
 
   damageWithScore(damageNum: number) {
     // return
-    // 如果机体已经消亡  todo:处理子弹
+    // 如果机体已经消亡
     if (!this.planeBody?.enable) return null;
 
     // 机体生命值减小
@@ -192,12 +205,9 @@ export class BigEnemyUnit extends PlaneUnit {
         new Vector2(attackerPos.x, attackerPos.y)
       );
 
-      this.planeBody.enable = false
-      for(const bullet of this.bulletBoxList){
-        bullet.stopBullet()
-      }
+      this.planeBody.enable = false;
     }
 
-    return this.score
+    return this.score;
   }
 }

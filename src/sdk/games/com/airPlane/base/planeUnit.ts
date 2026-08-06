@@ -2,7 +2,6 @@ import { AttackerType, EnemyType } from '../type';
 import { PlaneBase } from './planeBase';
 import type { PlaneBody } from './planeBody';
 import type { PlaneBullet } from './planeBullet';
-import type { PlaneBulletBox } from './PlaneBulletBox';
 import type { PlaneToolBase } from './planeToolBase';
 import type { HitInfo, PlaneUnitParams } from './type';
 import { nanoid } from 'nanoid';
@@ -23,7 +22,6 @@ export class PlaneUnit extends PlaneBase {
   // 是否无敌
   noHit: boolean = false;
   planeBody: PlaneBody | null = null;
-  bulletBoxList: PlaneBulletBox[] = [];
 
   tools:PlaneToolBase[] = []
 
@@ -52,11 +50,10 @@ export class PlaneUnit extends PlaneBase {
     this.shootCooldown = params.shootCooldown;
     this.health = params.health;
     this.score = params.score;
-    // this.type = params.type || 'test'
-    // console.log(params.type, 'type');
     
   }
 
+  // 在渲染之前需要的操作，更新坐标 检测是否有必要在当前帧渲染...
   beforeRender() {
     // updatePos。。。。
   }
@@ -69,68 +66,9 @@ export class PlaneUnit extends PlaneBase {
     // 绘制机体
     this.planeBody?.enable && this.planeBody.render(ctx);
 
-    // 绘制子弹
-    for (let i = 0; i < this.bulletBoxList.length; i++) {
-      const enableBox = this.bulletBoxList[i].enable;
-      enableBox && this.bulletBoxList[i].render(ctx);
-    }
     ctx.restore();
     this.invisible();
     this.checkState();
-  }
-
-  // 同步最新的战机位置
-  syncAttackerPos(x: number, y: number) {
-    this.attackerX = x;
-    this.attackerY = y;
-  }
-
-  // 遍历当前所属作战单元下的子弹
-  // 由主战机使用
-  traverseBullet(callback: (bullet: PlaneBullet) => boolean) {
-    for (let i = 0; i < this.bulletBoxList.length; i++) {
-      const bulletBox = this.bulletBoxList[i];
-      for (let i = 0; i < bulletBox.bullets.length; i++) {
-        // 此时拿到了子弹
-        // 将当前子弹信息返回出去，
-        // 由外层具体的逻辑判断当前子弹是否发生碰撞
-        const bullet = bulletBox.bullets[i];
-        const flag = callback(bullet);
-        if (flag) {
-          this.removeBullet(bullet);
-          return flag;
-        }
-      }
-    }
-
-    return false;
-  }
-// todo:后续整合
-  traverseEnemyBullet(callback: (bullet: PlaneBullet) => boolean) {
-    for (let i = 0; i < this.bulletBoxList.length; i++) {
-      const bulletBox = this.bulletBoxList[i];
-      for (let i = 0; i < bulletBox.bullets.length; i++) {
-        // 此时拿到了子弹
-        // 将当前子弹信息返回出去，
-        // 由外层具体的逻辑判断当前子弹是否发生碰撞
-        const bullet = bulletBox.bullets[i];
-        const flag = callback(bullet);
-
-        // 同一敌机 同时只能命中一次
-        if(flag){
-          this.removeBullet(bullet);
-          break
-        }
-      }
-    }
-  }
-
-  // 移除子弹
-  removeBullet(bullet: PlaneBullet) {
-    for (let i = 0; i < this.bulletBoxList.length; i++) {
-      const res = this.bulletBoxList[i].removeBullet(bullet);
-      if (res) break;
-    }
   }
 
   // 移除工具
@@ -172,18 +110,7 @@ export class PlaneUnit extends PlaneBase {
     return null;
   }
 
-  destroy() {
-    this.planeBody?.enable && (this.planeBody.enable = false);
-    for (let i = 0; i < this.bulletBoxList.length; i++) {
-      this.bulletBoxList[i].stopBullet();
-    }
-  }
-  // 判断是否需要销毁当前作战单元
-  isDestroy() {
-    return true;
-  }
-
-  // 当前body 超出了可视范围，则销毁
+  // 当前body 超出了可视范围，改变机体的状态
   invisible() {
     const { unitX, unitY, unitWidth, unitHeight, canvasHeight, canvasWidth } =
       this;
@@ -204,18 +131,14 @@ export class PlaneUnit extends PlaneBase {
   // 依据机体 和 子弹弹道的状态，判断是否需要销毁当前作战单元 从画布移除
   checkState() {
     const bodyEnable = this.planeBody?.enable;
-    const bulletEnable = this.bulletBoxList.some(
-      (bulletBox) => bulletBox.enable
-    );
-    if (!bodyEnable && !bulletEnable) {
+    if (!bodyEnable ) {
       this.removeUnit();
     }
   }
 
   // 直接扣除生命值
   damageWithScore(damageNum: number) {
-    // return
-    // 如果机体已经消亡  todo:处理子弹
+    // 如果机体已经消亡  
     if (!this.planeBody?.enable) return null;
 
     // 机体生命值减小
@@ -226,16 +149,17 @@ export class PlaneUnit extends PlaneBase {
       this.planeBody.enable = false;
       this.bodyDead()
       // 机体死亡后 需要执行销毁
-      this.destroy()
     }
 
     return this.score
   }
 
+  // 销毁整个作战单元的回调
   removeUnit() {
-    console.warn('需要上层实现');
+    // console.warn('需要上层实现');
   }
 
+  // 机体被子弹击中后的死亡事件 
   bodyDead(){
     // console.log('需要上层实现');
   }

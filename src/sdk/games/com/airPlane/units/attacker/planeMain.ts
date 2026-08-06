@@ -5,9 +5,9 @@ import {
   type PlaneBulletParams,
   type PlaneUnitParams,
   type HitInfo,
+  BulletCamp,
 } from '../../base/type';
 import { PlaneMainBody } from './planeMainBody';
-import { PlaneMainBullet } from './planeMainBullet';
 import { planeMainBulletConfig } from '../../config';
 import {
   AttackerType,
@@ -16,7 +16,7 @@ import {
 } from '../../type';
 import type { ToolShieldConfig } from '../tools/type';
 import { ToolPlaneShield } from '../tools/toolShield';
-import type { PlaneBullet } from '../../base/planeBullet';
+import { PlaneBullet } from '../../base/planeBullet';
 import type { PlaneAttacker } from './planeAttacker';
 import { MiniFlyState } from '../../state/flyState';
 import type { TextUnit } from '../textTip/textUnit';
@@ -36,6 +36,11 @@ export class PlaneMain extends PlaneUnit {
   noHitTime: number = 3 * 1000;
   noHitText: TextUnit | null = null;
 
+  // 子弹生成逻辑
+  bulletLastTime: number = 0;
+  bulletConfig: PlaneBulletParams = planeMainBulletConfig;
+  bulletSize: number = 1;
+
   constructor(params: PlaneUnitParams, planeAtt: PlaneAttacker) {
     super(params);
     this.planeAtt = planeAtt;
@@ -51,75 +56,17 @@ export class PlaneMain extends PlaneUnit {
       },
       this
     );
-
-    const bulletParams = JSON.parse(
-      JSON.stringify(planeMainBulletConfig)
-    ) as PlaneBulletParams;
-
-    bulletParams.bulletX = this.unitX;
-    bulletParams.bulletY = this.unitY;
-    const bullet = new PlaneMainBullet(
-      PlaneBulletType.Normal,
-      bulletParams,
-      this
-    );
-    this.bulletBoxList.push(bullet);
   }
 
   // 增加子弹列数
   addBullet() {
-    const len = this.bulletBoxList.length;
-    if (len >= 3) {
-      return;
-    }
-
-    const bulletParams = JSON.parse(
-      JSON.stringify(planeMainBulletConfig)
-    ) as PlaneBulletParams;
-    if (len === 1) {
-      bulletParams.bulletX = this.unitX + this.bulletGap;
-      bulletParams.bulletY = this.unitY;
-      const bullet = new PlaneMainBullet(
-        PlaneBulletType.Normal,
-        bulletParams,
-        this
-      );
-      this.bulletBoxList[0].updatePos(this.unitX - this.bulletGap, this.unitY);
-      this.bulletBoxList[0].refreshTimer();
-      this.bulletBoxList.push(bullet);
-    } else if (len === 2) {
-      bulletParams.bulletX = this.unitX;
-      bulletParams.bulletY = this.unitY - 10;
-      const bullet = new PlaneMainBullet(
-        PlaneBulletType.Normal,
-        bulletParams,
-        this
-      );
-      for (let i = 0; i < this.bulletBoxList.length; i++) {
-        // this.bulletBoxList[i].stopBullet()
-        const bullet = this.bulletBoxList[i];
-        if (i === 0) {
-          bullet.updatePos(this.unitX - this.bulletGap * 1.5, this.unitY);
-        } else if (i === 1) {
-          bullet.updatePos(this.unitX + this.bulletGap * 1.5, this.unitY);
-        }
-        bullet.refreshTimer();
-      }
-      this.bulletBoxList.push(bullet);
-    }
+    if (this.bulletSize >= 3) return;
+    this.bulletSize++;
   }
 
   // 击中后 重新设置子弹数量
   resetBullet() {
-    for (let i = 0; i < this.bulletBoxList.length; i++) {
-      const bullet = this.bulletBoxList[i];
-      if (i === 0) {
-        bullet.updatePos(this.unitX, this.unitY);
-        bullet.refreshTimer();
-      } else {
-        bullet.stopBullet();
-      }
-    }
+    this.bulletSize = 1;
   }
 
   // 添加工具
@@ -148,39 +95,6 @@ export class PlaneMain extends PlaneUnit {
     // 更新玩家位置 (平滑跟随鼠标/手指)
     this.unitX = x;
     this.matrix.makeTranslation(this.unitX, this.unitY);
-
-    // 在子弹减少时，去除已经没有子弹的弹道
-    const ind = this.bulletBoxList.findIndex((bullet) => !bullet.enable);
-    if (ind > -1) {
-      this.bulletBoxList.splice(ind, 1);
-    }
-
-    // const len = this.bulletBoxList.length;
-    // 只更新 存在定时器的子弹弹道
-    const len = this.bulletBoxList.filter(
-      (bullet) => bullet.bulletTimer !== null
-    ).length;
-    for (let i = 0; i < this.bulletBoxList.length; i++) {
-      let bulletX = this.unitX;
-      if (len === 1) {
-        bulletX = this.unitX;
-      } else if (len === 2) {
-        if (i === 0) {
-          bulletX = bulletX - this.bulletGap;
-        } else {
-          bulletX = bulletX + this.bulletGap;
-        }
-      } else if (len === 3) {
-        if (i === 0) {
-          bulletX = bulletX - this.bulletGap * 1.5;
-        } else if (i === 1) {
-          bulletX = bulletX + this.bulletGap * 1.5;
-        }
-      }
-      const bullet = this.bulletBoxList[i];
-      bullet.updatePosX(bulletX);
-    }
-
     // 更新工具坐标
     for (let i = 0; i < this.tools.length; i++) {
       const tool = this.tools[i];
@@ -197,6 +111,9 @@ export class PlaneMain extends PlaneUnit {
         this.closeInvincibleText();
       }
     }
+
+    this.createBullet();
+
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -207,11 +124,74 @@ export class PlaneMain extends PlaneUnit {
     }
   }
 
+  createBullet() {
+    // 获取游戏时间
+    const time = MiniFlyState.duration;
+    const deltaTime = time - this.bulletLastTime;
+
+    if (deltaTime >= this.bulletConfig.shootCooldown) {
+      const bulletParams = JSON.parse(
+        JSON.stringify(this.bulletConfig)
+      ) as PlaneBulletParams;
+      this.bulletLastTime = time;
+      if (this.bulletSize === 1) {
+        bulletParams.bulletX = this.unitX;
+        bulletParams.bulletY = this.unitY;
+        this.planeAtt.miniFly.planeBullets.addBulletByParams(
+          PlaneBulletType.Normal,
+          BulletCamp.Player,
+          bulletParams
+        );
+      } else if (this.bulletSize === 2) {
+        bulletParams.bulletX = this.unitX - this.bulletGap;
+        bulletParams.bulletY = this.unitY;
+        this.planeAtt.miniFly.planeBullets.addBulletByParams(
+          PlaneBulletType.Normal,
+          BulletCamp.Player,
+          bulletParams
+        );
+        bulletParams.bulletX = this.unitX + this.bulletGap;
+        bulletParams.bulletY = this.unitY;
+        this.planeAtt.miniFly.planeBullets.addBulletByParams(
+          PlaneBulletType.Normal,
+          BulletCamp.Player,
+
+          bulletParams
+        );
+      } else {
+        bulletParams.bulletX = this.unitX - this.bulletGap * 1.5;
+        bulletParams.bulletY = this.unitY;
+        this.planeAtt.miniFly.planeBullets.addBulletByParams(
+          PlaneBulletType.Normal,
+          BulletCamp.Player,
+
+          bulletParams
+        );
+        bulletParams.bulletX = this.unitX + this.bulletGap * 1.5;
+        bulletParams.bulletY = this.unitY;
+        this.planeAtt.miniFly.planeBullets.addBulletByParams(
+          PlaneBulletType.Normal,
+          BulletCamp.Player,
+
+          bulletParams
+        );
+        bulletParams.bulletX = this.unitX;
+        bulletParams.bulletY = this.unitY - 10;
+        this.planeAtt.miniFly.planeBullets.addBulletByParams(
+          PlaneBulletType.Normal,
+          BulletCamp.Player,
+
+          bulletParams
+        );
+      }
+    }
+  }
+
   testPause() {
-    setTimeout(() => {
+    // setTimeout(() => {
       this.planeAtt.miniFly.emit(MINI_GAME_OVER, 1);
       // 先跑功能 需要优化 buttleBox 逻辑
-    }, 100);
+    // }, 100);
   }
 
   // 判断是否被敌机的子弹击中

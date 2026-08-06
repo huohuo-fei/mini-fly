@@ -4,6 +4,7 @@ import {
   type PlaneBulletParams,
   type PlaneUnitParams,
   type HitInfo,
+  BulletCamp,
 } from '../../../base/type';
 import {
   MiniPlaneEnemyType,
@@ -17,14 +18,17 @@ import {
   enemyConfig3,
   planeBossDotBullet,
 } from '../../../config';
-import { JokerBullet } from './jokerBullet';
-import type { PlaneBullet } from '../../../base/planeBullet';
 import type { PlaneEnemy } from '../planeEnemy';
+import { MiniFlyState } from '../../../state/flyState';
 
 export class EnemyJoker extends PlaneUnit {
   config: IMiniPlaneEnemy;
   planeEnemy: PlaneEnemy;
   type: EnemyType = EnemyType.JOKER;
+
+  // 子弹生成逻辑
+  bulletLastTime: number = 0;
+  bulletConfig: PlaneBulletParams = planeBossDotBullet;
   constructor(
     params: PlaneUnitParams,
     type: MiniPlaneEnemyType,
@@ -40,7 +44,8 @@ export class EnemyJoker extends PlaneUnit {
     } else if (type === MiniPlaneEnemyType.LEVEL3) {
       config = JSON.parse(JSON.stringify(enemyConfig3));
     }
-    this.config = JSON.parse(JSON.stringify(config)) as IMiniPlaneEnemy
+    this.config = JSON.parse(JSON.stringify(config)) as IMiniPlaneEnemy;
+
     this.planeEnemy = planeEnemy;
     this.updateParams();
 
@@ -56,23 +61,8 @@ export class EnemyJoker extends PlaneUnit {
       this
     );
 
-    this.buildBullet();
   }
 
-  buildBullet() {
-    const bulletParams = JSON.parse(
-      JSON.stringify(planeBossDotBullet)
-    ) as PlaneBulletParams;
-
-    bulletParams.shootCooldown = this.config.shootCooldown;
-
-    // 竖直两列
-    bulletParams.bulletX = this.unitX;
-    bulletParams.bulletY = this.unitY;
-    const bullet1 = new JokerBullet(PlaneBulletType.Normal, bulletParams, this);
-
-    this.bulletBoxList.push(bullet1);
-  }
   updateParams() {
     this.unitWidth = this.config.w;
     this.unitHeight = this.config.h;
@@ -85,36 +75,44 @@ export class EnemyJoker extends PlaneUnit {
     this.unitX = x + this.config.w / 2;
     this.unitY = this.config.y + this.config.h / 2;
     this.matrix.makeTranslation(this.unitX, this.unitY);
+    this.bulletConfig.shootCooldown = this.config.shootCooldown;
   }
 
   updatePos() {
     this.unitY += this.speedY;
     this.matrix.translate(0, this.speedY);
-
-    // 更新子弹位置
-    this.bulletBoxList.forEach((bullet) => {
-      bullet.updatePos(this.unitX, this.unitY);
-    });
   }
 
-   beforeRender(): void {
+  beforeRender(): void {
     this.updatePos();
-    
+    this.createBullet()
   }
 
-  isHitUnit(bullet: PlaneBullet): HitInfo | null {
-    const res = super.isHitUnit(bullet);
-    if (res && res.dead) {
-      this.destroy();
+  createBullet() {
+    // 获取游戏时间
+    const time = MiniFlyState.duration;
+    const deltaTime = time - this.bulletLastTime;
+
+    if (deltaTime >= this.config.shootCooldown) {
+      const bulletParams = JSON.parse(
+        JSON.stringify(this.bulletConfig)
+      ) as PlaneBulletParams;
+      this.bulletLastTime = time;
+        bulletParams.bulletX = this.unitX;
+        bulletParams.bulletY = this.unitY;
+        this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+          PlaneBulletType.Normal,
+          BulletCamp.Enemy,
+          bulletParams
+        );
     }
-    return res;
   }
 
-  removeUnit(){
+  removeUnit() {
     this.planeEnemy.removeJoker(this);
   }
 
-  bodyDead(){
-    this.planeEnemy.generateTool(this)
+  bodyDead() {
+    this.planeEnemy.generateTool(this);
   }
 }
