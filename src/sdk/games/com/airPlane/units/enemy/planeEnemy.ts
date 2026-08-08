@@ -280,13 +280,16 @@ export class PlaneEnemy implements IMiniGam {
             enemy.unitX,
             enemy.unitY
           );
-          const score = enemy.damageWithScore(DamageValueNumber);
-          if (score) {
-            this.miniFly.updateScore(score);
-          }
+          enemy.damageWithScore(DamageValueNumber);
+          
+          // if (score) {
+          //   this.miniFly.updateScore(score);
+          // }
         }
       }
     }
+    // console.log('子弹清屏 就不再更新分数了');
+    this.miniFly.planeBullets.celarAll()
   }
 
   // 获取战机的位置

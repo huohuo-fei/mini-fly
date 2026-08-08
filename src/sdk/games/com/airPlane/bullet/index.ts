@@ -129,6 +129,10 @@ export class PlaneBullets implements IMiniGam {
     }
   }
 
+  celarAll(){
+    this.buttlesMap.clear();
+  }
+
   actionStart(p: IMiniActParams) {}
   actionEnd(p: IMiniActParams) {}
   actionDoing(p: IMiniActParams) {}
