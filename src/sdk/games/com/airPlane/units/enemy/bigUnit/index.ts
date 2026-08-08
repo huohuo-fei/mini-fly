@@ -19,6 +19,7 @@ import { planeBigBullet } from '../../../config';
 import type { PlaneBullet } from '../../../base/planeBullet';
 import { PlaneMissile } from '../../../base/planeMissile';
 import { MiniFlyState } from '../../../state/flyState';
+import { MINI_GAME_OVER } from '../../../../../..';
 
 export class BigEnemyUnit extends PlaneUnit {
   type: EnemyType = EnemyType.BIG;
@@ -114,6 +115,7 @@ export class BigEnemyUnit extends PlaneUnit {
 
         // 销毁当前实例
         this.planeEnemy.removeBigEnemy(this);
+        this.missileHitPlane(dotPos.x, dotPos.y, 20);
       }
     );
     this.missileList.push(missile);
@@ -209,5 +211,22 @@ export class BigEnemyUnit extends PlaneUnit {
     }
 
     return this.score;
+  }
+
+  // 导弹是否命中战机
+  missileHitPlane(x: number, y: number, r: number) {
+    const planePos = this.planeEnemy.getPlanePos();
+    // this.attackerX = planePos.x;
+    // this.attackerY = planePos.y;
+
+    const vec1 = new Vector2(planePos.x, planePos.y);
+    const vec2 = new Vector2(x, y);
+    const dis = vec1.sub(vec2).length();
+
+    if (dis > r) {
+      // 距离大于爆炸半径 没有影响
+    } else {
+      this.planeEnemy.miniFly.emit(MINI_GAME_OVER, 1);
+    }
   }
 }

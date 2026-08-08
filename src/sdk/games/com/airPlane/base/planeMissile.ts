@@ -13,9 +13,22 @@ export class PlaneMissile extends PlaneBase {
   step: number = 0.01; // 每次移动的步长
   currentT: number = 0; // 当前移动到贝塞尔曲线的t值
   missileImg: HTMLImageElement | null = null;
-  endCallback: Function = () => { };
+  endCallback: Function = () => {};
 
-  constructor(p1: Vector2, p2: Vector2, height: number, step: number,cb:Function) {
+  // 当前曲线的最后一个点信息
+  lastInfo = {
+    x: 0,
+    y: 0,
+    angle: 0,
+  };
+
+  constructor(
+    p1: Vector2,
+    p2: Vector2,
+    height: number,
+    step: number,
+    cb: Function
+  ) {
     super();
     this.p1.set(p1.x, p1.y);
     this.p2.set(p2.x, p2.y);
@@ -23,44 +36,55 @@ export class PlaneMissile extends PlaneBase {
     this.step = step;
     this.missileImg = MiniUtils.getImage(planeMissileSvg);
 
-    this.endCallback = cb
+    this.endCallback = cb;
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    if(!this.missileImg)return
+    if (!this.missileImg) return;
     const rw = this.missileWidth;
     const rh = this.missileHeight;
-    const {dotPos,rotateAngle} = this.getMissileInfo(this.p1, this.p2, this.heightFactor)
+
+    const res = this.getMissileInfo(this.p1, this.p2, this.heightFactor);
+
+    if (res) {
+      const { dotPos, rotateAngle } = res;
+      this.lastInfo.x = dotPos.x;
+      this.lastInfo.y = dotPos.y;
+      this.lastInfo.angle = rotateAngle;
+    }
+
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.beginPath();
     ctx.strokeStyle = 'red';
-    ctx.translate(dotPos.x, dotPos.y);
-    ctx.rotate(rotateAngle + Math.PI / 2);
+
+    ctx.translate(this.lastInfo.x, this.lastInfo.y);
+    ctx.rotate(this.lastInfo.angle + Math.PI / 2);
 
     ctx.strokeRect(-rw / 2, -rh / 2, rw, rh);
     ctx.drawImage(this.missileImg, -rw / 2, -rh / 2, rw, rh);
     ctx.restore();
   }
 
-  getMissileInfo(
-    p1: Vector2,
-    p2: Vector2,
-    height: number,
-  ) {
+
+
+  getMissileInfo(p1: Vector2, p2: Vector2, height: number) {
     const dotPos = this.getPointOnParabola(p1, p2, height, this.currentT);
     const tangent = this.getTangentOnParabola(p1, p2, height, this.currentT);
     const rotateAngle = Math.atan2(tangent.y, tangent.x);
 
-    if(this.currentT > 1){
-      this.endCallback(dotPos)
-    }else{
+    if (this.currentT >= 1) {
+      this.endCallback(dotPos);
+    } else {
       this.currentT += this.step;
     }
-    return {
-      dotPos,
-      rotateAngle,
-    };
+    const flag = Boolean(this.currentT >= 1);
+    return flag
+      ? null
+      : {
+          dotPos,
+          rotateAngle,
+        };
   }
 
   // 依据两点以及高度 计算二次贝塞尔曲线参数
