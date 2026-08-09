@@ -41,6 +41,7 @@ export interface IMiniGam extends IEventBus {
   actionEnd: (p: IMiniActParams) => void;
   actionDoing: (p: IMiniActParams) => void;
   pauseRender: () => void;
+  exportGameInfo: () => IGameResult;
 }
 export interface IMiniScreen extends EventBus {
   gamList: Set<IMiniGam>;
@@ -56,6 +57,7 @@ export interface IMiniScreen extends EventBus {
   initAni: (timestamp: number) => void;
   pauseAni: () => void;
   setActiveGam: (gam: IMiniGam) => void;
+  getGameInfo:() => IGameResult
   actionTransfer: (p: IMiniActParams) => void;
   draw: () => void;
 }
@@ -92,4 +94,11 @@ export enum GameStatus {
   DOING = 'doing',
   PAUSE = 'pause',
   END = 'end',
+}
+
+// 每种游戏都要抛出的信息信息
+export type GameInfo = {
+  score: number;
+  time: number;
+  // ....
 }

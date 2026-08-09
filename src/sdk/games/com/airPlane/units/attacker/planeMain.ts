@@ -186,11 +186,12 @@ export class PlaneMain extends PlaneUnit {
     }
   }
 
-  testPause() {
-    // setTimeout(() => {
-    this.planeAtt.screen.emit(MINI_GAME_OVER, 1);
-    // 先跑功能 需要优化 buttleBox 逻辑
-    // }, 100);
+  gameEnd() {
+    this.planeAtt.screen.emit(MINI_GAME_OVER, {
+      score: MiniFlyState.score,
+      time: MiniFlyState.duration,
+      des:'游戏结束'
+    });
   }
 
   // 判断是否被敌机的子弹击中
@@ -236,7 +237,7 @@ export class PlaneMain extends PlaneUnit {
           );
           dead = true;
           console.log('战机阵亡，游戏结束');
-          this.testPause();
+          this.gameEnd();
         }
         MiniFlyState.life -= 1;
         this.showInvincibleText();
@@ -263,7 +264,7 @@ export class PlaneMain extends PlaneUnit {
       // 忽略无敌状态的碰撞
       if (!this.noHit) {
         console.log('碰撞');
-        this.planeAtt.screen.emit(MINI_GAME_OVER, 1);
+        this.gameEnd()
       }
     } else {
     }

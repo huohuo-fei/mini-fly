@@ -27,7 +27,7 @@ export class MiniScreen extends EventBus implements IMiniScreen {
   FRAME_INTERVAL = 1000 / 66;
 
   constructor(canvas: HTMLCanvasElement) {
-    super()
+    super();
     this.canvas = canvas;
     this.height = canvas.height;
     this.width = canvas.width;
@@ -76,11 +76,23 @@ export class MiniScreen extends EventBus implements IMiniScreen {
   }
 
   resetGame() {
-   this.activeGam =  this.gamManager.resetGame();
+    this.activeGam = this.gamManager.resetGame();
   }
 
   setActiveGam(gam: IMiniGam) {
     this.activeGam = gam;
+  }
+
+  getGameInfo() {
+    const info = this.activeGam?.exportGameInfo();
+    if(info){
+      return info;
+    }
+    return {
+      score: 0,
+      time: 0,
+      des: '',
+    };
   }
 
   actionTransfer(params: IMiniActParams) {

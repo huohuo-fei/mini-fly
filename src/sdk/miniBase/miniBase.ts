@@ -1,4 +1,4 @@
-import type { IMiniActParams, IMiniGam } from '..';
+import type {  IMiniActParams, IMiniGam } from '..';
 import { Matrix3 } from '../utils/Matrix3';
 import { EventBus } from './eventBus';
 
@@ -9,4 +9,11 @@ export abstract class MiniBase extends EventBus implements IMiniGam {
   actionEnd(p: IMiniActParams) {}
   actionDoing(p: IMiniActParams) {}
   pauseRender() {}
+  exportGameInfo (){
+    return {
+      score:0,
+      time:0,
+      des:''
+    }
+  };
 }

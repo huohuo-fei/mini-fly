@@ -226,7 +226,11 @@ export class BigEnemyUnit extends PlaneUnit {
     if (dis > r) {
       // 距离大于爆炸半径 没有影响
     } else {
-      this.planeEnemy.screen.emit(MINI_GAME_OVER, 1);
+      this.planeEnemy.screen.emit(MINI_GAME_OVER, {
+        score:MiniFlyState.score,
+        time: MiniFlyState.duration,
+        des:'游戏结束'
+      });
     }
   }
 }

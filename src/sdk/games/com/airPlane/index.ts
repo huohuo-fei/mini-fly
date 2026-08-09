@@ -1,14 +1,15 @@
 // 飞机大战
-import type {
-  IMiniActParams,
-  IMiniGameParams,
-} from '../../../type';
+import type { IMiniActParams, IMiniGameParams } from '../../../type';
 import { PlaneAttacker } from './units/attacker/planeAttacker';
 
 import { PlaneBg } from './units/background/planeBg';
 import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
-import { EnemyType, MiniPlaneToolType, type IMiniPlaneEffectType } from './type';
+import {
+  EnemyType,
+  MiniPlaneToolType,
+  type IMiniPlaneEffectType,
+} from './type';
 import { PlaneBar } from './units/bar/planeBar';
 import { PlaneToolBox } from './units/tools/planeToolBox';
 
@@ -29,27 +30,27 @@ export class MiniFly extends MiniBase {
   planeBar: PlaneBar;
   planeToolBox: PlaneToolBox;
   planeControl: PlaneControl;
-  planeText:PlaneText
-  planeBullets:PlaneBullets
-  screen:MiniScreen
+  planeText: PlaneText;
+  planeBullets: PlaneBullets;
+  screen: MiniScreen;
 
-  constructor(screen:MiniScreen,gameParams: IMiniGameParams) {
-    super()
+  constructor(screen: MiniScreen, gameParams: IMiniGameParams) {
+    super();
     // 初始化内部状态
-    MiniFlyState.reset()
+    MiniFlyState.reset();
 
-    this.screen = screen
+    this.screen = screen;
 
     // 加载各个模块
-    this.planeBullets = new PlaneBullets(gameParams,this)
+    this.planeBullets = new PlaneBullets(gameParams, this);
     this.planeBackground = new PlaneBg();
-    this.planeAttacker = new PlaneAttacker(gameParams,this);
+    this.planeAttacker = new PlaneAttacker(gameParams, this);
     this.planeEnemy = new PlaneEnemy(gameParams, this);
     this.planeEffect = new PlaneEffect();
     this.planeBar = new PlaneBar(this);
     this.planeToolBox = new PlaneToolBox(gameParams, this);
     this.planeControl = new PlaneControl(this, this.planeEnemy);
-    this.planeText = new PlaneText(gameParams,this)
+    this.planeText = new PlaneText(gameParams, this);
   }
 
   // render 方法
@@ -64,7 +65,7 @@ export class MiniFly extends MiniBase {
     this.planeToolBox.render(ctx);
     this.planeText.render(ctx);
     this.bulletHitEnemy();
-    this.enemyHitAttacker()
+    this.enemyHitAttacker();
     this.catchTool();
     this.updateTime();
   }
@@ -72,7 +73,6 @@ export class MiniFly extends MiniBase {
   // 渲染暂停，主要是控制内部的时间系统
   pauseRender() {
     MiniFlyState.pauseTemp = new Date().getTime();
-    
   }
 
   // 子弹击中敌机
@@ -140,4 +140,12 @@ export class MiniFly extends MiniBase {
   actionDoing(p: IMiniActParams) {
     this.planeAttacker.actionDoing(p);
   }
+
+  exportGameInfo = () => {
+    return {
+      score: MiniFlyState.score,
+      time: MiniFlyState.duration,
+      des: '',
+    };
+  };
 }

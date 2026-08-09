@@ -88,4 +88,19 @@ export class MiniUtils {
     const pad = (n:number) => String(n).padStart(2, '0');
     return `${hours}:${pad(minutes)}:${pad(seconds)}`;
   }
+
+  static formatTimeStr(ms: number): string {
+    if (ms < 0) ms = 0;
+    
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    let str_s = seconds?`${seconds}秒`:''
+    let str_m = minutes?`${minutes}分`:''
+    let str_h = hours?`${hours}小时`:''
+  
+    return str_h + str_m + str_s;
+  }
 }
