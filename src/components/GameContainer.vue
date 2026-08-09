@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted,ref } from 'vue';
 
-import { MINI_GAME_OVER, MiniScreen } from '../sdk';
+import { MINI_GAME_OVER, MiniScreen, type IGameResult, GameStatus } from '../sdk';
 
 import { MiniUtils } from '../sdk/utils/MiniUtils';
 
 let canvasElement: HTMLCanvasElement | null = null;
 let miniGameInstance: MiniScreen | null = null;
 
-onMounted(() => {
-  console.log('这里初始化游戏场景');
+const gameStatus = ref<GameStatus>(GameStatus.START)
+const gameResult = ref<IGameResult>({
+  score: 0,
+  time: 0,
+  des:''
+})
 
+onMounted(() => {
   // 批量增加图片资源
   const planeImageModules = import.meta.glob('@/assets/game/plane/*.svg', {
     eager: true,
@@ -29,35 +34,46 @@ onMounted(() => {
     canvasElement = canvas;
     miniGameInstance = new MiniScreen(canvas);
     MiniUtils.loadImageListProg(imageList, () => {}).then(() => {
-      miniGameInstance?.startAni();
+      // miniGameInstance?.startAni();
       registerEvent();
+      console.log(canvasElement);
+      
+      // 资源加载完毕
     });
   } else {
     canvasElement = null;
   }
-  console.log(canvasElement);
 });
 
 // 游戏暂停
 function pauseGame() {
   miniGameInstance?.pauseAni();
+  gameStatus.value = GameStatus.PAUSE
 }
 
 // 游戏开始
 function startGame() {
   miniGameInstance?.startAni();
+  gameStatus.value = GameStatus.DOING
+}
+
+// 游戏重置
+function reset() {
+  miniGameInstance?.resetGame();
+  startGame()
 }
 
 // 注册监听事件
 function registerEvent() {
-  // miniGameInstance?.actionTransferif
   if (miniGameInstance?.activeGam && miniGameInstance?.activeGam.on) {
     miniGameInstance.activeGam?.on(MINI_GAME_OVER, gameoverCallback);
   }
 }
 
 // 游戏结束的回调
-function gameoverCallback() {
+function gameoverCallback(params:IGameResult) {
+  console.log(params,'params');
+  
   // 需要在下一个渲染帧之前取消动画帧
   setTimeout(() => {
     miniGameInstance?.pauseAni();
@@ -73,9 +89,49 @@ function gameoverCallback() {
     <button @click="startGame">开始</button>
     <button @click="pauseGame">暂停</button>
   </div>
+
+    <!-- 游戏开始面板 -->
+    <template v-if="gameStatus === GameStatus.START">
+    <div class="show-res" >
+    <p class="title">游戏设置</p>
+    <p class="item">声音：{{ gameResult.score }}</p>
+    <p class="item">模式：{{ gameResult.time }}</p>
+    <div class="opt">
+      <button >重置</button>
+      <button @click="startGame">开始游戏</button>
+    </div>
+  </div>
+  </template>
+
+  <!-- 游戏暂停面板 -->
+  <template v-if="gameStatus === GameStatus.PAUSE">
+    <div class="show-res" >
+    <p class="title">游戏暂停</p>
+    <p class="item">得分：{{ gameResult.score }}</p>
+    <p class="item">用时：{{ gameResult.time }}</p>
+    <div class="opt">
+      <button @click="startGame">继续</button>
+      <button @click="reset">首页</button>
+    </div>
+  </div>
+  </template>
+
+  <!-- 游戏结束面板 -->
+  <template v-if="gameStatus === GameStatus.END">
+    <div class="show-res" >
+    <p class="title">游戏结束</p>
+    <p class="item">得分：{{ gameResult.score }}</p>
+    <p class="item">用时：{{ gameResult.time }}</p>
+    <div class="opt">
+      <button>再来一局</button>
+      <button>返回首页</button>
+    </div>
+  </div>
+  </template>
+
 </template>
 
-<style>
+<style lang="less">
 .canvas-container {
   width: 100%;
   height: 100vh;
@@ -86,7 +142,7 @@ function gameoverCallback() {
 #mini-game-canvas {
   width: min(100%, 500px);
   height: 100%;
-  background-color: gray;
+  background-color: #000;
   touch-action: none;
 }
 
@@ -102,5 +158,39 @@ function gameoverCallback() {
 .opt-box button {
   width: 100%;
   margin-top: 4px;
+}
+
+.show-res{
+  background-color: pink;
+  position: absolute;
+  width:200px;
+  // height: 100px;
+  left: 50%;
+  top: 100px;
+  // translate: ;
+  transform: translateX(-50%);
+  padding: 10px 8px;
+
+  .title{
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+  }
+
+  .item{
+    font-size: 16px;
+    color: #000;
+    margin-top: 5px;
+  }
+
+ .opt{
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  button {
+    // background-color: aliceblue;
+    margin: 0 10px;
+  }
+ }
 }
 </style>

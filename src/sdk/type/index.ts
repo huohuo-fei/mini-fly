@@ -12,6 +12,7 @@ export interface IMiniGamManager {
   getActiveGam: () => IMiniGam | null;
   setActiveGam: (gamParams: IMiniGameParams) => void;
   buildGam: (gamParams: IMiniGameParams) => void;
+  resetGame: () => IMiniGam | null;
   receiveTransfer: (p: IMiniActParams) => void;
 }
 
@@ -25,7 +26,7 @@ export interface IMiniAction {
   removeEventListener: () => void;
 }
 
-export interface IMiniGam extends IMiniBus{
+export interface IMiniGam extends IMiniBus {
   render: (ctx: CanvasRenderingContext2D) => void;
   actionStart: (p: IMiniActParams) => void;
   actionEnd: (p: IMiniActParams) => void;
@@ -51,7 +52,7 @@ export interface IMiniScreen {
   ctx: CanvasRenderingContext2D | null;
 
   aniTime: number | null;
-  initAni: (timestamp:number) => void;
+  initAni: (timestamp: number) => void;
   pauseAni: () => void;
   setActiveGam: (gam: IMiniGam) => void;
   actionTransfer: (p: IMiniActParams) => void;
@@ -74,4 +75,20 @@ export type IMiniActParams = {
 export interface Point {
   x: number;
   y: number;
+}
+
+// 游戏结束后的数据类型
+export type IGameResult = {
+  score: number;
+  time: number;
+  des: string; // 游戏结束描述
+  // resultId: number; // 游戏结果id
+};
+
+// 游戏状态
+export enum GameStatus {
+  START = 'start',
+  DOING = 'doing',
+  PAUSE = 'pause',
+  END = 'end',
 }

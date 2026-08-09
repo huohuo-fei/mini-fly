@@ -113,7 +113,6 @@ export class PlaneMain extends PlaneUnit {
     }
 
     this.createBullet();
-
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -189,8 +188,8 @@ export class PlaneMain extends PlaneUnit {
 
   testPause() {
     // setTimeout(() => {
-      this.planeAtt.miniFly.emit(MINI_GAME_OVER, 1);
-      // 先跑功能 需要优化 buttleBox 逻辑
+    this.planeAtt.miniFly.emit(MINI_GAME_OVER, 1);
+    // 先跑功能 需要优化 buttleBox 逻辑
     // }, 100);
   }
 
@@ -251,6 +250,23 @@ export class PlaneMain extends PlaneUnit {
       };
     }
     return null;
+  }
+
+  // 战机相撞 返回逻辑
+  collidePlane(plane: PlaneUnit) {
+    const { unitHeight: h1, unitWidth: w1, unitX: x1, unitY: y1 } = plane;
+    const { unitHeight: h2, unitWidth: w2, unitX: x2, unitY: y2 } = this;
+    if (
+      Math.abs(x1 - x2) < (w1 + w2) / 2 &&
+      Math.abs(y1 - y2) < (h1 + h2) / 2
+    ) {
+      // 忽略无敌状态的碰撞
+      if (!this.noHit) {
+        console.log('碰撞');
+        this.planeAtt.miniFly.emit(MINI_GAME_OVER, 1);
+      }
+    } else {
+    }
   }
 
   // 无敌提示文字

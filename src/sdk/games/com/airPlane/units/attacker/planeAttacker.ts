@@ -5,6 +5,7 @@ import type { PlaneBullet } from '../../base/planeBullet';
 import { IMiniPlaneEffectType, MiniPlaneToolType } from '../../type';
 import type { MiniFly } from '../..';
 import type { TextUnit } from '../textTip/textUnit';
+import type { PlaneUnit } from '../../base/planeUnit';
 
 export class PlaneAttacker extends PlaneBase {
   // 战机的配置参数
@@ -48,7 +49,6 @@ export class PlaneAttacker extends PlaneBase {
         canvasWidth: this.gameParams.canvasWidth,
         health: 1,
         score: 1,
-        type: 'main',
       },
       this
     );
@@ -92,6 +92,12 @@ export class PlaneAttacker extends PlaneBase {
     } else {
       return false;
     }
+  }
+
+  // 敌机 战机 机体相撞
+  checkHitByEnemyPlane(enemyUnit:PlaneUnit) {
+    this.planeMain.collidePlane(enemyUnit)
+    
   }
 
   // 无敌提示文字

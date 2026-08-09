@@ -38,8 +38,7 @@ export class MiniScreen implements IMiniScreen {
     this.gamAcion = new MiniAction(canvas, this);
   }
 
-  initAni(timestamp: number | undefined) {
-  }
+  initAni(timestamp: number | undefined) {}
 
   pauseAni() {
     if (this.aniId !== null) {
@@ -72,6 +71,10 @@ export class MiniScreen implements IMiniScreen {
     this.aniId = requestAnimationFrame((timestamp) => {
       this.aniLoop(timestamp);
     });
+  }
+
+  resetGame() {
+   this.activeGam =  this.gamManager.resetGame();
   }
 
   setActiveGam(gam: IMiniGam) {

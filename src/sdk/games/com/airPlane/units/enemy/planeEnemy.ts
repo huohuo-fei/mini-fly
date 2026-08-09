@@ -117,6 +117,7 @@ export class PlaneEnemy implements IMiniGam {
         if (enemy) {
           // 渲染敌机
           enemy.render(ctx);
+          this.miniFly.planeAttacker.checkHitByEnemyPlane(enemy);
         }
       }
     }
