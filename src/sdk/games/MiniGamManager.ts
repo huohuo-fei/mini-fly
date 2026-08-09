@@ -1,7 +1,7 @@
+import type { MiniScreen } from '..';
 import type {
   IMiniGam,
   IMiniGamManager,
-  IMiniScreen,
   IMiniGameParams,
   IMiniActParams,
 } from '../type';
@@ -9,11 +9,11 @@ import { MiniActionType, MiniGameType } from '../utils/common';
 
 import { MiniFly } from './com/airPlane';
 export class MiniGamManager implements IMiniGamManager {
-  screen: IMiniScreen;
+  screen: MiniScreen;
   activeGam: IMiniGam | null = null;
   gameParams: IMiniGameParams 
 
-  constructor(screen: IMiniScreen, params: IMiniGameParams) {
+  constructor(screen: MiniScreen, params: IMiniGameParams) {
     this.screen = screen;
     this.gameParams = params;
   }
@@ -21,7 +21,7 @@ export class MiniGamManager implements IMiniGamManager {
   buildGam() {
     switch (this.gameParams.type) {
       case MiniGameType.FLY:
-        this.activeGam = new MiniFly(this.gameParams);
+        this.activeGam = new MiniFly(this.screen,this.gameParams);
         return;
     }
   }
@@ -34,7 +34,7 @@ export class MiniGamManager implements IMiniGamManager {
   }
 
   setActiveGam(gamParams: IMiniGameParams) {
-    this.activeGam = new MiniFly(gamParams);
+    this.activeGam = new MiniFly(this.screen,gamParams);
   }
 
   resetGame() :IMiniGam | null{

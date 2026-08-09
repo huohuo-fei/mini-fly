@@ -65,16 +65,16 @@ function reset() {
 
 // 注册监听事件
 function registerEvent() {
-  if (miniGameInstance?.activeGam && miniGameInstance?.activeGam.on) {
-    miniGameInstance.activeGam?.on(MINI_GAME_OVER, gameoverCallback);
+  if(miniGameInstance){
+    miniGameInstance.on(MINI_GAME_OVER, gameoverCallback);
   }
 }
 
 // 游戏结束的回调
 function gameoverCallback(params:IGameResult) {
   console.log(params,'params');
-  
-  // 需要在下一个渲染帧之前取消动画帧
+  gameStatus.value = GameStatus.END
+  // 需要在下一个渲染帧之前取消动画帧,所以使用到 定时器
   setTimeout(() => {
     miniGameInstance?.pauseAni();
   });

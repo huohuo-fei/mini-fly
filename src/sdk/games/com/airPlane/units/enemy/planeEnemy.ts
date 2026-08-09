@@ -19,8 +19,10 @@ import type { PlaneUnitParams } from '../../base/type';
 import type { PlaneUnit } from '../../base/planeUnit';
 import { DamageValueNumber } from '../../config';
 import { MiniBase } from '../../../../../miniBase/miniBase';
+import type { MiniScreen } from '../../../../..';
 export class PlaneEnemy extends MiniBase {
   miniFly: MiniFly;
+  screen:MiniScreen
   gameParams: IMiniGameParams;
 
   // 所有类型的敌机
@@ -47,6 +49,7 @@ export class PlaneEnemy extends MiniBase {
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
     super()
     this.miniFly = miniFly;
+    this.screen = miniFly.screen;
     this.gameParams = params;
   }
 

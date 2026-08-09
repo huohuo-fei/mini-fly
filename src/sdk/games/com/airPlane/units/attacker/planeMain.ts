@@ -188,7 +188,7 @@ export class PlaneMain extends PlaneUnit {
 
   testPause() {
     // setTimeout(() => {
-    this.planeAtt.miniFly.emit(MINI_GAME_OVER, 1);
+    this.planeAtt.screen.emit(MINI_GAME_OVER, 1);
     // 先跑功能 需要优化 buttleBox 逻辑
     // }, 100);
   }
@@ -263,7 +263,7 @@ export class PlaneMain extends PlaneUnit {
       // 忽略无敌状态的碰撞
       if (!this.noHit) {
         console.log('碰撞');
-        this.planeAtt.miniFly.emit(MINI_GAME_OVER, 1);
+        this.planeAtt.screen.emit(MINI_GAME_OVER, 1);
       }
     } else {
     }

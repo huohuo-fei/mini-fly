@@ -19,7 +19,7 @@ import { planeBigBullet } from '../../../config';
 import type { PlaneBullet } from '../../../base/planeBullet';
 import { PlaneMissile } from '../../../base/planeMissile';
 import { MiniFlyState } from '../../../state/flyState';
-import { MINI_GAME_OVER } from '../../../../../..';
+import { MINI_GAME_OVER, MiniScreen } from '../../../../../..';
 
 export class BigEnemyUnit extends PlaneUnit {
   type: EnemyType = EnemyType.BIG;
@@ -40,7 +40,7 @@ export class BigEnemyUnit extends PlaneUnit {
   constructor(
     params: PlaneUnitParams,
     config: IBigEnemyConfig,
-    planeEnemy: PlaneEnemy
+    planeEnemy: PlaneEnemy,
   ) {
     super(params);
     this.config = JSON.parse(JSON.stringify(config)) as IBigEnemyConfig;
@@ -226,7 +226,7 @@ export class BigEnemyUnit extends PlaneUnit {
     if (dis > r) {
       // 距离大于爆炸半径 没有影响
     } else {
-      this.planeEnemy.miniFly.emit(MINI_GAME_OVER, 1);
+      this.planeEnemy.screen.emit(MINI_GAME_OVER, 1);
     }
   }
 }

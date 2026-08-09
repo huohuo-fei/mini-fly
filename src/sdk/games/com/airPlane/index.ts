@@ -18,6 +18,7 @@ import { PlaneText } from './units/textTip/textTip';
 import { MiniFlyState } from './state/flyState';
 import { PlaneBullets } from './bullet';
 import { MiniBase } from '../../../miniBase/miniBase';
+import type { MiniScreen } from '../../..';
 
 export class MiniFly extends MiniBase {
   events: Map<string, Set<Function>> = new Map();
@@ -30,11 +31,14 @@ export class MiniFly extends MiniBase {
   planeControl: PlaneControl;
   planeText:PlaneText
   planeBullets:PlaneBullets
+  screen:MiniScreen
 
-  constructor(gameParams: IMiniGameParams) {
+  constructor(screen:MiniScreen,gameParams: IMiniGameParams) {
     super()
     // 初始化内部状态
     MiniFlyState.reset()
+
+    this.screen = screen
 
     // 加载各个模块
     this.planeBullets = new PlaneBullets(gameParams,this)
@@ -133,13 +137,6 @@ export class MiniFly extends MiniBase {
     this.planeControl.updateEnemyCountSub(type);
   }
 
-  actionStart(action: IMiniActParams) {
-    console.log('action', action);
-  }
-
-  actionEnd(p: IMiniActParams) {
-    console.log('p', p);
-  }
   actionDoing(p: IMiniActParams) {
     this.planeAttacker.actionDoing(p);
   }

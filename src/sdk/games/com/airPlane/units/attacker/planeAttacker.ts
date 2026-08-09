@@ -6,12 +6,14 @@ import type { MiniFly } from '../..';
 import type { TextUnit } from '../textTip/textUnit';
 import type { PlaneUnit } from '../../base/planeUnit';
 import { MiniBase } from '../../../../../miniBase/miniBase';
+import type { MiniScreen } from '../../../../..';
 
 export class PlaneAttacker extends MiniBase {
   // 战机的配置参数
   PLAYER_WIDTH = 30;
   PLAYER_HEIGHT = 30;
   shootCooldown = 160;
+  screen:MiniScreen
 
   // 位置信息
   attackerX: number = 0;
@@ -36,6 +38,7 @@ export class PlaneAttacker extends MiniBase {
     const playerY = params.canvasHeight - offsetY;
     this.gameParams = params;
     this.miniFly = miniFly;
+    this.screen = miniFly.screen
     this.planeMain = new PlaneMain(
       {
         unitWidth: PLAYER_WIDTH,
