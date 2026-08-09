@@ -1,14 +1,16 @@
-import type { IMiniGam, IMiniGameParams } from '../../../../../type';
+import type {  IMiniGameParams } from '../../../../../type';
 import type { MiniFly } from '../..';
 import { TextUnit } from './textUnit';
 import type { textSnapshot } from './type';
+import { MiniBase } from '../../../../../miniBase/miniBase';
 
-export class PlaneText implements IMiniGam {
+export class PlaneText extends MiniBase {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
 
   textList: any[] = [];
   constructor(gameParams:IMiniGameParams,miniFly: MiniFly) {
+    super()
     this.miniFly = miniFly;
     this.gameParams = gameParams;
     // this.testText()
@@ -57,8 +59,4 @@ export class PlaneText implements IMiniGam {
       text.render(ctx);
     }
   }
-
-  actionStart = () => {};
-  actionEnd = () => {};
-  actionDoing = () => {};
 }

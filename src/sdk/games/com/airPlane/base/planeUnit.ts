@@ -1,12 +1,12 @@
+import { MiniBase } from '../../../../miniBase/miniBase';
 import { AttackerType, EnemyType } from '../type';
-import { PlaneBase } from './planeBase';
 import type { PlaneBody } from './planeBody';
 import type { PlaneBullet } from './planeBullet';
 import type { PlaneToolBase } from './planeToolBase';
 import type { HitInfo, PlaneUnitParams } from './type';
 import { nanoid } from 'nanoid';
 
-export class PlaneUnit extends PlaneBase {
+export abstract class PlaneUnit extends MiniBase {
   canvasWidth: number = 0;
   canvasHeight: number = 0;
   unitWidth: number = 0;
@@ -17,13 +17,13 @@ export class PlaneUnit extends PlaneBase {
   speedY: number = 0;
   shootCooldown: number = 0;
   health: number = 0;
-  type:EnemyType | AttackerType = EnemyType.BOSS;
+  type: EnemyType | AttackerType = EnemyType.BOSS;
 
   // 是否无敌
   noHit: boolean = false;
   planeBody: PlaneBody | null = null;
 
-  tools:PlaneToolBase[] = []
+  tools: PlaneToolBase[] = [];
 
   // 外层战机的位置
   attackerX: number = 0;
@@ -50,12 +50,6 @@ export class PlaneUnit extends PlaneBase {
     this.shootCooldown = params.shootCooldown;
     this.health = params.health;
     this.score = params.score;
-    
-  }
-
-  // 在渲染之前需要的操作，更新坐标 检测是否有必要在当前帧渲染...
-  beforeRender() {
-    // updatePos。。。。
   }
 
   render(ctx: CanvasRenderingContext2D) {
@@ -73,9 +67,9 @@ export class PlaneUnit extends PlaneBase {
 
   // 移除工具
   removeTool(tool: PlaneToolBase) {
-    const ind = this.tools.findIndex((item) => item === tool)
+    const ind = this.tools.findIndex((item) => item === tool);
     if (ind !== -1) {
-      this.tools.splice(ind, 1)
+      this.tools.splice(ind, 1);
     }
   }
 
@@ -98,7 +92,7 @@ export class PlaneUnit extends PlaneBase {
       if (dead && this.planeBody) {
         // 机体死亡
         this.planeBody.enable = false;
-        this.bodyDead()
+        this.bodyDead();
       }
       return {
         x: unitX,
@@ -131,14 +125,14 @@ export class PlaneUnit extends PlaneBase {
   // 依据机体 和 子弹弹道的状态，判断是否需要销毁当前作战单元 从画布移除
   checkState() {
     const bodyEnable = this.planeBody?.enable;
-    if (!bodyEnable ) {
+    if (!bodyEnable) {
       this.removeUnit();
     }
   }
 
   // 直接扣除生命值
   damageWithScore(damageNum: number) {
-    // 如果机体已经消亡  
+    // 如果机体已经消亡
     if (!this.planeBody?.enable) return null;
 
     // 机体生命值减小
@@ -147,21 +141,19 @@ export class PlaneUnit extends PlaneBase {
     if (dead && this.planeBody) {
       // 机体死亡
       this.planeBody.enable = false;
-      this.bodyDead()
+      this.bodyDead();
       // 机体死亡后 需要执行销毁
     }
 
-    return this.score
+    return this.score;
   }
+
+  // 在渲染之前需要的操作，更新坐标 检测是否有必要在当前帧渲染...
+   beforeRender(){};
 
   // 销毁整个作战单元的回调
-  removeUnit() {
-    // console.warn('需要上层实现');
-  }
+   removeUnit(){};
 
-  // 机体被子弹击中后的死亡事件 
-  bodyDead(){
-    // console.log('需要上层实现');
-  }
-
+  // 机体被子弹击中后的死亡事件
+   bodyDead(){};
 }

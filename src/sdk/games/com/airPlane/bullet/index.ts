@@ -1,7 +1,6 @@
 import type { MiniFly } from '..';
+import { MiniBase } from '../../../../miniBase/miniBase';
 import type {
-  IMiniActParams,
-  IMiniGam,
   IMiniGameParams,
 } from '../../../../type';
 import { PlaneBullet } from '../base/planeBullet';
@@ -11,13 +10,14 @@ import {
   type PlaneBulletType,
 } from '../base/type';
 
-export class PlaneBullets implements IMiniGam {
+export class PlaneBullets extends MiniBase {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
   bullets: PlaneBullet[] = [];
   buttlesMap: Map<BulletCamp, Set<PlaneBullet>> = new Map();
 
   constructor(gameParams: IMiniGameParams, miniFly: MiniFly) {
+    super()
     this.miniFly = miniFly;
     this.gameParams = gameParams;
   }
@@ -132,8 +132,4 @@ export class PlaneBullets implements IMiniGam {
   celarAll(){
     this.buttlesMap.clear();
   }
-
-  actionStart(p: IMiniActParams) {}
-  actionEnd(p: IMiniActParams) {}
-  actionDoing(p: IMiniActParams) {}
 }

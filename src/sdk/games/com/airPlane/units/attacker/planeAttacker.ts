@@ -1,13 +1,13 @@
 import type { IMiniActParams, IMiniGameParams } from '../../../../../type';
 import { PlaneMain } from './planeMain';
-import { PlaneBase } from '../../base/planeBase';
 import type { PlaneBullet } from '../../base/planeBullet';
 import { IMiniPlaneEffectType, MiniPlaneToolType } from '../../type';
 import type { MiniFly } from '../..';
 import type { TextUnit } from '../textTip/textUnit';
 import type { PlaneUnit } from '../../base/planeUnit';
+import { MiniBase } from '../../../../../miniBase/miniBase';
 
-export class PlaneAttacker extends PlaneBase {
+export class PlaneAttacker extends MiniBase {
   // 战机的配置参数
   PLAYER_WIDTH = 30;
   PLAYER_HEIGHT = 30;

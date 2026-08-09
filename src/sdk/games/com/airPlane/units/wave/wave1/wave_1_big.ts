@@ -10,7 +10,7 @@ export class Wave_1_Big extends BigCreater {
 
   num = 0;
 
-  checkRule(wave: PlaneWave): boolean {
+  checkRule = (wave: PlaneWave) => {
     if (wave.waveScore < this.minScore || wave.waveScore > this.maxScore) {
       return false;
     }
@@ -32,7 +32,7 @@ export class Wave_1_Big extends BigCreater {
         return true;
       }
     }
-  }
+  };
 
   builder(): WaveEnemyConfig | null {
     this.num++;

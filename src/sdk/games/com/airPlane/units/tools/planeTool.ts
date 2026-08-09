@@ -1,9 +1,10 @@
 import { type IMiniPlaneToolInfo, MiniPlaneToolType } from '../../type';
-import type { IMiniGam, IMiniGameParams } from '../../../../../type';
+import type {  IMiniGameParams } from '../../../../../type';
 import type { PlaneToolBox } from './planeToolBox';
 import { Matrix3 } from '../../../../../utils/Matrix3';
+import { MiniBase } from '../../../../../miniBase/miniBase';
 
-export class PlaneTool implements IMiniGam {
+export class PlaneTool extends MiniBase{
   lastTime: number;
   type: MiniPlaneToolType;
   toolInfo: IMiniPlaneToolInfo;
@@ -18,6 +19,7 @@ export class PlaneTool implements IMiniGam {
     gameParams: IMiniGameParams,
     toolBox: PlaneToolBox
   ) {
+    super()
     this.type = toolInfo.type;
     this.toolInfo = toolInfo;
     this.lastTime = Date.now();
@@ -75,7 +77,4 @@ export class PlaneTool implements IMiniGam {
       ctx.drawImage(this.resource, x, y, w, h);
     }
   }
-  actionStart = () => {};
-  actionEnd = () => {};
-  actionDoing = () => {};
 }

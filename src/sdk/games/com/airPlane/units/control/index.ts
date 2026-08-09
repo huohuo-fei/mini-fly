@@ -2,7 +2,6 @@
 // 依据 时间 分数 控制游戏内的各种行为
 
 import type { MiniFly } from '../..';
-import { PlaneBase } from '../../base/planeBase';
 import type { PlaneWave } from '../../base/planeWave';
 import { UPDATE_SCORE, UPDATE_TIME } from '../../state/eventName';
 import { EnemyType } from '../../type';
@@ -14,8 +13,9 @@ import {
 import { Wave_1 } from '../wave/wave1';
 import { Wave_2 } from '../wave/wave2';
 import { MiniFlyState } from '../../state/flyState';
+import { MiniBase } from '../../../../../miniBase/miniBase';
 
-export class PlaneControl extends PlaneBase {
+export class PlaneControl extends MiniBase {
   initFlag: boolean = false;
 
   miniFly: MiniFly;

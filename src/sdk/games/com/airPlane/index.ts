@@ -1,7 +1,6 @@
 // 飞机大战
 import type {
   IMiniActParams,
-  IMiniGam,
   IMiniGameParams,
 } from '../../../type';
 import { PlaneAttacker } from './units/attacker/planeAttacker';
@@ -18,8 +17,9 @@ import type { PlaneUnit } from './base/planeUnit';
 import { PlaneText } from './units/textTip/textTip';
 import { MiniFlyState } from './state/flyState';
 import { PlaneBullets } from './bullet';
+import { MiniBase } from '../../../miniBase/miniBase';
 
-export class MiniFly implements IMiniGam {
+export class MiniFly extends MiniBase {
   events: Map<string, Set<Function>> = new Map();
   planeBackground: PlaneBg;
   planeAttacker: PlaneAttacker;
@@ -31,9 +31,8 @@ export class MiniFly implements IMiniGam {
   planeText:PlaneText
   planeBullets:PlaneBullets
 
-  // flyState: FlyState;
-  // miniFlyState:MiniFlyState = MiniFlyState
   constructor(gameParams: IMiniGameParams) {
+    super()
     // 初始化内部状态
     MiniFlyState.reset()
 
@@ -143,20 +142,5 @@ export class MiniFly implements IMiniGam {
   }
   actionDoing(p: IMiniActParams) {
     this.planeAttacker.actionDoing(p);
-  }
-
-  on(eventName: string, callback: Function) {
-    const set = this.events.get(eventName) || new Set();
-    set.add(callback);
-    this.events.set(eventName, set);
-  }
-
-  emit(eventName: string, ...args: any[]) {
-    const set = this.events.get(eventName);
-    if (set) {
-      set.forEach((callback) => {
-        callback(...args);
-      });
-    }
   }
 }

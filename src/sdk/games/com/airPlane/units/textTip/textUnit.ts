@@ -1,8 +1,7 @@
-import { Matrix3 } from '../../../../../utils/Matrix3';
-import { PlaneBase } from '../../base/planeBase';
+import { MiniBase } from '../../../../../miniBase/miniBase';
 import { TextAline, type textSnapshot } from './type';
 
-export class TextUnit extends PlaneBase {
+export class TextUnit extends MiniBase {
   text: string = '';
   color: string = '#ffffff';
   fontSize: number = 20;

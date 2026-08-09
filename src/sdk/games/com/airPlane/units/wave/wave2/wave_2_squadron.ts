@@ -11,7 +11,7 @@ export class Wave_2_Squadron extends SquadronCreater {
   maxScore = 4000;
   num = 0;
 
-  checkRule(wave: PlaneWave): boolean {
+  checkRule = (wave: PlaneWave) => {
     // 1.判断分数
     if (wave.waveScore < this.minScore || wave.waveScore > this.maxScore) {
       return false;
@@ -36,7 +36,7 @@ export class Wave_2_Squadron extends SquadronCreater {
         return true;
       }
     }
-  }
+  };
 
   builder(): WaveEnemyConfig | null {
     this.num++;
@@ -49,8 +49,6 @@ export class Wave_2_Squadron extends SquadronCreater {
       const dis = w * count + gap * (count - 1);
       this.config.startX = 500 + dis;
     }
-
-
 
     return super.builder();
   }

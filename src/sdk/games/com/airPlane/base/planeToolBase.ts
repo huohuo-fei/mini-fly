@@ -1,8 +1,8 @@
+import { MiniBase } from "../../../../miniBase/miniBase";
 import { MiniPlaneToolType } from "../type";
-import { PlaneBase } from "./planeBase";
 import type { PlaneUnit } from "./planeUnit";
 
-export class PlaneToolBase extends PlaneBase {
+export class PlaneToolBase extends MiniBase {
 
   type:MiniPlaneToolType = MiniPlaneToolType.SHIELD
   // 主机体的尺寸 位置信息
@@ -11,9 +11,6 @@ export class PlaneToolBase extends PlaneBase {
   mainHeight:number = 0
   mainX:number = 0
   mainY:number = 0
-  initTool(){
-
-  }
 
   updatePosX(x:number){
     this.mainX = x
@@ -30,10 +27,6 @@ export class PlaneToolBase extends PlaneBase {
     this.mainY = y
     this.matrix.makeTranslation(this.mainX, this.mainY);
 
-  }
-
-  destroyTool(){
-    
   }
 
 }

@@ -1,10 +1,11 @@
-import type { IMiniActParams, IMiniGam } from '../../../../../type';
+import { MiniBase } from '../../../../../miniBase/miniBase';
+import type { IMiniActParams } from '../../../../../type';
 import { Matrix3 } from '../../../../../utils/Matrix3';
 import { PlaneExplodeConfig } from '../../config';
 import { IMiniPlaneEffectType, type SpriteConfig } from '../../type';
 import type { PlaneEffect } from './planeEffects';
 // 飞机大战中需要的各种特效管理
-export class BaseEffect implements IMiniGam {
+export class BaseEffect extends MiniBase {
   type: IMiniPlaneEffectType;
   planeEffect: PlaneEffect;
   spriteConfig: SpriteConfig;
@@ -23,6 +24,7 @@ export class BaseEffect implements IMiniGam {
     other?: any,
     cb?:() => void
   ) {
+    super()
     this.type = type;
     this.spriteConfig = JSON.parse(JSON.stringify(PlaneExplodeConfig));
     this.spriteConfig.tx = cx ;
@@ -66,8 +68,4 @@ export class BaseEffect implements IMiniGam {
     this.animate(ctx);
     ctx.restore();
   }
-
-  actionStart = (p: IMiniActParams) => {};
-  actionEnd = (p: IMiniActParams) => {};
-  actionDoing = (p: IMiniActParams) => {};
 }

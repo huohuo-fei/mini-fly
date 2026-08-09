@@ -10,7 +10,7 @@ export class Wave_1_Joker extends JokerCreater {
   minScore = 0;
   maxScore = 800;
 
-  checkRule(wave: PlaneWave): boolean {
+  checkRule = (wave: PlaneWave) => {
     if (wave.waveScore < this.minScore || wave.waveScore > this.maxScore) {
       return false;
     }

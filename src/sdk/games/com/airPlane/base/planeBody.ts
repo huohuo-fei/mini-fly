@@ -1,7 +1,7 @@
-import { PlaneBase } from "./planeBase";
+import { MiniBase } from "../../../../miniBase/miniBase";
 import type {PlaneBodyParams } from "./type";
 
-export class PlaneBody extends PlaneBase {
+export abstract class PlaneBody extends MiniBase {
   bodyWidth: number = 0;
   bodyHeight: number = 0;
   bodyX: number = 0;

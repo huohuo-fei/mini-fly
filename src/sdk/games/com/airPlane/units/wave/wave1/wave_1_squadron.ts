@@ -11,7 +11,7 @@ export class Wave_1_Squadron extends SquadronCreater {
   maxScore = 1000;
   num = 0;
 
-  checkRule(wave: PlaneWave): boolean {
+  checkRule =(wave: PlaneWave)=>{
 
     // 1.判断分数
     if (wave.waveScore < this.minScore || wave.waveScore > this.maxScore) {

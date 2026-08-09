@@ -1,8 +1,8 @@
 import { PlaneCreater } from '../base/planeCreater';
 import type { PlaneUnitParams } from '../base/type';
-import type { IBigEnemyConfig, IBossConfig } from '../type';
+import type {  IBossConfig } from '../type';
 
-export class BossCreater extends PlaneCreater {
+export abstract class BossCreater extends PlaneCreater {
   params: PlaneUnitParams = {
     unitWidth: 80,
     unitHeight: 60,

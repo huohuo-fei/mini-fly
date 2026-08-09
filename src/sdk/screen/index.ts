@@ -8,8 +8,9 @@ import type {
 import { MiniGamManager } from '..';
 import { MiniGameType } from '../utils/common';
 import { MiniAction } from '../action';
+import { EventBus } from '../miniBase/eventBus';
 
-export class MiniScreen implements IMiniScreen {
+export class MiniScreen extends EventBus implements IMiniScreen {
   gamList = new Set<IMiniGam>();
   canvas: HTMLCanvasElement;
   height: number;
@@ -26,6 +27,7 @@ export class MiniScreen implements IMiniScreen {
   FRAME_INTERVAL = 1000 / 66;
 
   constructor(canvas: HTMLCanvasElement) {
+    super()
     this.canvas = canvas;
     this.height = canvas.height;
     this.width = canvas.width;

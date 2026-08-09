@@ -2,7 +2,7 @@ import { EnemyCreaterStatus, EnemyType, type WaveEnemyConfig } from '../type';
 import type { PlaneWave } from './planeWave';
 
 // 每种敌机类型对应的生成器
-export abstract class PlaneCreater {
+export  class PlaneCreater {
   // 敌机类型
   type: EnemyType = EnemyType.BIG;
 
@@ -31,13 +31,17 @@ export abstract class PlaneCreater {
     Object.assign(this.params, params);
   }
 
+  checkRule(wave:PlaneWave): boolean {
+    console.log(wave,'需要上层实现');
+    return true;
+  }
+
   builder(): WaveEnemyConfig | null {
+    // if (!this.checkRule(wave)) return null;
     return {
       type: this.type,
       config: this.config,
       params: this.params,
     };
   }
-
-  abstract checkRule: (wave: PlaneWave) => boolean;
 }

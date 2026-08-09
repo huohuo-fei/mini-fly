@@ -1,5 +1,5 @@
-import type { IMiniGam } from '../../../../../type';
-export class PlaneBg implements IMiniGam {
+import { MiniBase } from '../../../../../miniBase/miniBase';
+export class PlaneBg extends MiniBase {
   render(ctx: CanvasRenderingContext2D) {
     const canvas = ctx.canvas;
     ctx.save();
@@ -19,7 +19,4 @@ export class PlaneBg implements IMiniGam {
 
     ctx.restore()
   }
-  actionStart = () => {};
-  actionEnd = () => {};
-  actionDoing = () => {};
 }

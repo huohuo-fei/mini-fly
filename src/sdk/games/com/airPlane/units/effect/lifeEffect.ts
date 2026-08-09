@@ -1,5 +1,4 @@
 import { EasedMove } from '../../../../../utils/Animate';
-import { PlaneExplodeConfig, PlaneLifeConfig } from '../../config';
 import { IMiniPlaneEffectType } from '../../type';
 import { BaseEffect } from './baseEffect';
 import type { PlaneEffect } from './planeEffects';

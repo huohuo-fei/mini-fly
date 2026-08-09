@@ -2,8 +2,7 @@ import { PlaneBody } from '../../base/planeBody';
 import type { PlaneBodyParams } from '../../base/type';
 import type { PlaneMain } from './planeMain';
 export class PlaneMainBody extends PlaneBody {
-
-  FRAME_NUM=10
+  FRAME_NUM = 10;
 
   // 护盾开始的时间
   curTime: number = 0;
@@ -14,16 +13,16 @@ export class PlaneMainBody extends PlaneBody {
   // 护盾闪烁的帧数计数
   blinkFrameCount: number = 0;
 
-  attacker:PlaneMain
+  attacker: PlaneMain;
 
-  constructor(params: PlaneBodyParams, attacker: PlaneMain){
-    super(params)
-    this.attacker = attacker
+  constructor(params: PlaneBodyParams, attacker: PlaneMain) {
+    super(params);
+    this.attacker = attacker;
   }
   render(ctx: CanvasRenderingContext2D) {
-    if(this.attacker.noHit){
+    if (this.attacker.noHit) {
       // 如果开启了不能被击中状态，要有闪烁效果
-      if(this.aniBlink()) return;
+      if (this.aniBlink()) return;
     }
     const { bodyWidth, bodyHeight } = this;
     ctx.save();

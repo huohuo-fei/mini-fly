@@ -1,7 +1,5 @@
 import type { MiniFly } from '../..';
 import type {
-  IMiniActParams,
-  IMiniGam,
   IMiniGameParams,
 } from '../../../../../type';
 import {
@@ -20,7 +18,8 @@ import { EnemyJoker } from './joker';
 import type { PlaneUnitParams } from '../../base/type';
 import type { PlaneUnit } from '../../base/planeUnit';
 import { DamageValueNumber } from '../../config';
-export class PlaneEnemy implements IMiniGam {
+import { MiniBase } from '../../../../../miniBase/miniBase';
+export class PlaneEnemy extends MiniBase {
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
 
@@ -46,6 +45,7 @@ export class PlaneEnemy implements IMiniGam {
   };
 
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
+    super()
     this.miniFly = miniFly;
     this.gameParams = params;
   }
@@ -349,11 +349,4 @@ export class PlaneEnemy implements IMiniGam {
   requestEffect(effectType: IMiniPlaneEffectType, x: number, y: number) {
     this.miniFly.createEffect(effectType, x, y);
   }
-
-  actionStart = (p: IMiniActParams) => {};
-  actionEnd = (p: IMiniActParams) => {};
-  actionDoing = (p: IMiniActParams) => {};
-  events: Map<string, Set<Function>> = new Map();
-  on(eventName: string, callback: Function) {}
-  emit(eventName: string, ...args: any[]) {}
 }

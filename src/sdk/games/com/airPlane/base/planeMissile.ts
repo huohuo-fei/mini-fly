@@ -1,10 +1,10 @@
 import { MiniUtils } from '../../../..';
+import { MiniBase } from '../../../../miniBase/miniBase';
 import { Vector2 } from '../../../../utils/Matrix3';
-import { PlaneBase } from './planeBase';
 import planeMissileSvg from '@/assets/game/plane/missile.svg';
 
 // 导弹类
-export class PlaneMissile extends PlaneBase {
+export class PlaneMissile extends MiniBase {
   missileWidth: number = 24;
   missileHeight: number = 48;
   p1: Vector2 = new Vector2(0, 0);

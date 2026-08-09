@@ -1,6 +1,6 @@
+import { MiniBase } from '../../../../miniBase/miniBase';
 import { Matrix3, Vector2 } from '../../../../utils/Matrix3';
 import type { PlaneBullets } from '../bullet';
-import { PlaneBase } from './planeBase';
 import {
   PlaneBulletType,
   type PlaneBulletParams,
@@ -8,7 +8,7 @@ import {
   BulletCamp,
 } from './type';
 
-export class PlaneBullet extends PlaneBase {
+export class PlaneBullet extends MiniBase {
   type: PlaneBulletType = PlaneBulletType.Normal;
   params: PlaneBulletParams;
   bulletBox: PlaneBullets;

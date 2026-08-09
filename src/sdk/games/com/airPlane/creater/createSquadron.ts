@@ -2,7 +2,7 @@ import { PlaneCreater } from '../base/planeCreater';
 import type { PlaneUnitParams } from '../base/type';
 import { type ISquadronConfig } from '../type';
 
-export class SquadronCreater extends PlaneCreater {
+export abstract class SquadronCreater extends PlaneCreater {
   params: PlaneUnitParams = {
     unitWidth: 80,
     unitHeight: 60,

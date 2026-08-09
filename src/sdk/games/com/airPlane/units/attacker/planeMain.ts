@@ -102,7 +102,7 @@ export class PlaneMain extends PlaneUnit {
     }
   }
 
-  beforeRender() {
+  beforeRender = () => {
     // 更新无敌状态
     if (this.noHit) {
       const newDur = MiniFlyState.duration;

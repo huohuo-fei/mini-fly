@@ -2,9 +2,17 @@ import { PlaneCreater } from '../base/planeCreater';
 import type { PlaneUnitParams } from '../base/type';
 import type { IBigEnemyConfig } from '../type';
 
-export class BigCreater extends PlaneCreater {
+/**
+ * BigCreater抽象类，实现了IPlaneCreater接口
+ * 用于创建大型飞机单位
+ */
+export abstract class BigCreater extends PlaneCreater {
+  /**
+   * PlaneUnitParams类型属性，定义飞机单位的基本参数
+   * 包含尺寸、位置、速度、冷却时间、画布尺寸、生命值和分数等属性
+   */
   params: PlaneUnitParams = {
-    unitWidth: 0,
+    unitWidth: 0,      // 单位宽度
     unitHeight: 0,
     unitX: 0,
     unitY: 0,

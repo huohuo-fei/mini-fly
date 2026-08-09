@@ -1,5 +1,5 @@
 import type { MiniFly } from '../..';
-import type { IMiniGam, IMiniGameParams } from '../../../../../type';
+import type {  IMiniGameParams } from '../../../../../type';
 import { type IMiniPlaneToolInfo, MiniPlaneToolType } from '../../type';
 import { PlaneTool } from './planeTool';
 import { planeToolConfig } from '../../config';
@@ -10,12 +10,14 @@ import lifeSvg from '@/assets/game/plane/life.svg';
 import shieldSvg from '@/assets/game/plane/shield.svg';
 import { MiniUtils } from '../../../../../utils/MiniUtils';
 import type { PlaneUnit } from '../../base/planeUnit';
-export class PlaneToolBox implements IMiniGam {
+import { MiniBase } from '../../../../../miniBase/miniBase';
+export class PlaneToolBox extends MiniBase{
   miniFly: MiniFly;
   gameParams: IMiniGameParams;
   toolList: PlaneTool[] = [];
 
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
+    super()
     this.miniFly = miniFly;
     this.gameParams = params;
   }
@@ -132,7 +134,4 @@ export class PlaneToolBox implements IMiniGam {
 
     return MiniPlaneToolType.BOMB;
   }
-  actionStart = () => {};
-  actionEnd = () => {};
-  actionDoing = () => {};
 }

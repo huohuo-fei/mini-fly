@@ -1,10 +1,10 @@
 import type { MiniFly } from '../..';
 import { MiniUtils } from '../../../../..';
-import type { IMiniGam } from '../../../../../type';
 import { UPDATE_LIFE, UPDATE_SCORE, UPDATE_TIME } from '../../state/eventName';
 import { IMiniPlaneEffectType } from '../../type';
 import { MiniFlyState } from '../../state/flyState';
-export class PlaneBar implements IMiniGam {
+import { MiniBase } from '../../../../../miniBase/miniBase';
+export class PlaneBar extends MiniBase {
   fontSize = 18;
   scoreVal: number = 0;
   lifeVal: number = 3;
@@ -23,6 +23,7 @@ export class PlaneBar implements IMiniGam {
   );
 
   constructor(miniFly: MiniFly) {
+    super()
     this.miniFly = miniFly;
     this.registerEvent();
   }
@@ -118,10 +119,4 @@ export class PlaneBar implements IMiniGam {
     this.drawTime(ctx);
     // this.drawCenterText(ctx)
   }
-  actionStart = () => {};
-  actionEnd = () => {};
-  actionDoing = () => {};
-  events=new Map()
-  on(eventName: string, callback: Function) {};
-  emit (eventName: string, ...args: any[]){};
 }

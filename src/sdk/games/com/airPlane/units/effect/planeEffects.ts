@@ -1,4 +1,3 @@
-import type { IMiniActParams, IMiniGam } from '../../../../../type';
 import { MiniUtils } from '../../../../../utils/MiniUtils';
 
 import planeExplodSvg from '@/assets/game/plane/explod.svg';
@@ -7,8 +6,9 @@ import { BaseEffect } from './baseEffect';
 import { IMiniPlaneEffectType } from '../../type';
 import { LifeEffect } from './lifeEffect';
 import { DamageEffect } from './damageEffect';
+import { MiniBase } from '../../../../../miniBase/miniBase';
 // 飞机大战中需要的各种特效管理
-export class PlaneEffect implements IMiniGam {
+export class PlaneEffect extends MiniBase {
   // 特效资源加载完毕
   effectList: BaseEffect[] = [];
   effectStore: Map<
@@ -94,7 +94,4 @@ export class PlaneEffect implements IMiniGam {
     }
   }
 
-  actionStart = (p: IMiniActParams) => {};
-  actionEnd = (p: IMiniActParams) => {};
-  actionDoing = (p: IMiniActParams) => {};
 }

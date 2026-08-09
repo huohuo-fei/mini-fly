@@ -1,14 +1,22 @@
+import type { EventBus } from '../miniBase/eventBus';
+import type { Matrix3 } from '../utils/Matrix3';
 import type { MiniActionType, MiniGameType } from '../utils/common';
+
+// 事件总线
+export interface IEventBus{
+  on: (eventName: string, callback: Function) => void;
+  emit: (eventName: string, ...args: any[]) => void;
+  off: (eventName: string,callback: Function) =>void;
+}
 export interface IMiniBus {
-  events?: Map<string, Set<Function>>;
-  // 事件总线
-  on?: (eventName: string, callback: Function) => void;
-  emit?: (eventName: string, ...args: any[]) => void;
+  events: Map<string, Set<Function>>;
+  on: (eventName: string, callback: Function) => void;
+  emit: (eventName: string, ...args: any[]) => void;
+  off: (eventName: string,callback: Function) =>void;
 }
 
 export interface IMiniGamManager {
   activeGam: IMiniGam | null;
-
   getActiveGam: () => IMiniGam | null;
   setActiveGam: (gamParams: IMiniGameParams) => void;
   buildGam: (gamParams: IMiniGameParams) => void;
@@ -26,22 +34,15 @@ export interface IMiniAction {
   removeEventListener: () => void;
 }
 
-export interface IMiniGam extends IMiniBus {
+export interface IMiniGam extends IEventBus {
+  matrix:Matrix3
   render: (ctx: CanvasRenderingContext2D) => void;
   actionStart: (p: IMiniActParams) => void;
   actionEnd: (p: IMiniActParams) => void;
   actionDoing: (p: IMiniActParams) => void;
-  pauseRender?: () => void;
+  pauseRender: () => void;
 }
-
-export interface IMiniG extends IMiniBus {
-  render: (ctx: CanvasRenderingContext2D) => void;
-  actionStart: (p: IMiniActParams) => void;
-  actionEnd: (p: IMiniActParams) => void;
-  actionDoing: (p: IMiniActParams) => void;
-}
-
-export interface IMiniScreen {
+export interface IMiniScreen extends EventBus {
   gamList: Set<IMiniGam>;
   canvas: HTMLCanvasElement;
   height: number;
