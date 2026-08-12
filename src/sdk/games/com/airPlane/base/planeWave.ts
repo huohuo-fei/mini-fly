@@ -54,6 +54,7 @@ export class PlaneWave {
 
   // 校验波次 依据条件返回最新的波次
   updateWave(info: waveInfo): PlaneWave | null {
+    console.log(info);
     return null;
   }
 

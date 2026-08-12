@@ -40,7 +40,10 @@ export class MiniScreen extends EventBus implements IMiniScreen {
     this.gamAcion = new MiniAction(canvas, this);
   }
 
-  initAni(timestamp: number | undefined) {}
+  initAni(timestamp: number | undefined) {
+    console.log(timestamp);
+    
+  }
 
   pauseAni() {
     if (this.aniId !== null) {
