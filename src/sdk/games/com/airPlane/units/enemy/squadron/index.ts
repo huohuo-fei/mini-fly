@@ -125,6 +125,7 @@ export class PlaneEnemySquadron extends PlaneUnit {
       this.bulletLastTime = time;
 
       for (const enemy of this.planeBody.enemyList) {
+        if(enemy.dead) continue;
         const cx = enemy.cx;
         const cy = enemy.cy;
 

@@ -6,11 +6,6 @@ import { Wave_1_Squadron } from './wave_1_squadron';
 
 // 第一阶段
 export class Wave_1 extends PlaneWave {
-  gapTime = 100;
-  lastTime = 0;
-  ind: number = 0;
-
-  //
   loadCreater() {
     const c1 = new Wave_1_Joker(EnemyType.JOKER);
     c1.loadParams({
@@ -29,7 +24,6 @@ export class Wave_1 extends PlaneWave {
       canvasHeight: this.gameParams.canvasHeight,
       canvasWidth: this.gameParams.canvasWidth,
       speedX:1
-      
     });
 
     // this.children.push(c3);
@@ -37,6 +31,9 @@ export class Wave_1 extends PlaneWave {
   }
 
   updateWave(info: waveInfo) {
+    if(this.waveTrans){
+      return this.transNext()
+    }
     // 没有配置
     if (!this.config) return null;
 
@@ -75,14 +72,26 @@ export class Wave_1 extends PlaneWave {
 
     // 时间 或者分数 达到解锁下一个波次
     if (isScoreReady || isTimeReady) {
-      return this.nextWave;
+      this.waveTrans = true
+      return null
     } else {
       return null;
     }
   }
 
+  transNext(){
+    // 当前屏幕中没有上一个波次的敌机
+    const count = this.control.planeEnemy.getEnemyCount()
+    if(count === 0){
+      return this.nextWave
+    }else{
+      return null
+    }
+  }
+
   createEnemy() {
     if (!this.config) return [];
+    if(this.waveTrans) return []
 
     // 筛选出当前激活的敌机列表
     const activeList = this.children.filter(

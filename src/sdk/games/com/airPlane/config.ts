@@ -215,6 +215,27 @@ export const planeBossDotBullet: PlaneBulletParams = {
   bulletAngleSpeed:0.342
 };
 
+export const planeJokerDotBullet: PlaneBulletParams = {
+  type: PlaneBulletType.Normal,
+  shape: PlaneBulletShape.Circle,
+  bulletWidth: 6,
+  bulletHeight: 6,
+  bulletX: 0,
+  bulletY: 0,
+  bodyX: 0,
+  bodyY: 0,
+  size: 2,
+  speedX: 4,
+  speedY: 4,
+  combat: 2,
+  shootCooldown: 200,
+  direction: [0, 1],
+  canvasHeight: 0,
+  canvasWidth: 0,
+  bulletAngle:0,
+  bulletAngleSpeed:0.342
+};
+
 export const planeSquadronConfig:ISquadronConfig = {
   count: 5,
   angle: Math.PI / 6,

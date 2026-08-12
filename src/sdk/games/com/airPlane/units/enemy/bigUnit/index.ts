@@ -19,7 +19,6 @@ import { planeBigBullet } from '../../../config';
 import type { PlaneBullet } from '../../../base/planeBullet';
 import { PlaneMissile } from '../../../base/planeMissile';
 import { MiniFlyState } from '../../../state/flyState';
-import { MINI_GAME_OVER, MiniScreen } from '../../../../../..';
 
 export class BigEnemyUnit extends PlaneUnit {
   type: EnemyType = EnemyType.BIG;
@@ -226,11 +225,7 @@ export class BigEnemyUnit extends PlaneUnit {
     if (dis > r) {
       // 距离大于爆炸半径 没有影响
     } else {
-      this.planeEnemy.screen.emit(MINI_GAME_OVER, {
-        score:MiniFlyState.score,
-        time: MiniFlyState.duration,
-        des:'游戏结束'
-      });
+      this.planeEnemy.gameOver()
     }
   }
 }

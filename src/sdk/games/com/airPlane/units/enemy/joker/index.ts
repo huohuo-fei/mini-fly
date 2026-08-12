@@ -3,7 +3,6 @@ import {
   PlaneBulletType,
   type PlaneBulletParams,
   type PlaneUnitParams,
-  type HitInfo,
   BulletCamp,
 } from '../../../base/type';
 import {
@@ -16,7 +15,7 @@ import {
   enemyConfig2,
   enemyConfig1,
   enemyConfig3,
-  planeBossDotBullet,
+  planeJokerDotBullet,
 } from '../../../config';
 import type { PlaneEnemy } from '../planeEnemy';
 import { MiniFlyState } from '../../../state/flyState';
@@ -28,7 +27,8 @@ export class EnemyJoker extends PlaneUnit {
 
   // 子弹生成逻辑
   bulletLastTime: number = 0;
-  bulletConfig: PlaneBulletParams = planeBossDotBullet;
+  // joker 配置 没有做数据隔离
+  bulletConfig: PlaneBulletParams = planeJokerDotBullet;
   constructor(
     params: PlaneUnitParams,
     type: MiniPlaneEnemyType,

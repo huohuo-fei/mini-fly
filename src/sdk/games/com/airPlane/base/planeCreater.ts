@@ -15,6 +15,9 @@ export abstract class PlaneCreater {
   // 状态
   status: EnemyCreaterStatus = EnemyCreaterStatus.PEDDING;
 
+  // 提示文字
+  tip: string = '';
+
   constructor(type: EnemyType) {
     this.type = type;
     this.config = null;

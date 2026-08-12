@@ -11,10 +11,10 @@ export abstract class BossCreater extends PlaneCreater {
     speedX: 0,
     speedY: 0,
     shootCooldown: 10,
-    canvasHeight:0, // this.gameParams.canvasHeight,
-    canvasWidth: 0,// this.gameParams.canvasWidth,
+    canvasHeight:0, 
+    canvasWidth: 0,
     health: 1000,
-    score: 20,
+    score: 20, // 总分数 health * score / 2
   }
 
   config: IBossConfig = {
@@ -23,4 +23,7 @@ export abstract class BossCreater extends PlaneCreater {
     h: 60,
     targetHeight: 100,
   }
+
+  tip: string = 'BOSS来袭'
+
 }

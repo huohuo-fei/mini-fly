@@ -1,5 +1,4 @@
 import { MiniBase } from '../../../../../miniBase/miniBase';
-import type { IMiniActParams } from '../../../../../type';
 import { Matrix3 } from '../../../../../utils/Matrix3';
 import { PlaneExplodeConfig } from '../../config';
 import { IMiniPlaneEffectType, type SpriteConfig } from '../../type';

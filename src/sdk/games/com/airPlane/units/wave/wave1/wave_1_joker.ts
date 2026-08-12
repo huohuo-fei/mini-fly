@@ -8,7 +8,7 @@ export class Wave_1_Joker extends JokerCreater {
 
   // 配置的规则
   minScore = 0;
-  maxScore = 800;
+  maxScore = 4000;
 
   checkRule = (wave: PlaneWave) => {
     if (wave.waveScore < this.minScore || wave.waveScore > this.maxScore) {

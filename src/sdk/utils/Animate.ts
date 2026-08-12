@@ -24,6 +24,26 @@ export const Easing = {
       ? 1
       : Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
   },
+
+  // 自定义：先缓入后缓出，中间暂停
+  easeWithPause: (t: number) => {
+    const pauseStart = 0.4;   // 暂停开始位置
+    const pauseEnd = 0.6;     // 暂停结束位置
+    const pauseValue = 0.5;   // 暂停时的值
+
+    if (t <= pauseStart) {
+      // 第一阶段：从0到暂停位置（使用缓出效果更自然）
+      const progress = t / pauseStart;
+      return Easing.easeOutQuad(progress) * pauseValue;
+    } else if (t <= pauseEnd) {
+      // 第二阶段：暂停（保持不变）
+      return pauseValue;
+    } else {
+      // 第三阶段：从暂停位置到1（使用缓入效果更自然）
+      const progress = (t - pauseEnd) / (1 - pauseEnd);
+      return pauseValue + Easing.easeInQuad(progress) * (1 - pauseValue);
+    }
+  },
 };
 
 export class EasedMove {

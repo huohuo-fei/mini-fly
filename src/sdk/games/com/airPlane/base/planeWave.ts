@@ -7,11 +7,16 @@ import type { PlaneCreater } from './planeCreater';
 export class PlaneWave {
   children: PlaneCreater[] = [];
   nextWave: PlaneWave | null = null;
+
+  // 是否启用当前波次 -- 主要在最开始做条件判断
   enable: boolean = false
 
   control: PlaneControl;
   config: EnemyConfig | null = null;
   gameParams: IMiniGameParams;
+
+  // 波次过渡，用于控制当前波次和下一波次之间的过渡
+  waveTrans:boolean = false
 
   //------ 外部参数 ------//
 
@@ -64,5 +69,9 @@ export class PlaneWave {
 
   appendNextWave(nextWave: PlaneWave) {
     this.nextWave = nextWave;
+  }
+
+  transNext(): null | PlaneWave {
+    return null
   }
 }

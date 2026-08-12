@@ -27,4 +27,7 @@ export abstract class SquadronCreater extends PlaneCreater {
     gap: 10,
     health: 10,
   };
+
+  tip: string = '敌机编队来袭'
+
 }

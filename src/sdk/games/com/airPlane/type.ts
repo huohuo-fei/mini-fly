@@ -46,6 +46,7 @@ export enum IMiniPlaneEffectType {
   EXPLODE = 'explode',
   LIFE = 'life',
   DAMAGE = 'damage',
+  TEXT='text'
 }
 
 // 特效中 精灵图的配置

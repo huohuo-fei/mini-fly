@@ -55,7 +55,7 @@ export class MiniFly extends MiniBase {
 
   // render 方法
   render(ctx: CanvasRenderingContext2D) {
-    this.planeControl.updateWave();
+    this.planeControl.render();
     this.planeBackground.render(ctx);
     this.planeBullets.render(ctx);
     this.planeAttacker.render(ctx);

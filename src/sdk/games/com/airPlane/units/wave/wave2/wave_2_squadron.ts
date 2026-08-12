@@ -7,8 +7,8 @@ export class Wave_2_Squadron extends SquadronCreater {
   lastTime = 0;
 
   // 配置的规则
-  minScore = 200;
-  maxScore = 4000;
+  minScore = 4000;
+  maxScore = 8000;
   num = 0;
 
   checkRule = (wave: PlaneWave) => {

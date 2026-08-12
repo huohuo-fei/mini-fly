@@ -39,7 +39,7 @@ export class PlaneMain extends PlaneUnit {
   // 子弹生成逻辑
   bulletLastTime: number = 0;
   bulletConfig: PlaneBulletParams = planeMainBulletConfig;
-  bulletSize: number = 1;
+  bulletSize: number = 2;
 
   constructor(params: PlaneUnitParams, planeAtt: PlaneAttacker) {
     super(params);

@@ -1,7 +1,5 @@
 import type { MiniFly } from '../..';
-import type {
-  IMiniGameParams,
-} from '../../../../../type';
+import type { IMiniGameParams } from '../../../../../type';
 import {
   IMiniPlaneEffectType,
   type IBigEnemyConfig,
@@ -19,10 +17,11 @@ import type { PlaneUnitParams } from '../../base/type';
 import type { PlaneUnit } from '../../base/planeUnit';
 import { DamageValueNumber } from '../../config';
 import { MiniBase } from '../../../../../miniBase/miniBase';
-import type { MiniScreen } from '../../../../..';
+import { MINI_GAME_OVER, type MiniScreen } from '../../../../..';
+import { MiniFlyState } from '../../state/flyState';
 export class PlaneEnemy extends MiniBase {
   miniFly: MiniFly;
-  screen:MiniScreen
+  screen: MiniScreen;
   gameParams: IMiniGameParams;
 
   // 所有类型的敌机
@@ -47,7 +46,7 @@ export class PlaneEnemy extends MiniBase {
   };
 
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
-    super()
+    super();
     this.miniFly = miniFly;
     this.screen = miniFly.screen;
     this.gameParams = params;
@@ -98,7 +97,7 @@ export class PlaneEnemy extends MiniBase {
     const unitParams = info.params as PlaneUnitParams;
     const config = info.config as IBossConfig;
 
-    const b = new EnemyBoss(unitParams, config,this);
+    const b = new EnemyBoss(unitParams, config, this);
     this.enemyMap[EnemyType.BOSS].push(b);
   }
 
@@ -285,15 +284,11 @@ export class PlaneEnemy extends MiniBase {
             enemy.unitY
           );
           enemy.damageWithScore(DamageValueNumber);
-          
-          // if (score) {
-          //   this.miniFly.updateScore(score);
-          // }
         }
       }
     }
     // console.log('子弹清屏 就不再更新分数了');
-    this.miniFly.planeBullets.celarAll()
+    this.miniFly.planeBullets.celarAll();
   }
 
   // 获取战机的位置
@@ -310,6 +305,18 @@ export class PlaneEnemy extends MiniBase {
       if (!delArr.length || !delArr.includes(ind)) {
         delArr.push(ind);
         this.removeEnemyByType(EnemyType.JOKER);
+      }
+    }
+  }
+
+  removeBoss(unit: EnemyBoss) {
+    const bossList = this.enemyMap[EnemyType.BOSS];
+    const ind = bossList.indexOf(unit);
+    if (ind > -1) {
+      const delArr = this.enemyDelMap[EnemyType.BOSS];
+      if (!delArr.length || !delArr.includes(ind)) {
+        delArr.push(ind);
+        this.removeEnemyByType(EnemyType.BOSS);
       }
     }
   }
@@ -351,5 +358,62 @@ export class PlaneEnemy extends MiniBase {
 
   requestEffect(effectType: IMiniPlaneEffectType, x: number, y: number) {
     this.miniFly.createEffect(effectType, x, y);
+  }
+
+  // 获取当前所有的敌机数量
+  getEnemyCount() {
+    let count = 0;
+    for (const key in this.enemyMap) {
+      const enemyList = this.enemyMap[key];
+      count += enemyList.length;
+    }
+
+    return count;
+  }
+
+  // boss 死亡后将剩余的敌机全部移除
+  removeEnemyAfterBossDead() {
+    // 先终止控制
+    this.miniFly.planeControl.enable = false
+    for (const key in this.enemyMap) {
+      const enemyList = this.enemyMap[key];
+      for (const enemy of enemyList) {
+        if (enemy.planeBody?.enable) {
+          this.miniFly.createEffect(
+            IMiniPlaneEffectType.EXPLODE,
+            enemy.unitX,
+            enemy.unitY
+          );
+        }
+      }
+      this.enemyMap[key] = [];
+    }
+
+    this.miniFly.createEffect(IMiniPlaneEffectType.TEXT,0,0,{
+      text:'游戏胜利',
+      type:'suc'
+    },() => {
+      this.gameOver()
+    })
+
+  }
+
+  // boss 出逃
+  bossBack(){
+    // 获取到boss
+    const bossList = this.enemyMap[EnemyType.BOSS];
+    const boss = bossList[0]
+    if(boss){
+      (boss as EnemyBoss).bossRetreat()
+    }
+
+  }
+
+  gameOver() {
+    this.screen.emit(MINI_GAME_OVER, {
+      score: MiniFlyState.score,
+      time: MiniFlyState.duration,
+      des:'游戏结束'
+    });
   }
 }

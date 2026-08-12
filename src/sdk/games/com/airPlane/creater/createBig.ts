@@ -34,4 +34,6 @@ export abstract class BigCreater extends PlaneCreater {
     angleSpeed: 0.01,
   };
 
+  tip: string = '强化敌机来袭'
+
 }

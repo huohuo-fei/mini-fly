@@ -6,17 +6,14 @@ import type { PlaneWave } from '../../base/planeWave';
 import { UPDATE_SCORE, UPDATE_TIME } from '../../state/eventName';
 import { EnemyType } from '../../type';
 import type { PlaneEnemy } from '../enemy/planeEnemy';
-import {
-  WAVE_1_CONFIG,
-  WAVE_2_CONFIG,
-} from '../wave/config';
+import { WAVE_1_CONFIG, WAVE_2_CONFIG } from '../wave/config';
 import { Wave_1 } from '../wave/wave1';
 import { Wave_2 } from '../wave/wave2';
 import { MiniFlyState } from '../../state/flyState';
 import { MiniBase } from '../../../../../miniBase/miniBase';
 
 export class PlaneControl extends MiniBase {
-  initFlag: boolean = false;
+  _enable: boolean = false;
 
   miniFly: MiniFly;
   planeEnemy: PlaneEnemy;
@@ -41,41 +38,49 @@ export class PlaneControl extends MiniBase {
   // 当前激活的波次
   activeWave: PlaneWave | null = null;
 
-  updateScoreFn:Function = this.updateScore.bind(this);
-  updateTimeFn:Function = this.updateGameTime.bind(this);
+  updateScoreFn: Function = this.updateScore.bind(this);
+  updateTimeFn: Function = this.updateGameTime.bind(this);
 
   constructor(miniFly: MiniFly, planeEnemy: PlaneEnemy) {
     super();
+    this.enable = true;
     this.miniFly = miniFly;
     this.planeEnemy = planeEnemy;
 
     this.initWave();
 
-    this.registerEvent()
+    this.registerEvent();
+  }
+
+  get enable(): boolean {
+    return this._enable;
+  }
+
+  set enable(val: boolean) {
+    this._enable = val;
   }
 
   registerEvent() {
-    MiniFlyState.addEvent(UPDATE_SCORE,this.updateScoreFn)
-    MiniFlyState.addEvent(UPDATE_TIME,this.updateTimeFn)
-
+    MiniFlyState.addEvent(UPDATE_SCORE, this.updateScoreFn);
+    MiniFlyState.addEvent(UPDATE_TIME, this.updateTimeFn);
   }
 
   // 初始化波次
   initWave() {
-    const wave1 = new Wave_1(this.planeEnemy.gameParams, this, WAVE_1_CONFIG)
-    const wave2 = new Wave_2(this.planeEnemy.gameParams, this, WAVE_2_CONFIG)
+    const wave1 = new Wave_1(this.planeEnemy.gameParams, this, WAVE_1_CONFIG);
+    const wave2 = new Wave_2(this.planeEnemy.gameParams, this, WAVE_2_CONFIG);
 
     wave1.appendNextWave(wave2);
 
     // todo : 后续追加波次结构
-    const target = wave1
+    const target = wave1;
     this.waveTree = target;
     this.activeWave = target;
   }
 
   // 依据当前的波次 生成敌机
   createEnemy() {
-    if (!this.activeWave) {
+    if (!this.activeWave ||!this.enable) {
       return;
     }
     const enemyConfigArr = this.activeWave.createEnemy();
@@ -96,12 +101,12 @@ export class PlaneControl extends MiniBase {
 
   // 更新分数
   updateScore(score: number) {
-    this.currentScore = score
+    this.currentScore = score;
   }
 
   // 更新游戏时间
-  updateGameTime(val:number) {
-    this.gamingTime = val
+  updateGameTime(val: number) {
+    this.gamingTime = val;
   }
 
   updateWave() {
@@ -114,15 +119,13 @@ export class PlaneControl extends MiniBase {
       if (newWave) {
         this.activeWave = newWave;
       } else {
-        // todo : 游戏结束
-        // console.log('游戏结束');
       }
       this.createEnemy();
     }
   }
 
   render(): void {
-
+    if (!this.enable) return;
     this.updateWave();
   }
 }

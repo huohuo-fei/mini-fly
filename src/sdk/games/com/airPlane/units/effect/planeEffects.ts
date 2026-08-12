@@ -7,6 +7,7 @@ import { IMiniPlaneEffectType } from '../../type';
 import { LifeEffect } from './lifeEffect';
 import { DamageEffect } from './damageEffect';
 import { MiniBase } from '../../../../../miniBase/miniBase';
+import { TextEffect } from './textEffect';
 // 飞机大战中需要的各种特效管理
 export class PlaneEffect extends MiniBase {
   // 特效资源加载完毕
@@ -65,6 +66,17 @@ export class PlaneEffect extends MiniBase {
           cb
         );
         break;
+        case IMiniPlaneEffectType.TEXT:
+          effect = new TextEffect(
+            MiniUtils.getImage(planeExplodSvg),
+            x,
+            y,
+            this,
+            type,
+            other,
+            cb
+          );
+          break;
     }
 
     if (effect) {
