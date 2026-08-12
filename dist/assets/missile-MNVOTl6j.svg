@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 520" width="200" height="520">
+  <!-- 导弹主体 -->
+  <defs>
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#d0d0d0;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#f5f5f5;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#e0e0e0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a0a0a0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="noseGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#cc0000;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#ff3333;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#990000;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="flameGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="20%" style="stop-color:#ffff00;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#ff8800;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#ff3300;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+
+  <!-- 阴影效果 -->
+  <ellipse cx="105" cy="475" rx="60" ry="10" fill="rgba(0,0,0,0.2)" />
+
+  <!-- 导弹弹头（圆锥形） -->
+  <polygon points="100,50 60,180 140,180" fill="url(#noseGrad)" stroke="#880000" stroke-width="1.5"/>
+
+  <!-- 弹头尖端点 -->
+  <circle cx="100" cy="50" r="3" fill="#ff6666" />
+
+  <!-- 弹头高光 -->
+  <polygon points="100,60 70,175 100,175" fill="rgba(255,255,255,0.3)" />
+
+  <!-- 导弹弹体（圆柱形） -->
+  <rect x="60" y="180" width="80" height="200" rx="2" fill="url(#bodyGrad)" stroke="#888888" stroke-width="1.5"/>
+
+  <!-- 弹体左侧高光 -->
+  <rect x="65" y="180" width="20" height="200" fill="rgba(255,255,255,0.4)" />
+
+  <!-- 弹体右侧阴影 -->
+  <rect x="125" y="180" width="12" height="200" fill="rgba(0,0,0,0.15)" />
+
+  <!-- 装饰环 1 -->
+  <rect x="58" y="210" width="84" height="6" rx="2" fill="#999999" stroke="#777777" stroke-width="0.8"/>
+
+  <!-- 装饰环 2 -->
+  <rect x="58" y="350" width="84" height="6" rx="2" fill="#999999" stroke="#777777" stroke-width="0.8"/>
+
+  <!-- 导弹翼片（后部） -->
+  <!-- 左上翼片 -->
+  <polygon points="60,370 20,390 25,410 60,395" fill="#a0a0a0" stroke="#777777" stroke-width="1.2"/>
+  <!-- 右上翼片 -->
+  <polygon points="140,370 180,390 175,410 140,395" fill="#a0a0a0" stroke="#777777" stroke-width="1.2"/>
+  <!-- 左下翼片 -->
+  <polygon points="60,400 30,430 40,445 60,415" fill="#888888" stroke="#666666" stroke-width="1.2"/>
+  <!-- 右下翼片 -->
+  <polygon points="140,400 170,430 160,445 140,415" fill="#888888" stroke="#666666" stroke-width="1.2"/>
+
+  <!-- 后部喷嘴 -->
+  <ellipse cx="100" cy="382" rx="25" ry="8" fill="#555555" stroke="#444444" stroke-width="1.5"/>
+  <ellipse cx="100" cy="382" rx="18" ry="5" fill="#333333" />
+  <ellipse cx="100" cy="382" rx="10" ry="3" fill="#ff6600" opacity="0.6"/>
+
+  <!-- 主火焰 - 外焰 -->
+  <path d="M100,390 Q70,430 60,460 Q80,440 85,470 Q95,445 100,480 Q105,445 115,470 Q120,440 140,460 Q130,430 100,390Z" 
+        fill="#ff3300" opacity="0.5"/>
+  
+  <!-- 主火焰 - 中焰 -->
+  <path d="M100,390 Q75,425 68,450 Q85,435 90,460 Q95,440 100,470 Q105,440 110,460 Q115,435 132,450 Q125,425 100,390Z" 
+        fill="#ff6600" opacity="0.65"/>
+  
+  <!-- 主火焰 - 内焰 -->
+  <path d="M100,390 Q82,418 78,440 Q90,428 94,452 Q98,435 100,460 Q102,435 106,452 Q110,428 122,440 Q118,418 100,390Z" 
+        fill="#ffaa00" opacity="0.8"/>
+  
+  <!-- 核心火焰 -->
+  <path d="M100,390 Q90,412 88,430 Q94,420 97,442 Q99,428 100,450 Q101,428 103,442 Q106,420 112,430 Q110,412 100,390Z" 
+        fill="#ffff00" opacity="0.9"/>
+  
+  <!-- 火焰中心高光 -->
+  <ellipse cx="100" cy="420" rx="6" ry="20" fill="#ffffff" opacity="0.7"/>
+
+  <!-- 火焰粒子/火星 -->
+  <circle cx="65" cy="445" r="2.5" fill="#ff8800" opacity="0.7"/>
+  <circle cx="135" cy="450" r="2" fill="#ff6600" opacity="0.6"/>
+  <circle cx="80" cy="465" r="1.5" fill="#ffcc00" opacity="0.5"/>
+  <circle cx="120" cy="468" r="1.8" fill="#ff9900" opacity="0.5"/>
+  <circle cx="100" cy="475" r="2" fill="#ff4400" opacity="0.4"/>
+  <circle cx="55" cy="455" r="1.5" fill="#ffaa00" opacity="0.4"/>
+  <circle cx="145" cy="458" r="1.2" fill="#ff7700" opacity="0.4"/>
+
+  <!-- 弹体上的文字 -->
+  <text x="100" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#666666" letter-spacing="3">MISSILE</text>
+
+  <!-- 弹体上的条纹 -->
+  <rect x="58" y="290" width="84" height="3" fill="#aa0000" />
+  <rect x="58" y="296" width="84" height="3" fill="#aa0000" />
+</svg>
