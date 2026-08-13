@@ -7,7 +7,6 @@ import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
 import {
   EnemyType,
-  MiniPlaneToolType,
   type IMiniPlaneEffectType,
 } from './type';
 import { PlaneBar } from './units/bar/planeBar';
