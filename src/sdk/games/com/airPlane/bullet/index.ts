@@ -1,8 +1,6 @@
 import type { MiniFly } from '..';
 import { MiniBase } from '../../../../miniBase/miniBase';
-import type {
-  IMiniGameParams,
-} from '../../../../type';
+import type { IMiniGameParams } from '../../../../type';
 import { PlaneBullet } from '../base/planeBullet';
 import {
   BulletCamp,
@@ -17,7 +15,7 @@ export class PlaneBullets extends MiniBase {
   buttlesMap: Map<BulletCamp, Set<PlaneBullet>> = new Map();
 
   constructor(gameParams: IMiniGameParams, miniFly: MiniFly) {
-    super()
+    super();
     this.miniFly = miniFly;
     this.gameParams = gameParams;
   }
@@ -73,6 +71,15 @@ export class PlaneBullets extends MiniBase {
     }
   }
 
+  update(deltaTime: number): void {
+    for (const [_, set] of this.buttlesMap) {
+      for (const bullet of set) {
+        bullet.update(deltaTime);
+        this.checkOutside(bullet);
+      }
+    }
+  }
+
   beforeRender() {
     // 每次渲染之前，需要过滤掉已经不在可视区域的子弹
     for (const [_, set] of this.buttlesMap) {
@@ -88,12 +95,9 @@ export class PlaneBullets extends MiniBase {
 
     // 渲染确定的子弹
     for (const [_, set] of this.buttlesMap) {
-      // if(_ == BulletCamp.Enemy){
-      //   console.log('bullets:',set.size);
-      // }
       for (const bullet of set) {
         bullet.render(ctx);
-        this.checkOutside(bullet);
+        // this.checkOutside(bullet);
       }
     }
   }
@@ -129,7 +133,7 @@ export class PlaneBullets extends MiniBase {
     }
   }
 
-  celarAll(){
+  celarAll() {
     this.buttlesMap.clear();
   }
 }

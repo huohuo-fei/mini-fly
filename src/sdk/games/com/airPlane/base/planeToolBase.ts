@@ -26,7 +26,6 @@ export class PlaneToolBase extends MiniBase {
     this.mainX = x
     this.mainY = y
     this.matrix.makeTranslation(this.mainX, this.mainY);
-
   }
 
 }

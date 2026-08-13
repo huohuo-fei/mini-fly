@@ -113,12 +113,21 @@ export class PlaneToolBox extends MiniBase{
     }
   }
 
+  update(deltaTime: number): void {
+    for (let i = 0; i < this.toolList.length; i++) {
+      const tool = this.toolList[i];
+      tool.update(deltaTime);
+    }
+  }
+
   render(ctx: CanvasRenderingContext2D) {
     for (let i = 0; i < this.toolList.length; i++) {
       const tool = this.toolList[i];
       tool.render(ctx);
     }
   }
+
+
 
   convertToolType(type: number) {
     switch (type) {

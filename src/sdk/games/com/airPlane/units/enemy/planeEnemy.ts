@@ -101,6 +101,26 @@ export class PlaneEnemy extends MiniBase {
     this.enemyMap[EnemyType.BOSS].push(b);
   }
 
+  // 剔除del 敌机 只需要在update 里面
+  update(deltaTime: number): void {
+    for (const key in this.enemyMap) {
+      const list = this.enemyMap[key];
+      const delList = this.enemyDelMap[key];
+      for (let i = delList.length - 1; i >= 0; i--) {
+        list.splice(delList[i], 1);
+      }
+      this.enemyDelMap[key] = [];
+      for (let i = 0; i < list.length; i++) {
+        const enemy = list[i];
+        if (enemy) {
+          // 渲染敌机
+          enemy.update(deltaTime);
+          this.miniFly.planeAttacker.checkHitByEnemyPlane(enemy);
+        }
+      }
+    }
+  }
+
   render(ctx: CanvasRenderingContext2D) {
     // 绘制逻辑待优化:相同敌机 或者相同的子弹可否一笔绘制
     for (const key in this.enemyMap) {

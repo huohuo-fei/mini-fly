@@ -23,7 +23,7 @@ export class Wave_1 extends PlaneWave {
     c3.loadParams({
       canvasHeight: this.gameParams.canvasHeight,
       canvasWidth: this.gameParams.canvasWidth,
-      speedX:1
+      speedX:100
     });
 
     // this.children.push(c3);

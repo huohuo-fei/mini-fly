@@ -7,6 +7,7 @@ import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
 import {
   EnemyType,
+  MiniPlaneToolType,
   type IMiniPlaneEffectType,
 } from './type';
 import { PlaneBar } from './units/bar/planeBar';
@@ -52,9 +53,17 @@ export class MiniFly extends MiniBase {
     this.planeText = new PlaneText(gameParams, this);
   }
 
+  // 做必要的更新
+  update(deltaTime: number): void {
+    this.planeBullets.update(deltaTime)
+    this.planeEnemy.update(deltaTime); 
+    this.planeToolBox.update(deltaTime);
+  }
+
   // render 方法
   render(ctx: CanvasRenderingContext2D) {
     this.planeControl.render();
+    // 背景可以输出图片 不需要每次更新
     this.planeBackground.render(ctx);
     this.planeBullets.render(ctx);
     this.planeAttacker.render(ctx);
@@ -129,7 +138,7 @@ export class MiniFly extends MiniBase {
   // 更新道具
   updateToolBox(enemy: PlaneUnit) {
     this.planeToolBox.buildTool(enemy);
-    // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.BOMB)
+    // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.LIFE)
   }
 
   removeControlEnemyByType(type: EnemyType) {

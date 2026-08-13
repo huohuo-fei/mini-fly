@@ -5,7 +5,6 @@ import { Matrix3 } from '../../../../../utils/Matrix3';
 import { MiniBase } from '../../../../../miniBase/miniBase';
 
 export class PlaneTool extends MiniBase{
-  lastTime: number;
   type: MiniPlaneToolType;
   toolInfo: IMiniPlaneToolInfo;
   gameParams: IMiniGameParams;
@@ -22,7 +21,6 @@ export class PlaneTool extends MiniBase{
     super()
     this.type = toolInfo.type;
     this.toolInfo = toolInfo;
-    this.lastTime = Date.now();
     this.gameParams = gameParams;
     this.resource = img;
     this.toolBox = toolBox;
@@ -30,10 +28,8 @@ export class PlaneTool extends MiniBase{
     this.matrix.makeTranslation(this.toolInfo.x, this.toolInfo.y);
   }
 
-  updatePos() {
-    const temp = Date.now();
-    this.lastTime = temp;
-    this.toolInfo.y += this.toolInfo.speedY
+  updatePos(deltaTime: number) {
+    this.toolInfo.y += deltaTime * this.toolInfo.speedY
     this.matrix.makeTranslation(this.toolInfo.x, this.toolInfo.y);
   }
 
@@ -66,8 +62,12 @@ export class PlaneTool extends MiniBase{
       ctx.drawImage(this.resource, -w / 2, -h / 2, w, h);
     }
     ctx.restore();
-    this.updatePos();
-    this.updateSate();
+
+  }
+
+  update(deltaTime: number): void {
+    this.updatePos(deltaTime);
+    this.updateSate(); 
   }
 
   drawLife(ctx: CanvasRenderingContext2D) {

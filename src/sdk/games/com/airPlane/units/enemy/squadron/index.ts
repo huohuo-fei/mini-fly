@@ -146,10 +146,15 @@ export class PlaneEnemySquadron extends PlaneUnit {
   }
 
   beforeRender() {
-    const { speedX } = this;
-    this.matrix.translate(speedX, 0);
+
     this.updateAttackerPos();
     this.createBullet();
+  }
+
+  update(deltaTime: number): void {
+    const { speedX } = this;
+    const sp = speedX * deltaTime;
+    this.matrix.translate(sp, 0);
   }
 
   render(ctx: CanvasRenderingContext2D) {

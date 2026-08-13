@@ -24,7 +24,7 @@ export class MiniScreen extends EventBus implements IMiniScreen {
   stopFlag: boolean = false;
 
   lastTime: number = 0;
-  FRAME_INTERVAL = 1000 / 66;
+  FRAME_INTERVAL = 1000 / 88;
 
   constructor(canvas: HTMLCanvasElement) {
     super();
@@ -38,11 +38,41 @@ export class MiniScreen extends EventBus implements IMiniScreen {
       canvasWidth: this.width,
     });
     this.gamAcion = new MiniAction(canvas, this);
+
+    // this.initAni();
   }
 
-  initAni(timestamp: number | undefined) {
-    console.log(timestamp);
-    
+  initAni() {
+    let frameCount = 0;
+    let lastTime = performance.now();
+
+    const countFrame = () => {
+      frameCount++;
+      const currentTime = performance.now();
+      // 每秒统计一次
+      if (currentTime >= lastTime + 1000) {
+        const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+        this.testDraw(fps);
+        // 重置
+        frameCount = 0;
+        lastTime = currentTime;
+      }
+      requestAnimationFrame(countFrame);
+    };
+
+    // 启动检测
+    requestAnimationFrame(countFrame);
+  }
+
+  testDraw(fps: number) {
+    const ctx = this.ctx;
+    if (!ctx) return;
+    ctx.save();
+    ctx.clearRect(0, 0, this.width, this.height);
+    ctx.fillStyle = '#fff';
+    ctx.font = '20px Arial';
+    ctx.fillText(`FPS: ${fps}`, this.width - 100, 20);
+    ctx.restore();
   }
 
   pauseAni() {
@@ -55,14 +85,13 @@ export class MiniScreen extends EventBus implements IMiniScreen {
     }
   }
   aniLoop(timestamp: number) {
-    const deltaTime = timestamp - this.lastTime;
-    if (deltaTime > this.FRAME_INTERVAL) {
-      // console.log(deltaTime, 'deltaTime');
+    const deltaTime = (timestamp - this.lastTime) / 1000;
 
-      // 超过了帧间隔时间，执行动画
-      this.draw();
-      this.lastTime = timestamp;
-    }
+    // console.log(deltaTime, 'deltaTime');
+
+    // 超过了帧间隔时间，执行动画
+    this.draw(deltaTime);
+    this.lastTime = timestamp;
 
     this.aniId = requestAnimationFrame((timestamp) => {
       this.aniLoop(timestamp);
@@ -88,7 +117,7 @@ export class MiniScreen extends EventBus implements IMiniScreen {
 
   getGameInfo() {
     const info = this.activeGam?.exportGameInfo();
-    if(info){
+    if (info) {
       return info;
     }
     return {
@@ -102,11 +131,13 @@ export class MiniScreen extends EventBus implements IMiniScreen {
     this.gamManager.receiveTransfer(params);
   }
 
-  draw() {
+  draw(deltaTime: number) {
     this.ctx?.clearRect(0, 0, this.width, this.height);
     this.ctx?.beginPath();
     if (this.activeGam) {
       if (this.ctx) {
+        // 先更新再渲染  --- 后续优化统一
+        this.activeGam.update(deltaTime);
         this.activeGam.render(this.ctx);
       } else {
         this.pauseAni();

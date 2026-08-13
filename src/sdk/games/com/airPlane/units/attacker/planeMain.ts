@@ -112,7 +112,7 @@ export class PlaneMain extends PlaneUnit {
       }
     }
 
-    this.createBullet();
+    this.createBullet()
   }
 
   render(ctx: CanvasRenderingContext2D): void {

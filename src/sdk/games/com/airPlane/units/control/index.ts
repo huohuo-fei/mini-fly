@@ -73,7 +73,7 @@ export class PlaneControl extends MiniBase {
     wave1.appendNextWave(wave2);
 
     // todo : 后续追加波次结构
-    const target = wave1;
+    const target = wave2;
     this.waveTree = target;
     this.activeWave = target;
   }

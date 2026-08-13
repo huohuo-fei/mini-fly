@@ -78,14 +78,19 @@ export class EnemyJoker extends PlaneUnit {
     this.bulletConfig.shootCooldown = this.config.shootCooldown;
   }
 
-  updatePos() {
-    this.unitY += this.speedY;
-    this.matrix.translate(0, this.speedY);
+  updatePos(deltaTime:number) {
+    const sp = this.speedY * deltaTime;
+    this.unitY += sp;
+    this.matrix.translate(0, sp);
   }
 
   beforeRender(): void {
-    this.updatePos();
     this.createBullet()
+  }
+
+  update(deltaTime: number): void {
+    this.updatePos(deltaTime);
+    
   }
 
   createBullet() {

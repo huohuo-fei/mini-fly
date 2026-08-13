@@ -83,6 +83,10 @@ export class PlaneAttacker extends MiniBase {
     this.planeMain.updatePosX(this.attackerX);
   }
 
+  update(deltaTime: number): void {
+    this.planeMain.update(deltaTime);
+  }
+
   render(ctx: CanvasRenderingContext2D) {
     this.planeMain.render(ctx);
   }

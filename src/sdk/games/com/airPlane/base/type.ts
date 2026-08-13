@@ -56,7 +56,6 @@ export type PlaneBulletParams = {
 
   // 螺旋子弹特有
   bulletAngle?:number
-  bulletAngleSpeed?:number
 
   canvasWidth:number;
   canvasHeight:number;

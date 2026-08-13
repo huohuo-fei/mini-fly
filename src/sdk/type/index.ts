@@ -36,6 +36,7 @@ export interface IMiniAction {
 
 export interface IMiniGam extends IEventBus {
   matrix:Matrix3
+  update: (deltaTime: number) => void;
   render: (ctx: CanvasRenderingContext2D) => void;
   actionStart: (p: IMiniActParams) => void;
   actionEnd: (p: IMiniActParams) => void;
@@ -54,12 +55,12 @@ export interface IMiniScreen extends EventBus {
   ctx: CanvasRenderingContext2D | null;
 
   aniTime: number | null;
-  initAni: (timestamp: number) => void;
+  initAni: () => void;
   pauseAni: () => void;
   setActiveGam: (gam: IMiniGam) => void;
   getGameInfo:() => IGameResult
   actionTransfer: (p: IMiniActParams) => void;
-  draw: () => void;
+  draw: (deltaTime: number) => void;
 }
 
 export type IMiniGameParams = {

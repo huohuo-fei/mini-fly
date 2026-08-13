@@ -34,13 +34,18 @@ export class PlaneBullet extends MiniBase {
     this.theat = Math.atan2(this.dirVec.y, this.dirVec.x);
   }
 
-  updatePos() {
+  updatePos(deltaTime:number) {
     const { speedX, speedY } = this.params;
     const deltaX = Math.cos(this.theat) * speedX;
     const deltaY = Math.sin(this.theat) * speedY;
-    this.params.bulletX += deltaX;
-    this.params.bulletY += deltaY;
+    this.params.bulletX += deltaX * deltaTime;
+    this.params.bulletY += deltaY * deltaTime;
     this.matrix.makeTranslation(this.params.bulletX, this.params.bulletY);
+  }
+
+  update(deltaTime: number): void {
+    this.updatePos(deltaTime);
+    
   }
   render(ctx: CanvasRenderingContext2D) {
     ctx.save();
@@ -54,7 +59,6 @@ export class PlaneBullet extends MiniBase {
     }
 
     ctx.restore();
-    this.updatePos();
   }
   
 
