@@ -1,6 +1,7 @@
 import type { PlaneWave } from '../../../base/planeWave';
 import { JokerCreater } from '../../../creater/createJoker';
-import { MiniPlaneEnemyType, type WaveEnemyConfig } from '../../../type';
+import { MiniPlaneEnemyType } from '../../enemy/type';
+import type { WaveEnemyConfig } from '../type';
 
 export class Wave_1_Joker extends JokerCreater {
   gapTime = 1000;

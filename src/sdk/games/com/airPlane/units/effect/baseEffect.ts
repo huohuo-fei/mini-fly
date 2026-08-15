@@ -1,8 +1,8 @@
 import { MiniBase } from '../../../../../miniBase/miniBase';
 import { Matrix3 } from '../../../../../utils/Matrix3';
-import { PlaneExplodeConfig } from '../../config';
-import { IMiniPlaneEffectType, type SpriteConfig } from '../../type';
+import { PlaneExplodeConfig } from './config';
 import type { PlaneEffect } from './planeEffects';
+import type { IMiniPlaneEffectType, SpriteConfig } from './type';
 // 飞机大战中需要的各种特效管理
 export class BaseEffect extends MiniBase {
   type: IMiniPlaneEffectType;

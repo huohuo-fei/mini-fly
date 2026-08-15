@@ -1,9 +1,9 @@
 import type { MiniFly } from '../..';
 import { MiniUtils } from '../../../../..';
 import { UPDATE_LIFE, UPDATE_SCORE, UPDATE_TIME } from '../../state/eventName';
-import { IMiniPlaneEffectType } from '../../type';
 import { MiniFlyState } from '../../state/flyState';
 import { MiniBase } from '../../../../../miniBase/miniBase';
+import { IMiniPlaneEffectType } from '../effect/type';
 export class PlaneBar extends MiniBase {
   fontSize = 18;
   scoreVal: number = 0;

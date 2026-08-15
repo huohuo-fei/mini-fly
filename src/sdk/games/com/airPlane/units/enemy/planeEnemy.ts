@@ -1,13 +1,6 @@
 import type { MiniFly } from '../..';
 import type { IMiniGameParams } from '../../../../../type';
-import {
-  IMiniPlaneEffectType,
-  type IBigEnemyConfig,
-  type IBossConfig,
-  type ISquadronConfig,
-  EnemyType,
-  type IMiniPlaneEnemy,
-} from '../../type';
+
 import { PlaneEnemySquadron } from './squadron';
 import { BigEnemyUnit } from './bigUnit';
 import { EnemyBoss } from './boss';
@@ -15,10 +8,12 @@ import type { PlaneBullet } from '../../base/planeBullet';
 import { EnemyJoker } from './joker';
 import type { PlaneUnitParams } from '../../base/type';
 import type { PlaneUnit } from '../../base/planeUnit';
-import { DamageValueNumber } from '../../config';
 import { MiniBase } from '../../../../../miniBase/miniBase';
 import { MINI_GAME_OVER, type MiniScreen } from '../../../../..';
 import { MiniFlyState } from '../../state/flyState';
+import { EnemyType, type IBigEnemyConfig, type IBossConfig, type IMiniPlaneEnemy, type ISquadronConfig } from './type';
+import { IMiniPlaneEffectType } from '../effect/type';
+import { DamageValueNumber } from './config';
 export class PlaneEnemy extends MiniBase {
   miniFly: MiniFly;
   screen: MiniScreen;

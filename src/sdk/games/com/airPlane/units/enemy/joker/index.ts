@@ -6,19 +6,13 @@ import {
   BulletCamp,
 } from '../../../base/type';
 import {
-  MiniPlaneEnemyType,
-  type IMiniPlaneEnemy,
-  EnemyType,
 } from '../../../type';
 import { JokerBody } from './jokerBody';
-import {
-  enemyConfig2,
-  enemyConfig1,
-  enemyConfig3,
-  planeJokerDotBullet,
-} from '../../../config';
+
 import type { PlaneEnemy } from '../planeEnemy';
 import { MiniFlyState } from '../../../state/flyState';
+import { EnemyType, MiniPlaneEnemyType, type IMiniPlaneEnemy } from '../type';
+import { enemyConfig1, enemyConfig2, enemyConfig3, planeJokerDotBullet } from '../config';
 
 export class EnemyJoker extends PlaneUnit {
   config: IMiniPlaneEnemy;

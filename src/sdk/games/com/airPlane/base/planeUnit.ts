@@ -1,5 +1,6 @@
 import { MiniBase } from '../../../../miniBase/miniBase';
-import { AttackerType, EnemyType } from '../type';
+import type { AttackerType } from '../units/attacker/type';
+import { EnemyType } from '../units/enemy/type';
 import type { PlaneBody } from './planeBody';
 import type { PlaneBullet } from './planeBullet';
 import type { PlaneToolBase } from './planeToolBase';

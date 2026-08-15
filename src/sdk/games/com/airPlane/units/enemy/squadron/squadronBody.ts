@@ -1,7 +1,7 @@
 import type { PlaneEnemySquadron } from '.';
 import { PlaneBody } from '../../../base/planeBody';
 import type { PlaneBodyParams } from '../../../base/type';
-import type { ISquadronEnemy } from '../../../type';
+import type { ISquadronEnemy } from '../type';
 
 export class SquadronBody extends PlaneBody {
   squadron: PlaneEnemySquadron;

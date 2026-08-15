@@ -1,6 +1,6 @@
 import type { IMiniGameParams } from '../../../../type';
-import type { EnemyConfig, WaveEnemyConfig, waveInfo } from '../type';
 import type { PlaneControl } from '../units/control';
+import type { EnemyConfig, WaveEnemyConfig, waveInfo } from '../units/wave/type';
 import type { PlaneCreater } from './planeCreater';
 
 // 波次系统

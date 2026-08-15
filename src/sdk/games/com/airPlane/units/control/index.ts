@@ -4,13 +4,13 @@
 import type { MiniFly } from '../..';
 import type { PlaneWave } from '../../base/planeWave';
 import { UPDATE_SCORE, UPDATE_TIME } from '../../state/eventName';
-import { EnemyType } from '../../type';
 import type { PlaneEnemy } from '../enemy/planeEnemy';
 import { WAVE_1_CONFIG, WAVE_2_CONFIG } from '../wave/config';
 import { Wave_1 } from '../wave/wave1';
 import { Wave_2 } from '../wave/wave2';
 import { MiniFlyState } from '../../state/flyState';
 import { MiniBase } from '../../../../../miniBase/miniBase';
+import { EnemyType } from '../enemy/type';
 
 export class PlaneControl extends MiniBase {
   _enable: boolean = false;

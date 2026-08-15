@@ -1,8 +1,7 @@
 import type { MiniFly } from '../..';
 import type {  IMiniGameParams } from '../../../../../type';
-import { type IMiniPlaneToolInfo, MiniPlaneToolType } from '../../type';
+
 import { PlaneTool } from './planeTool';
-import { planeToolConfig } from '../../config';
 
 import boomSvg from '@/assets/game/plane/boom.svg';
 import doubleSvg from '@/assets/game/plane/double.svg';
@@ -11,6 +10,8 @@ import shieldSvg from '@/assets/game/plane/shield.svg';
 import { MiniUtils } from '../../../../../utils/MiniUtils';
 import type { PlaneUnit } from '../../base/planeUnit';
 import { MiniBase } from '../../../../../miniBase/miniBase';
+import { MiniPlaneToolType, type IMiniPlaneToolInfo } from './type';
+import { planeToolConfig } from './config';
 export class PlaneToolBox extends MiniBase{
   miniFly: MiniFly;
   gameParams: IMiniGameParams;

@@ -1,4 +1,5 @@
-import { EnemyCreaterStatus, EnemyType, type WaveEnemyConfig } from '../type';
+import { EnemyType } from '../units/enemy/type';
+import type { WaveEnemyConfig } from '../units/wave/type';
 import type { PlaneWave } from './planeWave';
 
 // 每种敌机类型对应的生成器
@@ -11,9 +12,6 @@ export abstract class PlaneCreater {
 
   // 敌机外观参数
   params: any = null;
-
-  // 状态
-  status: EnemyCreaterStatus = EnemyCreaterStatus.PEDDING;
 
   // 提示文字
   tip: string = '';

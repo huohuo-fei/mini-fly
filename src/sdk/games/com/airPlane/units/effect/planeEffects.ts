@@ -3,11 +3,11 @@ import { MiniUtils } from '../../../../../utils/MiniUtils';
 import planeExplodSvg from '@/assets/game/plane/explod.svg';
 import planeLifeSvg from '@/assets/game/plane/life.svg';
 import { BaseEffect } from './baseEffect';
-import { IMiniPlaneEffectType } from '../../type';
 import { LifeEffect } from './lifeEffect';
 import { DamageEffect } from './damageEffect';
 import { MiniBase } from '../../../../../miniBase/miniBase';
 import { TextEffect } from './textEffect';
+import { IMiniPlaneEffectType } from './type';
 // 飞机大战中需要的各种特效管理
 export class PlaneEffect extends MiniBase {
   // 特效资源加载完毕

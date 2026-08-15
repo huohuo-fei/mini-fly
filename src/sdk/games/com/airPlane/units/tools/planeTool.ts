@@ -1,8 +1,9 @@
-import { type IMiniPlaneToolInfo, MiniPlaneToolType } from '../../type';
+
 import type {  IMiniGameParams } from '../../../../../type';
 import type { PlaneToolBox } from './planeToolBox';
 import { Matrix3 } from '../../../../../utils/Matrix3';
 import { MiniBase } from '../../../../../miniBase/miniBase';
+import type { IMiniPlaneToolInfo, MiniPlaneToolType } from './type';
 
 export class PlaneTool extends MiniBase{
   type: MiniPlaneToolType;

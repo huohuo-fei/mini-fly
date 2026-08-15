@@ -1,6 +1,6 @@
 import type { PlaneWave } from '../../../base/planeWave';
 import { BigCreater } from '../../../creater/createBig';
-import { EnemyType } from '../../../type';
+import { EnemyType } from '../../enemy/type';
 
 export class Wave_2_Big extends BigCreater {
   ind: number = 0;

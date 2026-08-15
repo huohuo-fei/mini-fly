@@ -1,7 +1,7 @@
 import { EasedMove } from '../../../../../utils/Animate';
-import { IMiniPlaneEffectType } from '../../type';
 import { BaseEffect } from './baseEffect';
 import type { PlaneEffect } from './planeEffects';
+import type { IMiniPlaneEffectType } from './type';
 // 飞机大战中需要的各种特效管理
 export class LifeEffect extends BaseEffect {
   endX: number;

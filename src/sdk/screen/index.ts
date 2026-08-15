@@ -19,12 +19,10 @@ export class MiniScreen extends EventBus implements IMiniScreen {
   gamAcion: IMiniAction;
   activeGam: IMiniGam | null = null;
   ctx: CanvasRenderingContext2D | null;
-  aniTime: number | null = null;
   aniId: number | null = null;
-  stopFlag: boolean = false;
 
+  // 最新的时间，用于判断每帧之间的间隔
   lastTime: number = 0;
-  FRAME_INTERVAL = 1000 / 88;
 
   constructor(canvas: HTMLCanvasElement) {
     super();
@@ -37,9 +35,8 @@ export class MiniScreen extends EventBus implements IMiniScreen {
       canvasHeight: this.height,
       canvasWidth: this.width,
     });
-    this.gamAcion = new MiniAction(canvas, this);
 
-    // this.initAni();
+    this.gamAcion = new MiniAction(canvas, this);
   }
 
   initAni() {
@@ -77,19 +74,15 @@ export class MiniScreen extends EventBus implements IMiniScreen {
 
   pauseAni() {
     if (this.aniId !== null) {
-      this.stopFlag = true;
       cancelAnimationFrame(this.aniId);
       this.activeGam?.pauseRender && this.activeGam.pauseRender();
-      this.aniTime = null;
       console.log('渲染终止');
     }
   }
   aniLoop(timestamp: number) {
+
+    // 计算出增量时间，用于控制每个动画的移动量
     const deltaTime = (timestamp - this.lastTime) / 1000;
-
-    // console.log(deltaTime, 'deltaTime');
-
-    // 超过了帧间隔时间，执行动画
     this.draw(deltaTime);
     this.lastTime = timestamp;
 
@@ -99,6 +92,7 @@ export class MiniScreen extends EventBus implements IMiniScreen {
   }
 
   startAni() {
+    this.lastTime = performance.now();
     if (!this.activeGam) {
       this.activeGam = this.gamManager.getActiveGam();
     }

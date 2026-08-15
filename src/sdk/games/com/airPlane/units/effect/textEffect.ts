@@ -1,8 +1,7 @@
 import { EasedMove } from '../../../../../utils/Animate';
-import { IMiniPlaneEffectType } from '../../type';
 import { BaseEffect } from './baseEffect';
 import type { PlaneEffect } from './planeEffects';
-import type { textColorConfig } from './type';
+import type { IMiniPlaneEffectType, textColorConfig } from './type';
 import { textColorMap } from './config';
 
 // 飞机大战中需要的各种特效管理

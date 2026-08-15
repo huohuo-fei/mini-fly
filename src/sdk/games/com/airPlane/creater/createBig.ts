@@ -1,6 +1,6 @@
 import { PlaneCreater } from '../base/planeCreater';
 import type { PlaneUnitParams } from '../base/type';
-import type { IBigEnemyConfig } from '../type';
+import type { IBigEnemyConfig } from '../units/enemy/type';
 
 /**
  * BigCreater抽象类，实现了IPlaneCreater接口

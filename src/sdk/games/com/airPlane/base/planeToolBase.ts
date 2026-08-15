@@ -1,5 +1,5 @@
 import { MiniBase } from "../../../../miniBase/miniBase";
-import { MiniPlaneToolType } from "../type";
+import { MiniPlaneToolType } from "../units/tools/type";
 import type { PlaneUnit } from "./planeUnit";
 
 export class PlaneToolBase extends MiniBase {

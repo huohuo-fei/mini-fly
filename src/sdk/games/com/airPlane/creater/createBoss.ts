@@ -1,6 +1,6 @@
 import { PlaneCreater } from '../base/planeCreater';
 import type { PlaneUnitParams } from '../base/type';
-import type {  IBossConfig } from '../type';
+import type { IBossConfig } from '../units/enemy/type';
 
 export abstract class BossCreater extends PlaneCreater {
   params: PlaneUnitParams = {

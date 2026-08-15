@@ -1,4 +1,4 @@
-import type { textColorConfig } from './type';
+import type { SpriteConfig, textColorConfig } from './type';
 
 const colorConfigSuc: textColorConfig = {
   colorStart: '#2ecc71',
@@ -25,4 +25,19 @@ const colorConfigDan: textColorConfig = {
 export const textColorMap = {
   suc: colorConfigSuc,
   dan: colorConfigDan,
+};
+
+// 爆炸动画配置
+export const PlaneExplodeConfig: SpriteConfig = {
+  x: 0,
+  y: 0,
+  w: 100,
+  h: 100,
+  tx: 0,
+  ty: 0,
+  tw: 50,
+  th: 50,
+  cFrame: 0,
+  frames: 8,
+  delayF: 5,
 };

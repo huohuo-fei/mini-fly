@@ -1,6 +1,6 @@
 import type { PlaneWave } from '../../../base/planeWave';
 import { BossCreater } from '../../../creater/createBoss';
-import { EnemyType } from '../../../type';
+import { EnemyType } from '../../enemy/type';
 
 export class Wave_2_Boss extends BossCreater {
   once:boolean = false;

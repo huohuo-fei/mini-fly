@@ -1,6 +1,7 @@
 import type { PlaneWave } from '../../../base/planeWave';
 import { SquadronCreater } from '../../../creater/createSquadron';
-import { EnemyType, type WaveEnemyConfig } from '../../../type';
+import { EnemyType } from '../../enemy/type';
+import type { WaveEnemyConfig } from '../type';
 
 export class Wave_2_Squadron extends SquadronCreater {
   gapTime = 600;

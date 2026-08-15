@@ -1,6 +1,5 @@
 import { Vector2 } from '../../../../../../utils/Matrix3';
 import type { PlaneEnemy } from '../planeEnemy';
-import { EnemyType, type ISquadronConfig } from '../../../type';
 import { PlaneUnit } from '../../../base/planeUnit';
 import {
   PlaneBulletType,
@@ -10,9 +9,10 @@ import {
   BulletCamp,
 } from '../../../base/type';
 import { SquadronBody } from './squadronBody';
-import { planeSquadronBullet } from '../../../config';
 import type { PlaneBullet } from '../../../base/planeBullet';
 import { MiniFlyState } from '../../../state/flyState';
+import { EnemyType, type ISquadronConfig } from '../type';
+import { planeSquadronBullet } from '../config';
 
 export class PlaneEnemySquadron extends PlaneUnit {
   config: ISquadronConfig;

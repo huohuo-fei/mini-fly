@@ -8,12 +8,6 @@ export interface IEventBus{
   emit: (eventName: string, ...args: any[]) => void;
   off: (eventName: string,callback: Function) =>void;
 }
-export interface IMiniBus {
-  events: Map<string, Set<Function>>;
-  on: (eventName: string, callback: Function) => void;
-  emit: (eventName: string, ...args: any[]) => void;
-  off: (eventName: string,callback: Function) =>void;
-}
 
 export interface IMiniGamManager {
   activeGam: IMiniGam | null;
@@ -24,6 +18,7 @@ export interface IMiniGamManager {
   receiveTransfer: (p: IMiniActParams) => void;
 }
 
+// 所有的交互操作 后续考虑添加键盘事件
 export interface IMiniAction {
   canvas: HTMLCanvasElement;
   screen: IMiniScreen;
@@ -44,6 +39,7 @@ export interface IMiniGam extends IEventBus {
   pauseRender: () => void;
   exportGameInfo: () => IGameResult;
 }
+
 export interface IMiniScreen extends EventBus {
   gamList: Set<IMiniGam>;
   canvas: HTMLCanvasElement;
@@ -54,7 +50,6 @@ export interface IMiniScreen extends EventBus {
   activeGam: IMiniGam | null;
   ctx: CanvasRenderingContext2D | null;
 
-  aniTime: number | null;
   initAni: () => void;
   pauseAni: () => void;
   setActiveGam: (gam: IMiniGam) => void;
@@ -63,12 +58,14 @@ export interface IMiniScreen extends EventBus {
   draw: (deltaTime: number) => void;
 }
 
+// 当前游戏的基本信息
 export type IMiniGameParams = {
   type: MiniGameType.FLY;
   canvasWidth: number;
   canvasHeight: number;
 };
 
+// 游戏操作信息
 export type IMiniActParams = {
   id: number;
   x: number;
@@ -97,9 +94,3 @@ export enum GameStatus {
   END = 'end',
 }
 
-// 每种游戏都要抛出的信息信息
-export type GameInfo = {
-  score: number;
-  time: number;
-  // ....
-}

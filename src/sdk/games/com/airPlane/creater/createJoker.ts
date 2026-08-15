@@ -1,6 +1,6 @@
 import { PlaneCreater } from '../base/planeCreater';
 import type { PlaneUnitParams } from '../base/type';
-import { MiniPlaneEnemyType } from '../type';
+import { MiniPlaneEnemyType } from '../units/enemy/type';
 
 export abstract class JokerCreater extends PlaneCreater {
   params: PlaneUnitParams = {

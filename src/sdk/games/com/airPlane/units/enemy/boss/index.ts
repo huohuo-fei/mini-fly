@@ -1,6 +1,4 @@
 import { EasedMove } from '../../../../../../utils/Animate';
-import { EnemyType, type IBossConfig } from '../../../type';
-import { planeBossDotBullet } from '../../../config';
 import { PlaneUnit } from '../../../base/planeUnit';
 import {
   PlaneBulletType,
@@ -13,6 +11,8 @@ import { BossBody } from './bossBody';
 import type { PlaneBullet } from '../../../base/planeBullet';
 import { MiniFlyState } from '../../../state/flyState';
 import type { PlaneEnemy } from '../planeEnemy';
+import { EnemyType, type IBossConfig } from '../type';
+import { planeBossDotBullet } from '../config';
 
 export class EnemyBoss extends PlaneUnit {
   type: EnemyType = EnemyType.BOSS;
@@ -206,5 +206,9 @@ export class EnemyBoss extends PlaneUnit {
     if (!moveUpdateIng) {
       this.createBullet();
     }
+  }
+
+  update(): void {
+    
   }
 }

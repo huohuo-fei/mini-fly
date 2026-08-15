@@ -5,10 +5,7 @@ import { PlaneAttacker } from './units/attacker/planeAttacker';
 import { PlaneBg } from './units/background/planeBg';
 import { PlaneEnemy } from './units/enemy/planeEnemy';
 import { PlaneEffect } from './units/effect/planeEffects';
-import {
-  EnemyType,
-  type IMiniPlaneEffectType,
-} from './type';
+
 import { PlaneBar } from './units/bar/planeBar';
 import { PlaneToolBox } from './units/tools/planeToolBox';
 
@@ -19,9 +16,10 @@ import { MiniFlyState } from './state/flyState';
 import { PlaneBullets } from './bullet';
 import { MiniBase } from '../../../miniBase/miniBase';
 import type { MiniScreen } from '../../..';
+import type { EnemyType } from './units/enemy/type';
+import type { IMiniPlaneEffectType } from './units/effect/type';
 
 export class MiniFly extends MiniBase {
-  events: Map<string, Set<Function>> = new Map();
   planeBackground: PlaneBg;
   planeAttacker: PlaneAttacker;
   planeEnemy: PlaneEnemy;

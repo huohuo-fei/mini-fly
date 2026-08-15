@@ -1,5 +1,7 @@
 import { PlaneWave } from '../../../base/planeWave';
-import { type waveInfo, EnemyType, IMiniPlaneEffectType } from '../../../type';
+import { IMiniPlaneEffectType } from '../../effect/type';
+import { EnemyType } from '../../enemy/type';
+import type { waveInfo } from '../type';
 import { Wave_2_Big } from './wave_2_big';
 import { Wave_2_Boss } from './wave_2_boss';
 import { Wave_2_Squadron } from './wave_2_squadron';
@@ -33,7 +35,7 @@ export class Wave_2 extends PlaneWave {
     sq.loadParams({
       canvasHeight: this.gameParams.canvasHeight,
       canvasWidth: this.gameParams.canvasWidth,
-      speedX: 1,
+      speedX: 100,
     });
 
     sq.loadConfig({

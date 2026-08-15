@@ -1,5 +1,6 @@
 import { PlaneWave } from '../../../base/planeWave';
-import { type waveInfo, EnemyType } from '../../../type';
+import { EnemyType } from '../../enemy/type';
+import type { waveInfo } from '../type';
 import { Wave_1_Big } from './wave_1_big';
 import { Wave_1_Joker } from './wave_1_joker';
 import { Wave_1_Squadron } from './wave_1_squadron';

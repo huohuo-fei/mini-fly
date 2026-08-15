@@ -1,12 +1,11 @@
 import type { IMiniActParams } from '../../../../../type';
 import { EasedMove } from '../../../../../utils/Animate';
-import { SHIELD_FRAME_NUM } from '../../config';
 import { PlaneToolBase } from '../../base/planeToolBase';
-import type { ToolShieldConfig } from './type';
+import { MiniPlaneToolType, type ToolShieldConfig } from './type';
 import type { PlaneUnit } from '../../base/planeUnit';
-import { MiniPlaneToolType } from '../../type';
 import { MiniFlyState } from '../../state/flyState';
 import { UPDATE_TIME } from '../../state/eventName';
+import { SHIELD_FRAME_NUM } from './config';
 
 export class ToolPlaneShield extends PlaneToolBase {
   // 离屏canvas todo:后续由外部统一管理

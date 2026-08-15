@@ -8,19 +8,17 @@ import {
   BulletCamp,
 } from '../../base/type';
 import { PlaneMainBody } from './planeMainBody';
-import { planeMainBulletConfig } from '../../config';
-import {
-  AttackerType,
-  IMiniPlaneEffectType,
-  MiniPlaneToolType,
-} from '../../type';
-import type { ToolShieldConfig } from '../tools/type';
+
+import { MiniPlaneToolType, type ToolShieldConfig } from '../tools/type';
 import { ToolPlaneShield } from '../tools/toolShield';
 import { PlaneBullet } from '../../base/planeBullet';
 import type { PlaneAttacker } from './planeAttacker';
 import { MiniFlyState } from '../../state/flyState';
 import type { TextUnit } from '../textTip/textUnit';
 import { MINI_GAME_OVER } from '../../../../..';
+import { AttackerType } from './type';
+import { planeMainBulletConfig } from './config';
+import { IMiniPlaneEffectType } from '../effect/type';
 
 export class PlaneMain extends PlaneUnit {
   planeAtt: PlaneAttacker;

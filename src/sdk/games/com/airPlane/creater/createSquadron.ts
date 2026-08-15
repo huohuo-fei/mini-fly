@@ -1,6 +1,6 @@
 import { PlaneCreater } from '../base/planeCreater';
 import type { PlaneUnitParams } from '../base/type';
-import { type ISquadronConfig } from '../type';
+import type { ISquadronConfig } from '../units/enemy/type';
 
 export abstract class SquadronCreater extends PlaneCreater {
   params: PlaneUnitParams = {

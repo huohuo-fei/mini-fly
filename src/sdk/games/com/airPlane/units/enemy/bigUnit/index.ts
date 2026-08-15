@@ -1,11 +1,6 @@
 import { Vector2 } from '../../../../../../utils/Matrix3';
 import type { PlaneEnemy } from '../planeEnemy';
 import { EasedMove } from '../../../../../../utils/Animate';
-import {
-  IMiniPlaneEffectType,
-  type IBigEnemyConfig,
-  EnemyType,
-} from '../../../type';
 import { PlaneUnit } from '../../../base/planeUnit';
 import {
   PlaneBulletType,
@@ -15,10 +10,12 @@ import {
   BulletCamp,
 } from '../../../base/type';
 import { BigBody } from './bigBody';
-import { planeBigBullet } from '../../../config';
 import type { PlaneBullet } from '../../../base/planeBullet';
 import { PlaneMissile } from '../../../base/planeMissile';
 import { MiniFlyState } from '../../../state/flyState';
+import { EnemyType, type IBigEnemyConfig } from '../type';
+import { planeBigBullet } from '../config';
+import { IMiniPlaneEffectType } from '../../effect/type';
 
 export class BigEnemyUnit extends PlaneUnit {
   type: EnemyType = EnemyType.BIG;
@@ -227,5 +224,10 @@ export class BigEnemyUnit extends PlaneUnit {
     } else {
       this.planeEnemy.gameOver()
     }
+  }
+
+  // todo:需要修改动画
+  update(): void {
+    
   }
 }
