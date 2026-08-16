@@ -40,11 +40,11 @@ export class MiniFly extends MiniBase {
 
     // 加载各个模块
     this.planeBullets = new PlaneBullets(gameParams, this);
-    this.planeBackground = new PlaneBg();
+    this.planeBackground = new PlaneBg(gameParams);
     this.planeAttacker = new PlaneAttacker(gameParams, this);
     this.planeEnemy = new PlaneEnemy(gameParams, this);
     this.planeEffect = new PlaneEffect();
-    this.planeBar = new PlaneBar(this);
+    this.planeBar = new PlaneBar(gameParams,this);
     this.planeToolBox = new PlaneToolBox(gameParams, this);
     this.planeControl = new PlaneControl(this, this.planeEnemy);
     this.planeText = new PlaneText(gameParams, this);

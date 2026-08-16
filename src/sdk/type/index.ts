@@ -49,6 +49,7 @@ export interface IMiniScreen extends EventBus {
   gamAcion: IMiniAction;
   activeGam: IMiniGam | null;
   ctx: CanvasRenderingContext2D | null;
+  matrix: Matrix3;
 
   initAni: () => void;
   pauseAni: () => void;

@@ -1,5 +1,5 @@
 import type { MiniFly } from '../..';
-import { MiniUtils } from '../../../../..';
+import { MiniUtils, type IMiniGameParams } from '../../../../..';
 import { UPDATE_LIFE, UPDATE_SCORE, UPDATE_TIME } from '../../state/eventName';
 import { MiniFlyState } from '../../state/flyState';
 import { MiniBase } from '../../../../../miniBase/miniBase';
@@ -12,6 +12,7 @@ export class PlaneBar extends MiniBase {
   timeVal: number = 0;
 
   miniFly: MiniFly;
+  gameParams:IMiniGameParams
   updateScoreFn: Function = this.updateScore.bind(this);
   updateLifeFn: Function = this.updateLife.bind(this);
   updateTimeFn: Function = this.updateTime.bind(this);
@@ -22,9 +23,10 @@ export class PlaneBar extends MiniBase {
     ]
   );
 
-  constructor(miniFly: MiniFly) {
+  constructor(params: IMiniGameParams,miniFly: MiniFly) {
     super()
     this.miniFly = miniFly;
+    this.gameParams = params;
     this.registerEvent();
   }
 
@@ -44,7 +46,7 @@ export class PlaneBar extends MiniBase {
   }
 
   drawTime(ctx: CanvasRenderingContext2D) {
-    const canvasWidth = ctx.canvas.width;
+    const canvasWidth = this.gameParams.canvasWidth;
     ctx.save();
     ctx.beginPath();
     ctx.fillStyle = 'white';

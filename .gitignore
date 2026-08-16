@@ -13,6 +13,7 @@ dist-ssr
 *.local
 
 todo.md
+hf_test
 
 # Editor directories and files
 .vscode/*

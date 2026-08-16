@@ -1,15 +1,35 @@
-import type { IMiniActParams, IMiniAction, IMiniScreen } from '../type';
+import type {
+  IMiniActParams,
+  IMiniAction,
+  IMiniGameParams,
+  IMiniScreen,
+} from '../type';
+import { Matrix3 } from '../utils/Matrix3';
 import type { MiniActionType } from '../utils/common';
 
-export class MiniAction  implements IMiniAction {
+export class MiniAction implements IMiniAction {
   canvas: HTMLCanvasElement;
   pointerDownFn = this.pointerDown.bind(this);
   pointerUpFn = this.pointerUp.bind(this);
   pointerMoveFn = this.pointerMove.bind(this);
   screen: IMiniScreen;
-  constructor(canvas: HTMLCanvasElement, screen: IMiniScreen) {
+  gameParams: IMiniGameParams;
+
+  matrix: Matrix3 = new Matrix3();
+  constructor(
+    canvas: HTMLCanvasElement,
+    screen: IMiniScreen,
+    params: IMiniGameParams
+  ) {
     this.canvas = canvas;
     this.screen = screen;
+    this.gameParams = params;
+
+    // 依据适配后的画布，计算坐标点的缩放矩阵
+    const { width, height } = canvas.getBoundingClientRect();
+    const scaleX = this.gameParams.canvasWidth / width;
+    const scaleY = this.gameParams.canvasHeight  /height;
+    this.matrix.scale(scaleX, scaleY);
     this.addEventListener();
   }
   addEventListener() {
@@ -32,7 +52,7 @@ export class MiniAction  implements IMiniAction {
       actionType: event.type as MiniActionType,
     };
 
-    this.screen.actionTransfer(params);
+    this.screen.actionTransfer(this.transformPos(params));
   }
 
   pointerUp(event: PointerEvent) {
@@ -42,8 +62,7 @@ export class MiniAction  implements IMiniAction {
       id: event.pointerId,
       actionType: event.type as MiniActionType,
     };
-
-    this.screen.actionTransfer(params);
+    this.screen.actionTransfer(this.transformPos(params));
   }
 
   pointerMove(event: PointerEvent) {
@@ -53,9 +72,15 @@ export class MiniAction  implements IMiniAction {
       id: event.pointerId,
       actionType: event.type as MiniActionType,
     };
+    this.screen.actionTransfer(this.transformPos(params));
+  }
 
-    
-
-    this.screen.actionTransfer(params);
+  transformPos(params: IMiniActParams): IMiniActParams {
+    const { x, y } = params;
+    const sx = this.matrix.elements[0];
+    const sy = this.matrix.elements[4];
+    params.x = x * sx;
+    params.y = y * sy;
+    return params;
   }
 }
