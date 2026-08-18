@@ -159,6 +159,7 @@ function updateGameInfo(params:IGameResult){
   overflow: hidden;
   display: flex;
   justify-content: center;
+  touch-action: none;
 }
 #mini-game-canvas {
   width: min(100%, 500px);

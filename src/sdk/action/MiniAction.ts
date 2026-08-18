@@ -28,7 +28,7 @@ export class MiniAction implements IMiniAction {
     // 依据适配后的画布，计算坐标点的缩放矩阵
     const { width, height } = canvas.getBoundingClientRect();
     const scaleX = this.gameParams.canvasWidth / width;
-    const scaleY = this.gameParams.canvasHeight  /height;
+    const scaleY = this.gameParams.canvasHeight / height;
     this.matrix.scale(scaleX, scaleY);
     this.addEventListener();
   }
@@ -53,6 +53,9 @@ export class MiniAction implements IMiniAction {
     };
 
     this.screen.actionTransfer(this.transformPos(params));
+    if (event.cancelable) {
+      event.preventDefault();
+    }
   }
 
   pointerUp(event: PointerEvent) {
@@ -63,6 +66,9 @@ export class MiniAction implements IMiniAction {
       actionType: event.type as MiniActionType,
     };
     this.screen.actionTransfer(this.transformPos(params));
+    if (event.cancelable) {
+      event.preventDefault();
+    }
   }
 
   pointerMove(event: PointerEvent) {
@@ -73,6 +79,9 @@ export class MiniAction implements IMiniAction {
       actionType: event.type as MiniActionType,
     };
     this.screen.actionTransfer(this.transformPos(params));
+    if (event.cancelable) {
+      event.preventDefault();
+    }
   }
 
   transformPos(params: IMiniActParams): IMiniActParams {

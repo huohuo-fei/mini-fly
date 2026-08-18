@@ -21,7 +21,7 @@ export abstract class BigCreater extends PlaneCreater {
     shootCooldown: 600,
     canvasHeight: 0, // this.gameParams.canvasHeight,
     canvasWidth: 0, // this.gameParams.canvasWidth,
-    health: 10,
+    health: 30,
     score: 200,
   };
 
@@ -30,7 +30,7 @@ export abstract class BigCreater extends PlaneCreater {
     speed: 1,
     targetHeight: 100, 
     shootCooldown: 300,
-    radius: 20,
+    radius: 50,
     angleSpeed: 0.01,
   };
 

@@ -15,6 +15,7 @@ export class Wave_2 extends PlaneWave {
     boss.loadParams({
       canvasHeight: this.gameParams.canvasHeight,
       canvasWidth: this.gameParams.canvasWidth,
+      unitX:this.gameParams.canvasWidth / 2,
     });
 
     const big = new Wave_2_Big(EnemyType.BIG);
@@ -25,8 +26,8 @@ export class Wave_2 extends PlaneWave {
     });
 
     big.loadConfig({
-      x: 250,
-      targetHeight: 300,
+      x: this.gameParams.canvasWidth / 2,
+      targetHeight: this.gameParams.canvasHeight / 2,
       speed: 0.5,
     });
 
@@ -106,7 +107,8 @@ export class Wave_2 extends PlaneWave {
       0,
       {
         text: 'BOSS 来袭',
-        type:'dan'
+        type:'dan',
+        endPos:{x:this.gameParams.canvasWidth}
       },
       () => {
         this.beforeState = 'loaded';

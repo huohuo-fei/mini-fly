@@ -28,6 +28,7 @@ export type IMiniPlaneEnemy = {
   score: number;
   // 击杀得分
   deadScore: number;
+  bulletSpeedY: number;
 };
 
 export type IMiniPlaneEnemyInfo = {

@@ -43,11 +43,13 @@ export class Wave_1_Squadron extends SquadronCreater {
 
   builder(): WaveEnemyConfig | null {
     this.num++;
+    const canvasHeight = this.params.canvasHeight
+    const configW = this.config.w
     if (this.num === 2) {
-      this.config.startY = 200;
+      this.config.startY = canvasHeight / 3 ;
       this.config.angle = -Math.PI / 6;
     }else{
-      this.config.startY = 20;
+      this.config.startY = configW / 2;
       this.config.angle = Math.PI / 6;
     }
 

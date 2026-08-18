@@ -13,7 +13,9 @@ export class TextEffect extends BaseEffect {
   durationPause: number = 100;
   durationRight: number = 100;
 
-  colorConfig: textColorConfig ;
+  colorConfig: textColorConfig;
+
+  endPos: { x: number; y: number } = { x: 0, y: 0 };
   constructor(
     sprite: HTMLImageElement | null,
     cx: number,
@@ -25,15 +27,20 @@ export class TextEffect extends BaseEffect {
   ) {
     super(sprite, cx, cy, planeEffect, type, other, cb);
     this.text = other?.text || '占位文字';
-    const colorType = (other?.type) as keyof typeof textColorMap || 'suc';
+    const colorType = (other?.type as keyof typeof textColorMap) || 'suc';
 
-    this.colorConfig = textColorMap[colorType]
+    this.colorConfig = textColorMap[colorType];
 
     this.spriteConfig.w = this.sprite?.width || 0;
     this.spriteConfig.h = this.sprite?.height || 0;
     this.spriteConfig.frames = 200;
     this.spriteConfig.tw = 20;
     this.spriteConfig.th = 20;
+
+    if (other && other.endPos) {
+      this.endPos.x = other.endPos.x || 500;
+      this.endPos.y = other.endPos.y || 200;
+    }
   }
 
   animate(ctx: CanvasRenderingContext2D) {
@@ -41,7 +48,7 @@ export class TextEffect extends BaseEffect {
       const { width } = ctx.measureText(this.text);
       this.move = new EasedMove(
         { x: -width, y: 200 },
-        { x: 500, y: 200 },
+        { x: this.endPos.x , y: 200 },
         this.spriteConfig.frames,
         'easeWithPause'
       );
@@ -57,7 +64,7 @@ export class TextEffect extends BaseEffect {
     ctx.shadowOffsetY = this.colorConfig.shadowOffsetY;
 
     // 渐变文字
-    const grad = ctx.createLinearGradient(0 - 160, 0 - 50,  160,50);
+    const grad = ctx.createLinearGradient(0 - 160, 0 - 50, 160, 50);
     grad.addColorStop(0, this.colorConfig.colorStart);
     grad.addColorStop(0.4, this.colorConfig.colorMid);
     grad.addColorStop(0.7, this.colorConfig.colorStart);
@@ -69,7 +76,7 @@ export class TextEffect extends BaseEffect {
     ctx.shadowBlur = 0;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
-    ctx.fillStyle = 'rgba(255, 200, 150, 0.06)'
+    ctx.fillStyle = 'rgba(255, 200, 150, 0.06)';
     ctx.fillText(this.text, 0 - 1, 0 - 2);
 
     if (cFrame < frames - 1) {

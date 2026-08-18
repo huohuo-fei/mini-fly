@@ -4,9 +4,9 @@ import type { IBossConfig } from '../units/enemy/type';
 
 export abstract class BossCreater extends PlaneCreater {
   params: PlaneUnitParams = {
-    unitWidth: 80,
-    unitHeight: 60,
-    unitX: 250,
+    unitWidth: 180,
+    unitHeight: 140,
+    unitX: 0,
     unitY: 0,
     speedX: 0,
     speedY: 0,
@@ -19,9 +19,9 @@ export abstract class BossCreater extends PlaneCreater {
 
   config: IBossConfig = {
     frame: 140,
-    w: 80,
-    h: 60,
-    targetHeight: 100,
+    w: 180,
+    h: 160,
+    targetHeight: 200,
   }
 
   tip: string = 'BOSS来袭'

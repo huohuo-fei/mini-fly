@@ -20,12 +20,12 @@ export abstract class SquadronCreater extends PlaneCreater {
   config: ISquadronConfig = {
     count: 5,
     angle: Math.PI / 6,
-    w: 30,
-    h: 30,
+    w: 60,
+    h: 60,
     startX: 20,
-    startY: 20,
-    gap: 10,
-    health: 10,
+    startY: 200,
+    gap: 20,
+    health: 14,
   };
 
   tip: string = '敌机编队来袭'

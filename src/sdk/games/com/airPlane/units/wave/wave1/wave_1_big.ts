@@ -38,10 +38,12 @@ export class Wave_1_Big extends BigCreater {
   builder(): WaveEnemyConfig | null {
     this.num++;
     let x = 0;
+    const canvasWidth = this.params.canvasWidth;
+    const radius = this.config.radius
     if (this.num === 2) {
-      x = 60;
+      x = radius *2;
     } else {
-      x = 400;
+      x = canvasWidth - radius *2;
     }
     this.config.x = x;
     return super.builder();

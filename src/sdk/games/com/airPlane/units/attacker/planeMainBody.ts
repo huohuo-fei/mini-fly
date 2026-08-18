@@ -35,8 +35,8 @@ export class PlaneMainBody extends PlaneBody {
     ctx.beginPath();
 
     // 绘制一个梭形
-    const offsetX = 3;
-    const offsetY = 6;
+    const offsetX = 10;
+    const offsetY = 20;
     ctx.moveTo(-bodyWidth / 2 + offsetX, offsetY);
     ctx.lineTo(0, -bodyHeight / 2);
     ctx.lineTo(bodyWidth / 2 - offsetX, offsetY);
@@ -44,7 +44,9 @@ export class PlaneMainBody extends PlaneBody {
     ctx.fill();
     ctx.fillStyle = '#ffd966';
     ctx.beginPath();
-    ctx.rect(-5, -5, 10, 10);
+
+    const miniRect = bodyWidth / 4;
+    ctx.rect(-miniRect / 2, -miniRect / 2, miniRect, miniRect);
     ctx.fill();
     ctx.restore();
   }

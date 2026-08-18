@@ -24,7 +24,7 @@ export class PlaneMain extends PlaneUnit {
   planeAtt: PlaneAttacker;
 
   // 每列子弹的横向间隔
-  bulletGap: number = 8;
+  bulletGap: number = 16;
 
   type: AttackerType = AttackerType.MAIN;
 
@@ -100,6 +100,12 @@ export class PlaneMain extends PlaneUnit {
     }
   }
 
+  updatePos(x:number,y:number){
+    this.unitX = x;
+    this.unitY = y;
+    this.matrix.makeTranslation(this.unitX, this.unitY);
+  }
+
   beforeRender = () => {
     // 更新无敌状态
     if (this.noHit) {
@@ -152,7 +158,6 @@ export class PlaneMain extends PlaneUnit {
         this.planeAtt.miniFly.planeBullets.addBulletByParams(
           PlaneBulletType.Normal,
           BulletCamp.Player,
-
           bulletParams
         );
       } else {
@@ -173,11 +178,10 @@ export class PlaneMain extends PlaneUnit {
           bulletParams
         );
         bulletParams.bulletX = this.unitX;
-        bulletParams.bulletY = this.unitY - 10;
+        bulletParams.bulletY = this.unitY - 20;
         this.planeAtt.miniFly.planeBullets.addBulletByParams(
           PlaneBulletType.Normal,
           BulletCamp.Player,
-
           bulletParams
         );
       }
@@ -279,7 +283,7 @@ export class PlaneMain extends PlaneUnit {
       x: cx,
       y: h,
       color: '#00ff66',
-      fontSize: 14,
+      fontSize: 24,
     };
 
     this.noHitText = this.planeAtt.miniFly.planeText.addText(t1);

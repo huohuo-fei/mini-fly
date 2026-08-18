@@ -169,13 +169,13 @@ export class BigEnemyUnit extends PlaneUnit {
 
       // 击中后需要判断是否死亡
       if (dead) {
-        const attackerPos = this.planeEnemy.getPlanePos();
-        this.buildMissile(
-          new Vector2(this.unitX, this.unitY),
-          new Vector2(attackerPos.x, attackerPos.y)
-        );
-
+        // const attackerPos = this.planeEnemy.getPlanePos();
+        // this.buildMissile(
+        //   new Vector2(this.unitX, this.unitY),
+        //   new Vector2(attackerPos.x, attackerPos.y)
+        // );
         this.planeBody.enable = false;
+        this.planeEnemy.removeBigEnemy(this);
       }
       return {
         x: unitX,

@@ -11,17 +11,17 @@ import type { IMiniPlaneEffectType } from '../effect/type';
 
 export class PlaneAttacker extends MiniBase {
   // 战机的配置参数
-  PLAYER_WIDTH = 30;
-  PLAYER_HEIGHT = 30;
+  PLAYER_WIDTH = 120;
+  PLAYER_HEIGHT = 100;
   shootCooldown = 160;
-  screen:MiniScreen
+  screen: MiniScreen;
 
   // 位置信息
   attackerX: number = 0;
   attackerY: number = 0;
   cx: number = 0;
   cy: number = 0;
-  offsetY: number = 50;
+  offsetY: number = 100;
 
   // 游戏参数，
   gameParams: IMiniGameParams;
@@ -35,11 +35,12 @@ export class PlaneAttacker extends MiniBase {
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
     super();
     const { PLAYER_HEIGHT, PLAYER_WIDTH, shootCooldown, offsetY } = this;
+    this.offsetY = PLAYER_HEIGHT;
     const playerX = params.canvasWidth / 2;
     const playerY = params.canvasHeight - offsetY;
     this.gameParams = params;
     this.miniFly = miniFly;
-    this.screen = miniFly.screen
+    this.screen = miniFly.screen;
     this.planeMain = new PlaneMain(
       {
         unitWidth: PLAYER_WIDTH,
@@ -65,23 +66,22 @@ export class PlaneAttacker extends MiniBase {
     this.attackerY = y;
   }
 
-  updatePosX(x: number) {
+  updatePosX(x: number, y: number) {
+    const slideSize = 20
     // 更新玩家位置 (平滑跟随鼠标/手指)
     const { PLAYER_WIDTH, attackerX, gameParams } = this;
     let targetX = x;
     targetX = Math.min(
-      Math.max(targetX, PLAYER_WIDTH + 5),
-      gameParams.canvasWidth - PLAYER_WIDTH - 5
+      Math.max(targetX, PLAYER_WIDTH / 2 + slideSize),
+      gameParams.canvasWidth - PLAYER_WIDTH / 2 - slideSize
     );
     let resX = attackerX * 0.85 + targetX * 0.15;
 
     // 边界限制最终
-    resX = Math.min(
-      Math.max(resX, 5),
-      gameParams.canvasWidth - PLAYER_WIDTH - 5
-    );
+    resX = Math.min(Math.max(resX, slideSize), gameParams.canvasWidth - slideSize);
     this.attackerX = resX;
-    this.planeMain.updatePosX(this.attackerX);
+    // this.planeMain.updatePosX(this.attackerX);
+    this.planeMain.updatePos(resX, y);
   }
 
   update(deltaTime: number): void {
@@ -103,9 +103,8 @@ export class PlaneAttacker extends MiniBase {
   }
 
   // 敌机 战机 机体相撞
-  checkHitByEnemyPlane(enemyUnit:PlaneUnit) {
-    this.planeMain.collidePlane(enemyUnit)
-    
+  checkHitByEnemyPlane(enemyUnit: PlaneUnit) {
+    this.planeMain.collidePlane(enemyUnit);
   }
 
   // 无敌提示文字
@@ -119,7 +118,7 @@ export class PlaneAttacker extends MiniBase {
       x: cx,
       y: h,
       color: '#00ff66',
-      fontSize: 14,
+      fontSize: 24,
     };
 
     this.noHitText = this.miniFly.planeText.addText(t1);
@@ -151,7 +150,7 @@ export class PlaneAttacker extends MiniBase {
   }
 
   actionDoing = (p: IMiniActParams) => {
-    const { x } = p;
-    this.updatePosX(x);
+    const { x, y } = p;
+    this.updatePosX(x, y);
   };
 }

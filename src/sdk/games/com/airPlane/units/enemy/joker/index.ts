@@ -5,14 +5,18 @@ import {
   type PlaneUnitParams,
   BulletCamp,
 } from '../../../base/type';
-import {
-} from '../../../type';
+import {} from '../../../type';
 import { JokerBody } from './jokerBody';
 
 import type { PlaneEnemy } from '../planeEnemy';
 import { MiniFlyState } from '../../../state/flyState';
 import { EnemyType, MiniPlaneEnemyType, type IMiniPlaneEnemy } from '../type';
-import { enemyConfig1, enemyConfig2, enemyConfig3, planeJokerDotBullet } from '../config';
+import {
+  enemyConfig1,
+  enemyConfig2,
+  enemyConfig3,
+  planeJokerDotBullet,
+} from '../config';
 
 export class EnemyJoker extends PlaneUnit {
   config: IMiniPlaneEnemy;
@@ -54,7 +58,6 @@ export class EnemyJoker extends PlaneUnit {
       },
       this
     );
-
   }
 
   updateParams() {
@@ -70,21 +73,22 @@ export class EnemyJoker extends PlaneUnit {
     this.unitY = this.config.y + this.config.h / 2;
     this.matrix.makeTranslation(this.unitX, this.unitY);
     this.bulletConfig.shootCooldown = this.config.shootCooldown;
+    // speedY
+    this.bulletConfig.speedY =this.config.bulletSpeedY
   }
 
-  updatePos(deltaTime:number) {
+  updatePos(deltaTime: number) {
     const sp = this.speedY * deltaTime;
     this.unitY += sp;
     this.matrix.translate(0, sp);
   }
 
   beforeRender(): void {
-    this.createBullet()
+    this.createBullet();
   }
 
   update(deltaTime: number): void {
     this.updatePos(deltaTime);
-    
   }
 
   createBullet() {
@@ -97,13 +101,14 @@ export class EnemyJoker extends PlaneUnit {
         JSON.stringify(this.bulletConfig)
       ) as PlaneBulletParams;
       this.bulletLastTime = time;
-        bulletParams.bulletX = this.unitX;
-        bulletParams.bulletY = this.unitY;
-        this.planeEnemy.miniFly.planeBullets.addBulletByParams(
-          PlaneBulletType.Normal,
-          BulletCamp.Enemy,
-          bulletParams
-        );
+      bulletParams.bulletX = this.unitX;
+      bulletParams.bulletY = this.unitY;
+      bulletParams.speedY = this.config.bulletSpeedY;
+      this.planeEnemy.miniFly.planeBullets.addBulletByParams(
+        PlaneBulletType.Normal,
+        BulletCamp.Enemy,
+        bulletParams
+      );
     }
   }
 

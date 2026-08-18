@@ -406,7 +406,10 @@ export class PlaneEnemy extends MiniBase {
 
     this.miniFly.createEffect(IMiniPlaneEffectType.TEXT,0,0,{
       text:'游戏胜利',
-      type:'suc'
+      type:'suc',
+      endPos:{
+        x:this.gameParams.canvasWidth
+      }
     },() => {
       this.gameOver()
     })

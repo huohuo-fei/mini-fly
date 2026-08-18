@@ -11,21 +11,22 @@ export class BigBody extends PlaneBody{
     ctx.stroke();
 
     // 绘制四个发射点
+    const dotR = 10
     ctx.beginPath();
     ctx.strokeStyle = 'aqua';
-    ctx.arc(0, -radius, 5, 0, 2 * Math.PI);
+    ctx.arc(0, -radius, dotR, 0, 2 * Math.PI);
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(0, radius, 5, 0, 2 * Math.PI);
+    ctx.arc(0, radius, dotR, 0, 2 * Math.PI);
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(-radius, 0, 5, 0, 2 * Math.PI);
+    ctx.arc(-radius, 0, dotR, 0, 2 * Math.PI);
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(radius, 0, 5, 0, 2 * Math.PI);
+    ctx.arc(radius, 0, dotR, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.restore()
 

@@ -41,6 +41,8 @@ export class Wave_2_Squadron extends SquadronCreater {
 
   builder(): WaveEnemyConfig | null {
     this.num++;
+    const width = this.params.canvasWidth
+    // const widthGap = width * 0.2
     if (this.num === 2) {
       this.config.angle = 0;
       this.config.startX = 0;
@@ -48,7 +50,7 @@ export class Wave_2_Squadron extends SquadronCreater {
       this.config.angle = -Math.PI;
       const { w, count, gap } = this.config;
       const dis = w * count + gap * (count - 1);
-      this.config.startX = 500 + dis;
+      this.config.startX =  width  + dis;
     }
 
     return super.builder();

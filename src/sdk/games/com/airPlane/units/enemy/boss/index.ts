@@ -74,7 +74,7 @@ export class EnemyBoss extends PlaneUnit {
         JSON.stringify(planeBossDotBullet)
       ) as PlaneBulletParams;
       this.bulletLastTime = time;
-      const disHalf = 10;
+      const disHalf = 20;
       // 竖直两列
       bulletParams.bulletX = this.unitX - disHalf;
       bulletParams.bulletY = this.unitY;

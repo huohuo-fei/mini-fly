@@ -5,7 +5,7 @@ import { MiniFlyState } from '../../state/flyState';
 import { MiniBase } from '../../../../../miniBase/miniBase';
 import { IMiniPlaneEffectType } from '../effect/type';
 export class PlaneBar extends MiniBase {
-  fontSize = 18;
+  fontSize = 32;
   scoreVal: number = 0;
   lifeVal: number = 3;
   maxLife: number = 5;
