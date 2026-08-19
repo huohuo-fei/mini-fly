@@ -1,4 +1,3 @@
-import type { IMiniActParams } from '../../../../../type';
 import { PlaneUnit } from '../../base/planeUnit';
 import {
   PlaneBulletType,
@@ -15,7 +14,7 @@ import { PlaneBullet } from '../../base/planeBullet';
 import type { PlaneAttacker } from './planeAttacker';
 import { MiniFlyState } from '../../state/flyState';
 import type { TextUnit } from '../textTip/textUnit';
-import { MINI_GAME_OVER } from '../../../../..';
+import { GameModel, MINI_GAME_OVER } from '../../../../..';
 import { AttackerType } from './type';
 import { planeMainBulletConfig } from './config';
 import { IMiniPlaneEffectType } from '../effect/type';
@@ -64,7 +63,9 @@ export class PlaneMain extends PlaneUnit {
 
   // 击中后 重新设置子弹数量
   resetBullet() {
-    this.bulletSize = 1;
+    if(MiniFlyState.model === GameModel.FORMAL){
+      this.bulletSize = 1;
+    }
   }
 
   // 添加工具
@@ -100,10 +101,15 @@ export class PlaneMain extends PlaneUnit {
     }
   }
 
-  updatePos(x:number,y:number){
+  updatePos(x: number, y: number) {
     this.unitX = x;
     this.unitY = y;
     this.matrix.makeTranslation(this.unitX, this.unitY);
+    // 更新工具坐标
+    for (let i = 0; i < this.tools.length; i++) {
+      const tool = this.tools[i];
+      tool.updatePos(this.unitX, this.unitY);
+    }
   }
 
   beforeRender = () => {
@@ -116,8 +122,8 @@ export class PlaneMain extends PlaneUnit {
       }
     }
 
-    this.createBullet()
-  }
+    this.createBullet();
+  };
 
   render(ctx: CanvasRenderingContext2D): void {
     super.render(ctx);
@@ -192,7 +198,7 @@ export class PlaneMain extends PlaneUnit {
     this.planeAtt.screen.emit(MINI_GAME_OVER, {
       score: MiniFlyState.score,
       time: MiniFlyState.duration,
-      des:'游戏结束'
+      des: '游戏结束',
     });
   }
 
@@ -266,7 +272,7 @@ export class PlaneMain extends PlaneUnit {
       // 忽略无敌状态的碰撞
       if (!this.noHit) {
         console.log('碰撞');
-        this.gameEnd()
+        this.gameEnd();
       }
     } else {
     }
@@ -295,9 +301,4 @@ export class PlaneMain extends PlaneUnit {
       this.planeAtt.miniFly.planeText.removeText(this.noHitText);
     }
   }
-
-  actionDoing = (p: IMiniActParams) => {
-    const { x } = p;
-    this.updatePosX(x);
-  };
 }

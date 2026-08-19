@@ -174,14 +174,7 @@ export class ToolPlaneShield extends PlaneToolBase {
       this.totaltime = this.continueTime + minTime;
     }
   }
-
-  actionStart = () => {};
-  actionEnd = () => {};
-  actionDoing = (p: IMiniActParams) => {
-    const { x } = p;
-    this.updatePosX(x);
-  };
-
+  
   // 监听游戏时间
   listenDur(lastTime: number) {
     // 更新最新的游戏时间

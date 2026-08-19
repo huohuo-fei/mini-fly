@@ -23,6 +23,7 @@ export class Wave_2 extends PlaneWave {
       canvasHeight: this.gameParams.canvasHeight,
       canvasWidth: this.gameParams.canvasWidth,
       health: 100,
+      score:500
     });
 
     big.loadConfig({

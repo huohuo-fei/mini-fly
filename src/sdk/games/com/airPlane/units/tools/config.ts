@@ -6,8 +6,8 @@ export const planeToolConfig: IMiniPlaneToolInfo = {
   type: MiniPlaneToolType.LIFE,
   x: 0,
   y: 0,
-  w: 20,
-  h: 20,
+  w: 40,
+  h: 40,
 };
 
 // 护盾闪烁帧数间隔

@@ -1,3 +1,4 @@
+import { GameModel} from '../../../..';
 import { UPDATE_LIFE, UPDATE_SCORE, UPDATE_TIME } from './eventName';
 
 // 全局状态信息
@@ -9,6 +10,7 @@ export class MiniFlyState {
   private static _duration: number = 0;
   private static _perTime: number = 0;
   private static _pauseTemp: number = 0;
+  private static _model:GameModel 
 
   static get score() {
     return MiniFlyState._scoreVal;
@@ -53,12 +55,21 @@ export class MiniFlyState {
     MiniFlyState._pauseTemp = val;
   }
 
+  static get model() {
+    return MiniFlyState._model;
+  }
+
+  static set model(val: GameModel) {
+    MiniFlyState._model = val;
+  }
+
   static reset() {
     // 游戏开始 重置游戏内部状态
     MiniFlyState.score = 0;
     MiniFlyState.life = 3;
     MiniFlyState.duration = 0;
     MiniFlyState._perTime = new Date().getTime();
+    // MiniFlyState.model = GameModel.PASTIME
   }
 
   static addEvent(eventName: string, callback: Function) {

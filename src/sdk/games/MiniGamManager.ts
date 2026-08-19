@@ -36,6 +36,9 @@ export class MiniGamManager implements IMiniGamManager {
   setActiveGam(gamParams: IMiniGameParams) {
     this.activeGam = new MiniFly(this.screen, gamParams);
   }
+  clearGame(){
+    this.activeGam = null;
+  }
 
   resetGame(): IMiniGam | null {
     this.activeGam = null;

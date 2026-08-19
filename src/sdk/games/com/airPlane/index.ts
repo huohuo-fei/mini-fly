@@ -35,6 +35,7 @@ export class MiniFly extends MiniBase {
     super();
     // 初始化内部状态
     MiniFlyState.reset();
+    MiniFlyState.model = screen.gameConfig.gameModel
 
     this.screen = screen;
 
@@ -135,7 +136,7 @@ export class MiniFly extends MiniBase {
   // 更新道具
   updateToolBox(enemy: PlaneUnit) {
     this.planeToolBox.buildTool(enemy);
-    // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.LIFE)
+    // this.planeToolBox.buildToolTest(enemy,MiniPlaneToolType.SHIELD)
   }
 
   removeControlEnemyByType(type: EnemyType) {

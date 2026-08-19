@@ -6,6 +6,7 @@ import {
   MiniScreen,
   type IGameResult,
   GameStatus,
+  GameModel,
 } from '../sdk';
 
 import { MiniUtils } from '../sdk/utils/MiniUtils';
@@ -19,6 +20,7 @@ const gameResult = ref<IGameResult>({
   time: 0,
   des: '',
 });
+const gameModel = ref<GameModel>(GameModel.FORMAL);
 
 onMounted(() => {
   // 批量增加图片资源
@@ -38,6 +40,7 @@ onMounted(() => {
     canvas.height = height;
     canvasElement = canvas;
     miniGameInstance = new MiniScreen(canvas);
+    gameModel.value = miniGameInstance.gameConfig.gameModel;
     MiniUtils.loadImageListProg(imageList, () => {}).then(() => {
       // miniGameInstance?.startAni();
       registerEvent();
@@ -55,9 +58,9 @@ function pauseGame() {
   miniGameInstance?.pauseAni();
   gameStatus.value = GameStatus.PAUSE;
 
-  if(miniGameInstance && miniGameInstance.activeGam){
-    const params = miniGameInstance.getGameInfo()
-    updateGameInfo(params)
+  if (miniGameInstance && miniGameInstance.activeGam) {
+    const params = miniGameInstance.getGameInfo();
+    updateGameInfo(params);
   }
 }
 
@@ -73,6 +76,26 @@ function reset() {
   startGame();
 }
 
+// 首页
+function goHome() {
+  miniGameInstance?.setActiveGam(null);
+  gameStatus.value = GameStatus.START;
+
+}
+
+function switchModel() {
+  if(!miniGameInstance)return
+  // miniGameInstance?.switchModel();
+  if (gameModel.value === GameModel.FORMAL) {
+    gameModel.value = GameModel.PASTIME;
+    miniGameInstance.gameConfig.gameModel = GameModel.PASTIME;
+  } else {
+    gameModel.value = GameModel.FORMAL;
+    miniGameInstance.gameConfig.gameModel = GameModel.FORMAL;
+
+  }
+}
+
 // 注册监听事件
 function registerEvent() {
   if (miniGameInstance) {
@@ -82,15 +105,17 @@ function registerEvent() {
 
 // 游戏结束的回调
 function gameoverCallback(params: IGameResult) {
-  updateGameInfo(params)
-  gameStatus.value = GameStatus.END;
-  // 需要在下一个渲染帧之前取消动画帧,所以使用到 定时器
-  setTimeout(() => {
-    miniGameInstance?.pauseAni();
-  });
+  if (miniGameInstance?.gameConfig.gameModel === GameModel.FORMAL) {
+    updateGameInfo(params);
+    gameStatus.value = GameStatus.END;
+    // 需要在下一个渲染帧之前取消动画帧,所以使用到 定时器
+    setTimeout(() => {
+      miniGameInstance?.pauseAni();
+    });
+  }
 }
 
-function updateGameInfo(params:IGameResult){
+function updateGameInfo(params: IGameResult) {
   gameResult.value.score = params.score;
   gameResult.value.time = params.time;
   gameResult.value.des = params.des;
@@ -102,8 +127,12 @@ function updateGameInfo(params:IGameResult){
     <canvas id="mini-game-canvas"></canvas>
   </div>
   <div class="opt-box">
-    <button v-if="gameStatus === GameStatus.PAUSE" @click="startGame">继续</button>
-    <button v-if="gameStatus === GameStatus.DOING" @click="pauseGame">暂停</button>
+    <button v-if="gameStatus === GameStatus.PAUSE" @click="startGame">
+      继续
+    </button>
+    <button v-if="gameStatus === GameStatus.DOING" @click="pauseGame">
+      暂停
+    </button>
   </div>
 
   <!-- 游戏开始面板 -->
@@ -112,7 +141,11 @@ function updateGameInfo(params:IGameResult){
       <p class="title">游戏设置</p>
       <div class="des">
         <p class="item">声音：{{ gameResult.score }}</p>
-        <p class="item">模式：{{ gameResult.time }}</p>
+        <p class="item">
+          模式：<button @click="switchModel">
+            {{ gameModel === GameModel.FORMAL ? '正式' : '娱乐' }}
+          </button>
+        </p>
       </div>
       <div class="opt">
         <!-- <button>重置</button> -->
@@ -127,11 +160,11 @@ function updateGameInfo(params:IGameResult){
       <p class="title">游戏暂停</p>
       <div class="des">
         <p class="item">得分：{{ gameResult.score }}</p>
-        <p class="item">用时：{{ MiniUtils.formatTimeStr(gameResult.time)}}</p>
+        <p class="item">用时：{{ MiniUtils.formatTimeStr(gameResult.time) }}</p>
       </div>
       <div class="opt">
         <button @click="startGame">继续</button>
-        <button @click="reset">再来一局</button>
+        <button @click="goHome">再来一局</button>
       </div>
     </div>
   </template>
@@ -142,11 +175,11 @@ function updateGameInfo(params:IGameResult){
       <p class="title">游戏结束</p>
       <div class="des">
         <p class="item">得分：{{ gameResult.score }}</p>
-        <p class="item">用时：{{  MiniUtils.formatTimeStr(gameResult.time) }}</p>
+        <p class="item">用时：{{ MiniUtils.formatTimeStr(gameResult.time) }}</p>
       </div>
       <div class="opt">
         <button @click="reset">再来一局</button>
-        <button @click="reset">返回首页</button>
+        <button @click="goHome">返回首页</button>
       </div>
     </div>
   </template>

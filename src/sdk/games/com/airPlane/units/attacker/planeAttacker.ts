@@ -80,7 +80,7 @@ export class PlaneAttacker extends MiniBase {
     // 边界限制最终
     resX = Math.min(Math.max(resX, slideSize), gameParams.canvasWidth - slideSize);
     this.attackerX = resX;
-    // this.planeMain.updatePosX(this.attackerX);
+    this.attackerY = y;
     this.planeMain.updatePos(resX, y);
   }
 

@@ -15,6 +15,7 @@ export interface IMiniGamManager {
   setActiveGam: (gamParams: IMiniGameParams) => void;
   buildGam: (gamParams: IMiniGameParams) => void;
   resetGame: () => IMiniGam | null;
+  clearGame: () => void;
   receiveTransfer: (p: IMiniActParams) => void;
 }
 
@@ -50,13 +51,19 @@ export interface IMiniScreen extends EventBus {
   activeGam: IMiniGam | null;
   ctx: CanvasRenderingContext2D | null;
   matrix: Matrix3;
+  gameConfig:GameConfig;
 
   initAni: () => void;
   pauseAni: () => void;
-  setActiveGam: (gam: IMiniGam) => void;
+  setActiveGam: (gam: IMiniGam | null) => void;
   getGameInfo:() => IGameResult
   actionTransfer: (p: IMiniActParams) => void;
   draw: (deltaTime: number) => void;
+}
+
+// 游戏配置信息
+export type GameConfig = {
+  gameModel: GameModel;
 }
 
 // 当前游戏的基本信息
@@ -93,5 +100,11 @@ export enum GameStatus {
   DOING = 'doing',
   PAUSE = 'pause',
   END = 'end',
+}
+
+// 游戏模式
+export enum GameModel {
+  PASTIME = 'pasttime',
+  FORMAL = 'formal',
 }
 

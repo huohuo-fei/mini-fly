@@ -4,8 +4,9 @@ import type {
   IMiniGamManager,
   IMiniAction,
   IMiniActParams,
+  GameConfig,
 } from '../type';
-import { MiniGamManager } from '..';
+import { GameModel, MiniGamManager } from '..';
 import { MiniGameType } from '../utils/common';
 import { MiniAction } from '../action';
 import { EventBus } from '../miniBase/eventBus';
@@ -30,6 +31,11 @@ export class MiniScreen extends EventBus implements IMiniScreen {
   outSize: number[] = [0, 0];
   // 在经过缩放后，canvas 的绘图尺寸
   drawSize: number[] = [0, 0];
+  // 游戏配置
+  gameConfig: GameConfig = {
+    gameModel:GameModel.FORMAL
+  }
+
 
   // 最新的时间，用于判断每帧之间的间隔
   lastTime: number = 0;
@@ -166,8 +172,14 @@ export class MiniScreen extends EventBus implements IMiniScreen {
     this.activeGam = this.gamManager.resetGame();
   }
 
-  setActiveGam(gam: IMiniGam) {
-    this.activeGam = gam;
+
+  setActiveGam(gam: IMiniGam | null) {
+    if(!gam){
+      this.activeGam = null;
+      this.gamManager.clearGame()
+    }else{
+      this.activeGam = gam;
+    }
   }
 
   getGameInfo() {
