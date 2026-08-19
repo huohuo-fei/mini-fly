@@ -198,7 +198,7 @@ function updateGameInfo(params: IGameResult) {
   width: min(100%, 500px);
   height: 100%;
   background-color: #16324f;
-  touch-action: none;
+  // touch-action: none;
 }
 
 .opt-box {

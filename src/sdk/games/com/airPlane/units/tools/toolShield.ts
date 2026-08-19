@@ -1,4 +1,3 @@
-import type { IMiniActParams } from '../../../../../type';
 import { EasedMove } from '../../../../../utils/Animate';
 import { PlaneToolBase } from '../../base/planeToolBase';
 import { MiniPlaneToolType, type ToolShieldConfig } from './type';
