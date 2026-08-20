@@ -21,8 +21,7 @@ export class PlaneAttacker extends MiniBase {
   attackerY: number = 0;
   cx: number = 0;
   cy: number = 0;
-  offsetY: number = 100;
-
+  
   // 游戏参数，
   gameParams: IMiniGameParams;
 
@@ -34,10 +33,9 @@ export class PlaneAttacker extends MiniBase {
 
   constructor(params: IMiniGameParams, miniFly: MiniFly) {
     super();
-    const { PLAYER_HEIGHT, PLAYER_WIDTH, shootCooldown, offsetY } = this;
-    this.offsetY = PLAYER_HEIGHT;
+    const { PLAYER_HEIGHT, PLAYER_WIDTH, shootCooldown } = this;
     const playerX = params.canvasWidth / 2;
-    const playerY = params.canvasHeight - offsetY;
+    const playerY = params.canvasHeight /2;
     this.gameParams = params;
     this.miniFly = miniFly;
     this.screen = miniFly.screen;

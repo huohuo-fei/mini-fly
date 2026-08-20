@@ -208,7 +208,7 @@ export class MiniScreen extends EventBus implements IMiniScreen {
         // 先更新再渲染  --- 后续优化统一
         this.activeGam.update(deltaTime);
         this.activeGam.render(this.ctx);
-        this.drawRect(this.ctx);
+        // this.drawRect(this.ctx);
         this.ctx.restore();
       } else {
         this.pauseAni();

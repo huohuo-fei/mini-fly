@@ -24,7 +24,7 @@ export class PlaneBg extends MiniBase {
     }
 
     ctx.restore();
-    this.drawRect(ctx);
+    // this.drawRect(ctx);
   }
 
   /**

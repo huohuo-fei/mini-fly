@@ -143,7 +143,7 @@ function updateGameInfo(params: IGameResult) {
         <p class="item">声音：{{ gameResult.score }}</p>
         <p class="item">
           模式：<button @click="switchModel">
-            {{ gameModel === GameModel.FORMAL ? '正式' : '娱乐' }}
+            {{ gameModel === GameModel.FORMAL ? '正常' : '娱乐' }}
           </button>
         </p>
       </div>
